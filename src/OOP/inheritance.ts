@@ -64,7 +64,7 @@ console.log(employee1);
 
 
 /**
- * Класс Employee2
+ * Класс Employee2.
  * Наследует Person, добавляет новые свойства (INN, номер, СНИЛС).
  * Переопределяет конструктор для инициализации дополнительных данных.
  */
@@ -94,8 +94,8 @@ console.log(employee2);
 class Developer extends Employee2 {
     private level: string; // Уровень разработчика (junior, middle, senior и т.д.)
 
-    constructor(fisrtname: string, lastname: string, age: number, inn: string, number: string, snils: string, level: string) {
-        super(fisrtname, lastname, age, inn, number, snils); // Вызов конструктора Employee2
+    constructor(firstname: string, lastname: string, age: number, inn: string, number: string, snils: string, level: string) {
+        super(firstname, lastname, age, inn, number, snils); // Вызов конструктора Employee2
         this.level = level;
     }
 }
