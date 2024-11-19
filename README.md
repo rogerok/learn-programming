@@ -3,11 +3,11 @@
 ## Оглавление
 
 1. ООП
-    * [Абстрактные классы](/src/OOP/abstractClasses.md)
-    * [Агрегация](/src/OOP/agregation.md)
-    * [Инкапсуляция](/src/OOP/encapsulation.md)
-    * [Интерфейсы](/src/OOP/interfaces.md)
-    * [Композиция](/src/OOP/composition.md)
-    * [Наследование](/src/OOP/encapsulation.md)
-    * [Полиморфизм](/src/OOP/polymorphism.md)
+    * [Абстрактные классы](/src/OOP/abstractClasses)
+    * [Агрегация](/src/OOP/agregation)
+    * [Инкапсуляция](/src/OOP/encapsulation)
+    * [Интерфейсы](/src/OOP/interfaces)
+    * [Композиция](/src/OOP/composition)
+    * [Наследование](/src/OOP/inheritance)
+    * [Полиморфизм](/src/OOP/polymorphism)
    
