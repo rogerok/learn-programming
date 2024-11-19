@@ -10,4 +10,5 @@
     * [Композиция](/src/OOP/composition)
     * [Наследование](/src/OOP/inheritance)
     * [Полиморфизм](/src/OOP/polymorphism)
-   
+    * [Внедрение зависимостей](/src/OOP/dependencyInjection)
+    * [Синглтон](/src/OOP/singleton)
