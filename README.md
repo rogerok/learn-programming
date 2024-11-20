@@ -12,3 +12,11 @@
     * [Полиморфизм](/src/OOP/polymorphism)
     * [Внедрение зависимостей](/src/OOP/dependencyInjection)
     * [Синглтон](/src/OOP/singleton)
+    * [Пример использования всех принципов](/src/OOP/allPrinciplesDemo.ts)
+
+2. SOLID
+    * [Single-responsibility principle](/src/solid/singleResponsibility)
+    * [Open-closed principle](/src/solid/openClosed)
+    * [Liskov substitution principle](/src/solid/liskovSubstitution)
+    * [Interface segregation principle](/src/solid/interfaceSegregation)
+    * [Dependency inversion principle](/src/solid/dependencyInversion)
