@@ -47,3 +47,8 @@ authService.userRepository = new UserRepository();
 ```
 
 В этом способое зависимости внедряются с помощью публичных свойств класса. ```AuthService``` класс объявляет публичное свойство ```userRepository``` , которое может быть экземпляром класса ```UserRepository```
+
+
+Источники:
+
+* https://bespoyasov.ru/blog/di-ts-in-practice/

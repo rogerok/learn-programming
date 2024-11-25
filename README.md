@@ -24,3 +24,5 @@
 3. MVC, MVVM
     * [MVC](/src/modelView/MVC)
     * [MVVM](/src/modelView/MVVM)
+    * [VM](/src/modelView/VM)
+4. Event Bus
