@@ -6,6 +6,8 @@
 
 ### 1.1.1 Architectural Patterns
 
+#### DOMAIN DRIVE DESIGN
+
 ### Model-View-Controller (MVC)
 
 - **Model**
@@ -251,4 +253,8 @@
     - Dynamic Dispatch
     - Virtual Methods
 
-  ессе. А если код «рыхлый», то его и микросервисом не изолировать, у такого сервиса будет большой внешний трафик, потому, что зацепление на чужие данные и чужую логику высоки. Так что, «распиливание» это только распиливание бюджета команд и бюдж
+### 8  Domain-Driven Design (DDD)
+
+- Fundamentals of DDD
+- Tactical Patterns
+- Strategic Patterns
