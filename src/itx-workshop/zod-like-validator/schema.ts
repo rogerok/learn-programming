@@ -1,119 +1,146 @@
-// class ZodTypeError extends Error {
-//
-//
-//   constructor(message: string = "type error") {
-//
-//   }
-//
-//   return this.message
-// }
+import { AddQuestionMarks, Flatten } from "./util";
 
-interface ZodNumber {
-  type: "number";
-  parse(value: unknown): number;
-}
-interface ZodUnknown {
-  type: "unknown";
-  parse(value: unknown): unknown;
-}
-interface ZodString {
-  type: "string";
-  parse(value: unknown): string;
+class ZodTypeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ZodTypeError";
+  }
 }
 
-interface ZodArray<T extends ZodType> {
-  type: "array";
-  element: T;
-  parse(value: unknown): Array<TypeOf<T>>;
+abstract class ZodType<Output = unknown> {
+  readonly _type: Output;
+
+  constructor(definition?: Output) {}
+
+  optional() {
+    return ZodOptional.create(this);
+  }
+
+  abstract parse(value: unknown): Output;
 }
 
-interface ZodObject<T extends Record<string, ZodType>> {
-  type: "object";
-  fields: T;
-  parse(value: unknown): InferZodObject<ZodObject<T>>;
+class ZodOptional<T extends ZodType = ZodType> extends ZodType<
+  TypeOf<T> | undefined
+> {
+  static create<T extends ZodType>(type: T) {
+    return new ZodOptional(type);
+  }
+
+  constructor(readonly type: ZodType) {
+    super();
+  }
+
+  parse(value: unknown) {
+    if (value === undefined) {
+      return undefined;
+    }
+
+    return this.type.parse(value);
+  }
 }
 
-type InferZodObject<T extends ZodObject<any>> = {
-  [K in keyof T["fields"]]: TypeOf<T["fields"][K]>;
-};
+class ZodString extends ZodType<string> {
+  static create() {
+    return new ZodString();
+  }
 
-type ZodType =
-  | ZodUnknown
-  | ZodString
-  | ZodNumber
-  | ZodArray<ZodType>
-  | ZodObject<Record<string, ZodType>>;
-
-export type TypeOf<T extends ZodType> = T extends ZodUnknown
-  ? unknown
-  : T extends ZodString
-    ? string
-    : T extends ZodNumber
-      ? number
-      : T extends ZodArray<infer E>
-        ? Array<TypeOf<E>>
-        : T extends ZodObject<Record<string, ZodType>>
-          ? InferZodObject<T>
-          : never;
-
-type shouldBeArrayOfString = TypeOf<ZodArray<ZodArray<ZodString>>>;
-
-export const string = (): ZodString => ({
-  type: "string",
   parse(value: unknown) {
     if (typeof value !== "string") {
-      throw new TypeError("invalid string ");
+      throw new ZodTypeError("Invalid string");
     }
-    return value;
-  },
-});
 
-export const number = (): ZodNumber => ({
-  type: "number",
+    return value;
+  }
+}
+
+class ZodNumber extends ZodType<number> {
+  static create() {
+    return new ZodNumber();
+  }
+
   parse(value: unknown) {
     if (typeof value !== "number") {
-      throw new TypeError("invalid number ");
+      throw new ZodTypeError("Invalid number");
     }
+
     return value;
-  },
-});
+  }
+}
 
-export const unknown = (): ZodUnknown => ({
-  type: "unknown",
-  parse(value) {
-    return value;
-  },
-});
+class ZodUnknown extends ZodType<unknown> {
+  static create() {
+    return new ZodUnknown();
+  }
 
-export const array = <T extends ZodType>(element: T): ZodArray<T> => ({
-  type: "array",
-  element,
-  parse(value: unknown): Array<TypeOf<T>> {
-    if (!Array.isArray(value)) {
-      throw new TypeError("invalid array ");
-    }
-    return value.map((item) => element.parse(item) as TypeOf<T>);
-  },
-});
-
-export const object = <T extends Record<string, ZodType>>(
-  fields: T,
-): ZodObject<T> => ({
-  type: "object",
-  fields,
   parse(value: unknown) {
-    if (typeof value !== "object" || value === null) {
-      throw new TypeError("invalid object");
+    return value;
+  }
+}
+
+class ZodArray<T extends ZodType> extends ZodType<Array<TypeOf<T>>> {
+  static create<T extends ZodType>(element: T) {
+    return new ZodArray(element);
+  }
+
+  constructor(readonly element: T) {
+    super();
+  }
+
+  parse(value: unknown) {
+    if (!Array.isArray(value)) {
+      throw new ZodTypeError("Invalid array");
+    }
+
+    return value;
+  }
+}
+
+class ZodObject<T extends Record<string, ZodType>> extends ZodType<
+  InferZodObject<T>
+> {
+  static create<T extends Record<string, ZodType>>(fields: T) {
+    return new ZodObject(fields);
+  }
+
+  constructor(readonly fields: T) {
+    super();
+  }
+
+  parse(value: unknown) {
+    if (typeof value !== "object" || value == null) {
+      throw new ZodTypeError("Not an object");
     }
 
     const recordValue = value as Record<string, unknown>;
 
-    Object.entries(recordValue).forEach(([key, value]) => {
-      fields[key].parse(value);
-    });
+    for (const [k, v] of Object.entries(this.fields)) {
+      v.parse(recordValue[k]);
+    }
 
-    return value as InferZodObject<ZodObject<T>>;
-  },
-});
+    return value as InferZodObject<T>;
+  }
+}
+
+type InferZodObject<T extends Record<string, ZodType>> = Flatten<
+  AddQuestionMarks<{
+    [Key in keyof T]: TypeOf<T[Key]>;
+  }>
+>;
+
+export type TypeOf<T extends ZodType> = T["_type"];
+
+type TestT = TypeOf<ZodOptional<ZodObject<{ a: ZodOptional<ZodString> }>>>;
+
+export const number = ZodNumber.create;
+
+export const string = ZodString.create;
+
+export const unknown = ZodUnknown.create;
+
+export const array = ZodArray.create;
+
+export const object = ZodObject.create;
+
+export const optional = ZodOptional.create;
 
 export type { TypeOf as infer };
