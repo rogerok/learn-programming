@@ -258,3 +258,10 @@
 - Fundamentals of DDD
 - Tactical Patterns
 - Strategic Patterns
+
+# Books to read
+
+- Domain Driven Design Quickly
+- Domain-Driven Design Distilled — Vaughn Vernon
+- Code complete
+- Грокаем алгоритмы
