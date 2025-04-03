@@ -265,3 +265,4 @@
 - Domain-Driven Design Distilled — Vaughn Vernon
 - Code complete
 - Грокаем алгоритмы
+Погружение в Рефакторинг (Александр Швец)
