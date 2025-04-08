@@ -187,3 +187,211 @@ const addSpending = (spending, appState) => {
 ---
 
 ### Contracts
+
+Public api of module can be a contract.
+Contracts fixate guarantees of one entity over others.
+
+For example. In the code below we rely on structure of api module.
+
+```typescript
+await api.post(api.baseUrl + "/" + api.createUserUrl, {body: user});
+await api.post(api.baseUrl + "/posts/" + api.posts.create, post);
+```
+
+`Api` module doesn't explicitly promise how it will work.
+So when we use it, we need to know how it works.
+If we now change `api` module, then we should change it code that uses `api` module.
+
+Instead of it we can declare a contract - a set of guarantees describing how it'll work:
+
+```typescript
+type ApiResponse = {
+    state: 'OK' | 'ERROR';
+}
+
+interface ApiClient {
+    createUser(user: User): Promise<ApiResponse>,
+
+    createPost(post: Post): Promise<ApiResponse>,
+}
+```
+
+Then we would implement this contract inside the api module without extra details
+
+```typescript
+const client: ApiClient = {
+    createUser: (user) =>
+        api.post(api.baseUrl + "/" + api.createUserUrl, {body: user}),
+
+    createPost: (post) =>
+        api.post(api.baseUrl + "/posts/" + api.posts.create, post),
+};
+```
+
+Different modules can fulfill the same "promises".
+So if we rely on "promises", it's become easier to change implementation.
+
+```typescript
+interface SyncStorage {
+    save(value: string): void;
+}
+
+
+function saveToStorage(value: string, storage: SyncStorage) {
+    if (value) storage.save(value);
+}
+
+const storage = preferences.useCookie ? cookieAdapter : localStorageAdapter;
+const saveCurrentTheme = () => saveToStorage(THEME, storage);
+```
+
+### Dependencies
+
+We can manage dependencies in different ways, it depends on paradigm and style of the code.
+It's usually separate dependencies which produce effects from the rest.
+
+#### Object composition
+
+For example:
+
+```typescript
+class BudgetManager {
+    constructor(private settings: BudgetSettings, private budget: Budget) {
+    }
+
+    // The main problem with code is CQS violation - effects mixed with logic
+    // This class at the same time validates the data and updates the budget value...
+
+    checkIncome(record: Record): MoneyAmount | boolean {
+        if (record.createdAt > this.budget.endsAt) {
+            return false;
+        }
+
+        const saving = record.amount * this.settings.piggyBankFraction;
+        this.budget.topUp(record.amount - saving);
+
+        return savings;
+    }
+}
+
+// ...But this isn't visible on the high level of the composition.
+// We won't be able to tell there's any effect
+// until we look inside BudgetManager code
+
+class AddIncomeCommandHandler {
+    constructor(private manager: BudgetManager, private piggyBank: PiggyBank) {
+    }
+
+    execute({record}: AddSpendingCommand) {
+        const saving = this.manager.checkIncome(record);
+
+        if (!saving) {
+            return false;
+        }
+
+        this.piggyBank.add(saving);
+    }
+}
+```
+
+In the example above, because of the CQS violation, it's not clear to use how many effects occur when `execute` method
+is called.
+We can see 2 effects, but there are no guarantees that `this.budget.topUp` doesn't change anything in `budget` object.
+
+The composition of side effects negates the point of abstraction: the more effects there are, the more overall state we
+have to keep in mind.
+(Компоновка сайд-эффектов сводит на нет суть абстракции: чем больше эффектов, тем больше общего состояния, за которым
+надо следить и держать в голове )
+
+f side effect composition can be avoided, it’s better to avoid it.
+
+Instead, we could extract the data transformations and push effects to the edges of the application.
+
+```typescript
+// Extract validation into a separate entity
+// This class will only handle validation
+
+class AddIncomeValidator {
+    constructor(private budget: Budget) {
+    }
+
+    // If necessary, the `canAddIncome` method can be made completely pure
+    // if we pass the value of `endsAt` as an argument
+
+    canAddIncome(record: Record) {
+        return record.createdAt < this.buget.endsAt;
+    }
+}
+
+
+// At the top level, we separate logic and effects.
+// We strive for the Imperium sandwich we talked about earlier:
+// - Impure effects for getting data (for example, work with database on backend)
+// - Pure data tranfsormation logic (domain functions, creating entities);
+// - Impure efffects for saving data (or displaying it on the screen);
+
+class AddIncomeHandler {
+    constructor(
+        // The same technique allow us to see the problem with coupling.
+        // If the class accumulates too many dependencies
+        // we should probably think about improving its design
+
+        private settings: BudgetSettings,
+        private validator: AddIncomeValidator,
+        private budget: Budget,
+        private piggyBank: PiggyBank
+    ) {
+
+    }
+
+    execute({record}: AddSpendingCommand) {
+        // validation: 
+        if (!this.validator.validate(record)) {
+            return false;
+        }
+
+        // Pure(-ish because if injected settings) logic.
+        // It can be extracted into a separate module
+
+        const saving = record.amount * this.settings.piggyBank;
+        const income = record.amount - saving;
+
+        // Effects of saving the data 
+        this.budget.topUp(income);
+        this.piggyBank.add(saving);
+    }
+}
+```
+
+#### Separate data and behaviour
+The next step could be to separate data from behavior. The `budget` and `piggyBank` objects would become “data containers”—entities in DDD terms, and data transformation would be handled by “services”:
+
+```typescript
+class AddIncomeCommandHandler {
+    constructor(
+        private settings: BudgetSettings,
+        private validator: AddIncomeValidator,
+        private budgetRepository: BudgetUpdater,
+        private piggyBankRepository: PiggyBankUpdater
+    ) {
+    }
+    
+    // The `budget` and `piggyBank` objects now contain no behavior, only data:
+    execute({record, budget, piggyBank}: AddSpendingCommand) {
+        if(!this.validator.validate(record, budget)) {
+            return false
+        }
+        
+        const saving = record.amount * this.settings.piggyBankFraction;
+        const income = record.amount - saving;
+
+        // Updated data objects:
+        const newBudget = new Budget({ ...budget, income });
+        const newPiggyBank = new PiggyBank({ ...piggyBank, saving });
+
+        // “Services” for effects with saving the data:
+        this.budgetRepository.update(newBudget);
+        this.piggyBankRepository.update(newPiggyBank);
+    }
+}
+```
