@@ -364,7 +364,9 @@ class AddIncomeHandler {
 ```
 
 #### Separate data and behaviour
-The next step could be to separate data from behavior. The `budget` and `piggyBank` objects would become “data containers”—entities in DDD terms, and data transformation would be handled by “services”:
+
+The next step could be to separate data from behavior. The `budget` and `piggyBank` objects would become “data
+containers”—entities in DDD terms, and data transformation would be handled by “services”:
 
 ```typescript
 class AddIncomeCommandHandler {
@@ -375,19 +377,19 @@ class AddIncomeCommandHandler {
         private piggyBankRepository: PiggyBankUpdater
     ) {
     }
-    
+
     // The `budget` and `piggyBank` objects now contain no behavior, only data:
     execute({record, budget, piggyBank}: AddSpendingCommand) {
-        if(!this.validator.validate(record, budget)) {
+        if (!this.validator.validate(record, budget)) {
             return false
         }
-        
+
         const saving = record.amount * this.settings.piggyBankFraction;
         const income = record.amount - saving;
 
         // Updated data objects:
-        const newBudget = new Budget({ ...budget, income });
-        const newPiggyBank = new PiggyBank({ ...piggyBank, saving });
+        const newBudget = new Budget({...budget, income});
+        const newPiggyBank = new PiggyBank({...piggyBank, saving});
 
         // “Services” for effects with saving the data:
         this.budgetRepository.update(newBudget);
@@ -395,3 +397,143 @@ class AddIncomeCommandHandler {
     }
 }
 ```
+
+#### Interface segregation principle
+
+```typescript
+interface BudgetUpdater {
+    updateBalance(balance: MoneyAmount): void;
+
+    recalculateDuration(date: Timestamp): void;
+
+    // Oops! This method return something.
+    // It's a query and not a command.
+    currentBalance(): MoneyAmount;
+}
+```
+
+We can apply ISP and decompose the problem:
+
+```typescript
+interface BudgetSource {
+    currentBalance(): MoneyAmount;
+}
+
+// While the older service only contains
+// commands for changing the data now:
+interface BudgetUpdater {
+    updateBalance(balance: MoneyAmount): void;
+
+    recalculateDuration(date: Timestamp): void;
+}
+```
+
+#### Functional composition
+
+In functional programming we can also do DI.
+It makes implicit dependencies explicit.
+
+For example, take a look at the `listingQuery`
+
+```typescript
+const listingQuery = (query) => {
+    return fs
+        .readdirSync(query)
+        .filter((fileName) => fileName.endsWith(".md"))
+        .map((fileName) => fileName.replace(".md", ""));
+};
+
+const projectList = listingQuery("projects");
+```
+
+Such function will be quite hard to test, because we will need global mock for `fs`.
+
+So we can refactor this function in way:
+
+```typescript
+/**
+ * 1. Inject the `system` “service”;
+ * 2. Pass the actual arguments;
+ * 3. Use the `system` “service”;
+ *    to get the desired effects.
+ */
+const createListingQuery =
+        ({system}) =>
+            (query) =>
+                system
+                    .readdirSync(query)
+                    .filter((fileName) => fileName.endsWith(".mdx"))
+                    .map((fileName) => fileName.replace(".mdx", ""));
+
+// When using it, we would first create the function
+// with “injected” `system` service:
+const listingQuery = createListingQuery({system: fs});
+
+// ...And then would use that function:
+const projectList = listingQuery("projects");
+```
+
+### Integrity and Consistency
+
+In stateful applications, we should also keep an eye on the integrity and consistency of the data. These properties
+ensure that the user sees and works with the application in a valid state.
+
+#### Aggregates
+
+Data consistency is easier to achieve if we use immutable data structures and ensure adequate encapsulation.
+
+Imagine that in the code of an online store, the shopping cart must always have the correct `total`:
+
+```typescript
+// cart.ts
+type Cart = {
+    items: ProductList;
+    total: MoneyAmount;
+};
+
+function totalPrice(products: ProductList) {
+    return products.reduce(
+        (tally, {price, count}) => tally + price * amount,
+        0
+    );
+}
+
+function createCart(products: productList): Cart {
+    return {
+        products: products,
+        total: totalPrice(products),
+    };
+}
+```
+
+By improperly changing the cart object, we can make the data inconsistent. Suppose some extraneous code added a new product to the list:
+
+
+```typescript
+// The outside code doesn't know that after adding a product
+// it must also recalculate the total price:
+userCart.products.push(appleJuice);
+
+// Now the `cart.total` field shows an incorrect value,
+// because it wasn't recalculated after adding the product.
+```
+
+A piece of data that must be updated “as a whole” is an _aggregate_. Data immutability can help keep aggregates consistent. It forces the updating of an aggregate to happen _starting at the aggregate root_
+:
+
+```typescript
+// cart.ts
+// ...
+
+function addProduct(cart: Cart, product: Product): Cart {
+  const products = [...cart.products, product];
+  const total = totalPrice(products);
+  return { products, total };
+}
+
+// ...
+
+addProduct(userCart, appleJuice);
+```
+The `addProduct` function guarantees consistency because it knows what data to update and from where to update it to keep it valid
+
