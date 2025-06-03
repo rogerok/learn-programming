@@ -358,3 +358,73 @@ const UserView = observer(({ request }: { request: HttpRequest<User, any> }) => 
 });
 
 ```
+
+```typescript
+class HttpClient {
+  async do(request) {
+    try {
+      const response = await fetch(request)
+      if (response.ok) {
+        return response
+      }
+      return Promise.reject(new Error(response.statusText))
+    } catch(error) {
+      throw error
+    }
+  }
+}
+
+class Storage {
+  #client;
+  #headers = new Headers({ 'Content-type', 'application/json })
+  #path = 'api/todos' 
+   
+  constructor(client) {
+    this.#client = client
+  }                        
+  
+  async getAll() {
+    try {
+      const request = new Request(this.#path, { headers: this.#headers })
+      const response = await this.#client.do(request)
+      return await response.json()
+    } catch(error) {
+      throw error
+    }
+  }
+
+  async getById(id) {
+    try {
+      const request = new Request(`${this.#path}/${id}`, { headers: this.#headers })
+      const response = await this.#client.do(request)
+      return await response.json()
+    } catch(error) {
+      throw error
+    }
+  }
+}
+
+class State {
+  #storage;
+  todos = [];
+  loading = false;
+  
+  constructor(storage) {
+    this.#storage = storage
+  }
+  
+  async getAll() {
+    try {
+      this.loading = true
+      this.todos = await this.#storage.getAll()
+    } catch(error) {
+      // maybe show error
+    } finally {
+      this.loading = false
+    }
+  }
+}
+
+const storage = new Storage(new HttpClient())
+const state = new State(storage)
+```
