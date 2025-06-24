@@ -1,4 +1,6 @@
+
 # **Mastering TypeScript's `infer` Keyword: A Deep Dive into Advanced Type Inference**
+(для простоты infer R можно думать как "вытяни тип в R")
 
 TypeScript's `infer` keyword is a powerful yet often misunderstood feature that enables **advanced type inference within
 conditional types**. It allows developers to extract and manipulate types dynamically, enabling sophisticated typing
