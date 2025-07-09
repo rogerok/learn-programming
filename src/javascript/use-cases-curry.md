@@ -56,5 +56,30 @@ useApi('/users');
 useApi('/projects');
 ```
 
+✅ 6. tRPC: curried middleware
 
+```typescript
+const roleGuard = (allowedRoles: string[]) =>
+    t.middleware(({ctx, next}) => {
+        if (!ctx.user || !allowedRoles.includes(ctx.user.role)) {
+            throw new TRPCError({code: 'FORBIDDEN'});
+        }
+        return next();
+    });
 
+const adminOnly = roleGuard(['admin']);
+const moderatorOnly = roleGuard(['admin', 'moderator']);
+
+export const protectedRouter = t.router({
+    deleteUser: t.procedure
+        .use(adminOnly)
+        .mutation(() => { /* ... */
+        }),
+
+    reviewComment: t.procedure
+        .use(moderatorOnly)
+        .mutation(() => { /* ... */
+        }),
+});
+
+```
