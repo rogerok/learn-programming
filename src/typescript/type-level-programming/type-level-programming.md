@@ -95,3 +95,60 @@ const routes = {
 1) Даёт проверку, что объект `routes` корректно реализует структуру `Routes`.
 2) `as const` фиксирует все значения в объекте как литералы. То есть `hasIdParam` становится типом `true` или `false` (
    не просто boolean)
+
+**Генерация функции на уровне типов**
+
+```typescript
+type ClientFunction<T extends RouteConfig> = T['hasParamId'] extends true ? (id: string) => Promise<string> : () => Promise<string>
+
+type Client<T extends Record<string, RouteConfig>> = {
+    [K in keyof T]: ClientFunction<T[K]>
+}
+
+const createClient = <T extends Record<string, RouteConfig>>(config: T): Client<T> => {
+    const entries = Object.entries(config).map(([key, route]) => {
+        const fn = route.hasIdParam ? (id: number) => Promise.resolve(`${route.method} ${route.path}/${id} was called`) : () => Promise.resolve(`${route.method} ${route.path} was called`)
+
+        return [key, fn]
+    })
+
+    return Object.fromEntries(entries);
+
+}
+
+const apiClient = createClient(routes);
+
+apiClient.getUsers().then(console.log);
+// "GET /users was called!"
+
+apiClient.getUserById(123).then(console.log);
+// "GET /users/123 was called!"
+
+apiClient.createUser().then(console.log);
+// "POST /users was called!"
+```
+
+**Пример 3: Генерация сообщений об ошибках**
+
+```typescript
+type ValidateRequired<T, K extends keyof T & string> = undefined extends T[K] ? `Error: field ${K} is optional, but required` : true;
+
+interface FormData {
+    name: string;
+    age?: number;
+}
+
+type ValidateName = ValidateRequired<FormData, "name">;
+type ValidateAge = ValidateRequired<FormData, "age">;
+// "Error: Field \"age\" is optional, but is required."
+```
+
+**Пример 4: Программирование на типах со сложными условиями**
+Можем реализовать тип `Flatten<T>`, который рекурсивно разворачивает массив
+
+```typescript
+type Flatten<T> = T extends (infer U)[] ? U extends any[] ? Flatten<U> : U : T;
+type Flatten<T> = T extends (infer U)[] ? Flatten<U> : T;
+
+// T является массивом ? тогда дёргаем его тип U и проверяем является ли он массивом? Дальше рекурсивно разворачиваем его
+```
