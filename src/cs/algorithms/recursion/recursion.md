@@ -304,3 +304,15 @@ const getSqrtBinarySearch = (n, lo = 0, hi = n, epsilon = 0.0001) => {
   }
 };
 ```
+
+### isPalindrome
+
+```js
+const isPalindrome = (s, i, j) => {
+  if (i > j) {
+    true;
+  }
+
+  return s[i] === s[j] && isPalindrome(s, i + 1, j - 1);
+};
+```
