@@ -323,6 +323,6 @@ const getReversed = (nums, i, j) => {
     return [nums[i]];
   }
 
-  return getReversed(nums, i + 1, j).push(nums[i]);
+  return [...getReversed(nums, i + 1, j), nums[i]];
 };
 ```
