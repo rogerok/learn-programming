@@ -18,3 +18,13 @@ const arraysAreEqual = (first, second, f, s) => {
 
 // console.log(arraysAreEqual([1, 2, 3], [1, 2, 3], 3, 3));
 // console.log(arraysAreEqual([1, 2, 3, 5], [1, 2, 3, 4], 4, 4));
+
+const getReversed = (nums, i, j) => {
+  if (i >= j) {
+    return [nums[i]];
+  }
+
+  return [...getReversed(nums, i + 1, j), nums[i]];
+};
+
+console.log(getReversed([1, 2, 3, 4], 0, 3));
