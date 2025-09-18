@@ -316,3 +316,13 @@ const isPalindrome = (s, i, j) => {
   return s[i] === s[j] && isPalindrome(s, i + 1, j - 1);
 };
 ```
+
+```js
+const getReversed = (nums, i, j) => {
+  if (i >= j) {
+    return [nums[i]];
+  }
+
+  return getReversed(nums, i + 1, j).push(nums[i]);
+};
+```
