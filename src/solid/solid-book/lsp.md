@@ -151,3 +151,79 @@ class Guest extends BaseUser implements UserWithAccess {
 
 Спецификации могут описывать интерфейсы методов, пред и постусловия, описание проверок и критерии соответствия.
 Такие спецификации называются контрактом.
+
+В примере ниже интерфейс `Contract` описывает методы для проверки предусловия `require` и постусловия `ensure`. Класс `ContractAssert` реализует этот интерфейс, определяя какие исключения следует сгенерировать при нарушении условий.
+Класс `ContractAssert` реализует интерфейс, определяя какие исключения следует сгенерировать при нарушении условий.
+
+```ts
+interface Contract {
+  require(expression: boolean, msg?: string): void;
+  ensure(expression: boolean, msg?: string): void;
+}
+
+class ContractAssert implements Contract {
+  require(expression: boolean, msg?: string): void {
+    if (!expression) {
+      throw new PreconditionException(msg);
+    }
+  }
+
+  ensure(expression: boolean, msg?: string): void {
+    if (!expression) {
+      throw new PostconditionException(msg);
+    }
+  }
+}
+```
+
+Опишем исключения, наследуясь от стандартного `Error`. Класс `PreconditionException` отвечает за исключение при нарушении предусловия, `PostconditionException` - за нарушение постусловия.
+
+```ts
+class ContractException extends Error {
+  constructor(msg?: string) {
+    super(`contract error: ${msg}`);
+  }
+}
+
+class PreconditionException extends ContractException {
+  constructor(msg?: string) {
+    super(`precondition failed, ${msg}`);
+  }
+}
+
+class PostconditionException extends ContractException {
+  constructor(msg?: string) {
+    super();
+  }
+}
+```
+
+Теперь если нам потребуется написать сумматор, который работает только с чётными числами, то мы можем проверять пред- и постусловия через контракт:
+
+```ts
+class EvenNumbersSumator {
+  contract: Contract;
+
+  constructor(contract: Contract = new ContractAssert()) {
+    this.contract = contract;
+  }
+
+  add(a: number, b: number): number {
+    // Перед работой проверяем все предусловия:
+
+    this.contract.require(a % 2 === 0, "first arg is not even");
+    this.contract.require(b % 2 === 0, "second arg is not even");
+
+    const result = a + b;
+
+    //   Перед тем, как вернуть результат проверяем постусловия
+
+    this.contract.ensure(result % 2 === 0, "result is not event");
+    this.contract.ensure(result === a + b, "result is not equal to expected");
+
+    return result;
+  }
+}
+```
+
+Теперь метод не начнёт свою работу, если какое-то из предусловий будет нарушено, как и не вернёт результат, если будет нарушено постусловие.
