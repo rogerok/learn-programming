@@ -48,7 +48,7 @@ function divideBy2(decNumber: number): string => {
     binaryString += stack.pop()
   }
 
-return binaryString();
+return binaryString;
 }
 ```
 
