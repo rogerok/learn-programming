@@ -32,23 +32,23 @@ For example
 Our algorithms
 
 ```ts
-function divideBy2(decNumber: number): string => {
+function divideBy2(decNumber: number): string {
   const stack = remStack();
   let rem = 0;
-  let binaryString = '';
+  let binaryString = "";
   let decNum = decNumber;
 
-  while(decNum > 0) {
+  while (decNum > 0) {
     rem = Math.floor(decNum % 2);
     stack.push(rem);
-    decNum = Math.floor(decNum) / 2;
+    decNum = Math.floor(decNum / 2);
   }
 
-  while(!stack.isEmpty()) {
-    binaryString += stack.pop()
+  while (!stack.isEmpty()) {
+    binaryString += stack.pop();
   }
 
-return binaryString();
+  return binaryString;
 }
 ```
 
