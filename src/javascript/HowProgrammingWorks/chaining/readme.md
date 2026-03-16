@@ -1,3 +1,8 @@
+---
+tags: [javascript, chaining, functional-programming, promises]
+aliases: [Цепочки вызовов, Chaining]
+---
+
 # [Chaining with classes, ptototypes and functors](https://github.com/HowProgrammingWorks/Chaining/tree/master)
 
 Chaining - это способ вызова методов, когда каждый вызов возвращает объект, который позволяет вызвать следующий метод.

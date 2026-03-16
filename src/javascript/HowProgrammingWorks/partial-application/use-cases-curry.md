@@ -1,3 +1,10 @@
+---
+tags: [javascript, typescript, currying, partial-application, react, mobx, use-cases]
+aliases: [Каррирование применение, Curry use cases]
+---
+
+# Практические примеры каррирования
+
 ✅ 1. Partially applied API clients (Reusable request builders)
 
 ```typescript

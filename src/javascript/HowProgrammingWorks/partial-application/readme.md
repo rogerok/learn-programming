@@ -1,3 +1,8 @@
+---
+tags: [javascript, functional-programming, partial-application, currying, closure]
+aliases: [Частичное применение, Каррирование, Currying]
+---
+
 # [Частичное применение и каррирование в JavaScript](https://github.com/HowProgrammingWorks/PartialApplication)
 
 Index:
