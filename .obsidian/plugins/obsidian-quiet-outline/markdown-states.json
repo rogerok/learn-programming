@@ -44,5 +44,38 @@
     "expandedKeys": [
       "item-1-0"
     ]
+  },
+  "src/07-craftsmanship/MOC.md": {
+    "scroll": 2.682170542635659,
+    "cursor": {
+      "from": {
+        "line": 4,
+        "ch": 0
+      },
+      "to": {
+        "line": 4,
+        "ch": 0
+      }
+    },
+    "expandedKeys": [
+      "item-1-0",
+      "item-2-1"
+    ]
+  },
+  "src/04-architecture/mvc/counterTwo/counterTwo.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 4,
+        "ch": 0
+      },
+      "to": {
+        "line": 4,
+        "ch": 0
+      }
+    },
+    "expandedKeys": [
+      "item-1-0"
+    ]
   }
 }

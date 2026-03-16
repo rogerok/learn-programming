@@ -11,5 +11,5 @@ aliases: [ITX Workshop]
 
 ## Связанные темы
 
-- [[../typescript/MOC|TypeScript MOC]]
-- [[../OOP/MOC|OOP MOC]]
+- [[../02-typescript/MOC|TypeScript MOC]]
+- [[../03-oop/MOC|OOP MOC]]

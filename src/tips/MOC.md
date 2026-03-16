@@ -25,6 +25,6 @@ aliases: [Tips, Советы]
 
 ## Связанные темы
 
-- [[../mobx/MOC|MobX MOC]]
-- [[../react/MOC|React MOC]]
-- [[../itx-workshop/MOC|ITX Workshop (Zod-like валидатор)]]
+- [[../05-frontend/mobx/MOC|MobX MOC]]
+- [[../05-frontend/react/MOC|React MOC]]
+- [[../09-practice/MOC|ITX Workshop (Zod-like валидатор)]]

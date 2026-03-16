@@ -5,37 +5,32 @@ aliases: [Dashboard, Главная]
 
 # Learn Programming — Dashboard
 
-Obsidian vault с материалами по программированию.
-
 ## Карта знаний
 
-| Раздел | Что внутри |
-|--------|-----------|
-| [[javascript/MOC\|JavaScript]] | Синтаксис, замыкания, async/await, промисы, ООП в JS, функциональные паттерны |
-| [[typescript/MOC\|TypeScript]] | Типы, generics, conditional types, type-level, unsound |
-| [[oop/MOC\|OOP]] | Концепции, абстракции, классы, полиморфизм (8 паттернов) |
-| [[solid/MOC\|SOLID]] | SRP, OCP, LSP, ISP, DIP с примерами |
-| [[architecture/MOC\|Architecture]] | MVC, MVVM, VM, DDD, Clean Architecture |
-| [[react/MOC\|React]] | Хуки, reconciliation, render props, рефакторинг |
-| [[mobx/MOC\|MobX]] | Реактивное состояние, observable, computed |
-| [[algorithms/MOC\|Algorithms]] | Grokking Algorithms, структуры данных, рекурсия |
-| [[craftsmanship/MOC\|Craftsmanship]] | Code Complete: классы, методы, переменные, циклы |
-| [[internals/MOC\|Internals]] | JIT-компиляция, V8, Hidden Classes, TurboFan |
-| [[tips/MOC\|Tips]] | MobX + RHF, SSR, HTTP-сервисы, pagination, Zod |
-| [[itx-workshop/MOC\|ITX Workshop]] | Zod-like валидатор с нуля |
-| [[golang/MOC\|Golang]] | Функции, switch |
-| [[css/эти-css-техники-устарели\|CSS]] | Устаревшие CSS-техники |
+| № | Раздел | Что внутри |
+|---|--------|-----------|
+| 01 | [[01-javascript/MOC\|JavaScript]] | Синтаксис, замыкания, async/промисы, ООП в JS, функциональные паттерны |
+| 02 | [[02-typescript/MOC\|TypeScript]] | Типы, generics, conditional types, type-level, unsound |
+| 03 | [[03-oop/MOC\|OOP + SOLID]] | Концепции, абстракции, классы, полиморфизм (8 паттернов), SOLID |
+| 04 | [[04-architecture/MOC\|Architecture]] | MVC, MVVM, VM, DDD, Clean Architecture |
+| 05 | [[05-frontend/MOC\|Frontend]] | React (internals, patterns, refactoring) + MobX (state, tips) |
+| 06 | [[06-algorithms/MOC\|Algorithms]] | Grokking Algorithms, структуры данных, рекурсия |
+| 07 | [[07-craftsmanship/MOC\|Craftsmanship]] | Code Complete: классы, методы, переменные, циклы |
+| 08 | [[08-internals/MOC\|Internals]] | JIT-компиляция, V8, Hidden Classes, TurboFan |
+| 09 | [[09-practice/MOC\|Practice]] | Задания, Zod-like валидатор с нуля |
+| — | [[golang/MOC\|Golang]] | Функции, switch |
+| — | [[css/эти-css-техники-устарели\|CSS]] | Устаревшие CSS-техники |
 
-## Быстрый доступ: Темы по категориям
+## Быстрый доступ
 
 ### Язык
-[[javascript/core/async/9.promise|Промисы]] · [[javascript/core/functions/closure|Замыкания]] · [[javascript/core/oop-in-js/prototype|Прототипы]] · [[typescript/unsound/unsound|TypeScript Unsound]] · [[internals/jit-compilation|JIT V8]]
+[[01-javascript/core/async/9.promise\|Промисы]] · [[01-javascript/core/functions/closure\|Замыкания]] · [[01-javascript/core/oop-in-js/prototype\|Прототипы]] · [[02-typescript/unsound/unsound\|TypeScript Unsound]] · [[08-internals/jit-compilation\|JIT V8]]
 
 ### Паттерны
-[[oop/polymorphism/6.factory-strategy|Factory & Strategy]] · [[oop/polymorphism/8.state-pattern|State Pattern]] · [[oop/polymorphism/7.object-composition|Composition]] · [[oop/classes/template-method|Template Method]]
+[[03-oop/polymorphism/6.factory-strategy\|Factory & Strategy]] · [[03-oop/polymorphism/8.state-pattern\|State Pattern]] · [[03-oop/polymorphism/7.object-composition\|Composition]] · [[03-oop/classes/template-method\|Template Method]]
 
 ### Архитектура
-[[architecture/ddd/clean-architecture|Clean Architecture]] · [[architecture/ddd/entity-vs-value-object|Entity vs Value Object]] · [[architecture/MVVM/MVVM|MVVM]] · [[solid/MOC|SOLID]]
+[[04-architecture/ddd/clean-architecture\|Clean Architecture]] · [[04-architecture/ddd/entity-vs-value-object\|Entity vs Value Object]] · [[04-architecture/mvvm/MVVM\|MVVM]] · [[03-oop/solid/MOC\|SOLID]]
 
 ### Функциональное программирование
-[[javascript/HowProgrammingWorks/partial-application/readme|Каррирование]] · [[javascript/HowProgrammingWorks/function-composition/function-composition|Composition]] · [[javascript/HowProgrammingWorks/memoization/memoization|Мемоизация]] · [[javascript/core/functions/cqs|CQS]]
+[[01-javascript/patterns/partial-application/readme\|Каррирование]] · [[01-javascript/patterns/function-composition/function-composition\|Composition]] · [[01-javascript/patterns/memoization/memoization\|Мемоизация]] · [[01-javascript/core/functions/cqs\|CQS]]
