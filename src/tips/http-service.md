@@ -1,3 +1,7 @@
+---
+tags: [tips, http, service, mobx]
+---
+
 ```typescript
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 import Router from "next/router";

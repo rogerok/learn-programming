@@ -1,3 +1,7 @@
+---
+tags: [tips, mobx, pagination, store]
+---
+
 ```typescript
 import { makeAutoObservable, runInAction } from "mobx";
 

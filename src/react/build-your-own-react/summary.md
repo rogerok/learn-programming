@@ -1,3 +1,7 @@
+---
+tags: [react, internals, summary]
+---
+
 # Build Your Own React - Summary
 
 This document summarizes the process of building a simplified React-like library, **Didact**, step by step.

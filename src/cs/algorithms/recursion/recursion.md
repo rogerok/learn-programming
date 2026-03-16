@@ -1,3 +1,7 @@
+---
+tags: [cs, algorithms, recursion]
+---
+
 # Рекурсия
 
 [Источник](https://www.youtube.com/watch?v=MWyVg6o3hG0&ab_channel=%D0%9A%D0%BE%D0%B4%D0%B8%D1%80%D1%83%D0%B5%D0%BC)

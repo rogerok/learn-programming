@@ -1,3 +1,7 @@
+---
+tags: [react, refactoring, generics, composition]
+---
+
 # Generics, Inheritance, and Composition
 
 ## Generic Algorithms

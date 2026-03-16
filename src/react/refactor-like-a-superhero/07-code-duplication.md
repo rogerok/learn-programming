@@ -1,3 +1,7 @@
+---
+tags: [react, refactoring, dry]
+---
+
 ## Code duplication
 
 ### Not All Duplication is Evil

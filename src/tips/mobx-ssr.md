@@ -1,3 +1,7 @@
+---
+tags: [tips, mobx, ssr, nextjs]
+---
+
 ```typescript
 // PROJECT STRUCTURE FOR APP ROUTER
 /*

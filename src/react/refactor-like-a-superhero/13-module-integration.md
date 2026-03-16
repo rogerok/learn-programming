@@ -1,3 +1,7 @@
+---
+tags: [react, refactoring, modules]
+---
+
 ## Module integration
 
 The first and foremost thing we should check when analyzing the interaction of modules during refactoring is the

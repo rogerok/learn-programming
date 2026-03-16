@@ -1,3 +1,7 @@
+---
+tags: [react, refactoring, functional-programming]
+---
+
 ## Functional Pipeline
 
 In user applications, one of such levels describes the business logic—the domain processes that make the application

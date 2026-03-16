@@ -1,3 +1,7 @@
+---
+tags: [tips, mobx, ssr, serialization]
+---
+
 # Key Points About MobX SSR Serialization:
 1. Why It's Needed
 MobX creates observable objects with internal proxies and metadata

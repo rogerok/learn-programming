@@ -1,3 +1,7 @@
+---
+tags: [css, deprecated, best-practices]
+---
+
 # Эти CSS-техники устарели
 
 [оригинал](https://habr.com/ru/companies/ruvds/articles/917204/)

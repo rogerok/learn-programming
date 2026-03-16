@@ -1,3 +1,7 @@
+---
+tags: [tips, zod, validation, classes, typescript]
+---
+
 **DTO — Data Transfer Object:**
 
 * Простая структура, пришла из API

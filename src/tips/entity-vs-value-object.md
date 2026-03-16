@@ -1,3 +1,7 @@
+---
+tags: [tips, ddd, entity, value-object]
+---
+
 # Разница между Entity и Value Object
 
 Entity - это "живой объект с идентичностью".

@@ -1,3 +1,7 @@
+---
+tags: [react, internals, fiber, reconciler]
+---
+
 # [Build your own react](https://pomb.us/build-your-own-react/)
 
 **Steps**

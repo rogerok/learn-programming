@@ -1,3 +1,7 @@
+---
+tags: [react, refactoring, clean-code]
+---
+
 ## Code Linting
 
 ### Code linting

@@ -1,3 +1,7 @@
+---
+tags: [mobx, reactive, state-management]
+---
+
 # Becoming fully reactive: an in-depth explanation of MobX
 
 [original](https://medium.com/hackernoon/becoming-fully-reactive-an-in-depth-explanation-of-mobservable-55995262a254)

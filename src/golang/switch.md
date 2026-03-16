@@ -1,3 +1,7 @@
+---
+tags: [golang, switch, control-flow]
+---
+
 ```go
 func getCreator(os string) string {
     var creator string

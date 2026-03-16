@@ -1,3 +1,7 @@
+---
+tags: [react, refactoring, naming]
+---
+
 ## Names
 
 Attention to the names of variables, functions, classes, and modules can be Pandora’s box in the world of refactoring. “Unclear” names can signal high coupling between modules, inadequate separation of concerns, or “leaking” abstractions.

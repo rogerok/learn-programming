@@ -1,3 +1,7 @@
+---
+tags: [tips, mobx, http, request]
+---
+
 ```typescript
 import {z, ZodTypeAny} from "zod";
 import {pipe} from "fp-ts/function";

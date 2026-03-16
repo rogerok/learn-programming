@@ -1,3 +1,7 @@
+---
+tags: [golang, functions]
+---
+
 # Named Return Values
 Named return values are best thought of as a way to document the purpose of the returned values.
 

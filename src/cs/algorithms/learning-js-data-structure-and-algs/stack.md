@@ -1,3 +1,7 @@
+---
+tags: [cs, algorithms, stack, data-structures, javascript]
+---
+
 ## Solving problems using stacks
 
 ```ts

@@ -1,3 +1,7 @@
+---
+tags: [mobx, reactive, state-management, internals]
+---
+
 # MobX в 50 строчек кода
 
 [оригинал](https://mobx-cookbook.github.io/mobx-inside)

@@ -1,3 +1,7 @@
+---
+tags: [react, refactoring, error-handling]
+---
+
 ## Error Handling
 
 ### Types of Errors

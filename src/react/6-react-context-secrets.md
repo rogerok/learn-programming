@@ -1,3 +1,7 @@
+---
+tags: [react, context, hooks]
+---
+
 # [6 React Context Secrets That Professional Teams Use (But Never Document)](https://javascript.plainenglish.io/6-react-context-secrets-that-professional-teams-use-but-never-document-b2422b5a2141)
 
 ## Context Composition Pattern (Eliminates Provider Hell)
