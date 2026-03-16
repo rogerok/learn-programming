@@ -1,31 +1,54 @@
-# Модификаторы сопоставления типов Mapping Modifiers
+# Mapping Modifiers
 
-При сопоставлении типов можно менять атрибуты свойств такие как неизменность (immutability) и необязательность (optionality). Делается это с помощью соответствующих модификаторов: readonly и ?.
+При сопоставлении (mapped types) можно изменять модификаторы свойств: `readonly` и `?`.
 
-Чтобы добавить или удалить эти модификаторы, можно использовать префиксы + или -. Если не использовать префикс, то подразумевается что модификатор будет добавлен, то есть по умолчанию префикс +.
+Префиксы `+` (добавить, по умолчанию) и `-` (удалить):
 
 ```ts
-/**
- * Делает все свойства типа `T` необязательными,
- * то есть добавляет атрибут `?`.
- */
-type Partial<T> = {
-  [P in keyof T]?: T[P];
+// Все свойства необязательные
+type Partial<T> = { [P in keyof T]?: T[P] };
+
+// Все свойства обязательные (удаляем ?)
+type Required<T> = { [P in keyof T]-?: T[P] };
+
+// Все свойства readonly
+type Readonly<T> = { readonly [P in keyof T]: T[P] };
+
+// Убрать readonly (Mutable)
+type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+```
+
+## Комбинирование модификаторов
+
+```ts
+// Убрать readonly + сделать опциональными
+type MutablePartial<T> = { -readonly [P in keyof T]?: T[P] };
+```
+
+## Key Remapping (TS 4.1+)
+
+Через `as` в mapped type можно переименовывать или фильтровать ключи:
+
+```ts
+// Префикс get для всех свойств
+type Getters<T> = {
+  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];
 };
 
-/**
- * Делает все свойства типа `T` обязательными,
- * то есть удаляет атрибут `?`.
- */
-type Required<T> = {
-  [P in keyof T]-?: T[P];
-};
-
-/**
- * Делает все свойства типа `T` неизменяемыми,
- * то есть добавляет атрибут `readonly`.
- */
-type Readonly<T> = {
-  readonly [P in keyof T]: T[P];
+// Фильтрация: оставить только строковые свойства
+type StringProps<T> = {
+  [K in keyof T as T[K] extends string ? K : never]: T[K];
 };
 ```
+
+## Гомоморфные mapped types
+
+Если mapped type итерирует по `keyof T`, он сохраняет модификаторы оригинального типа:
+
+```ts
+type T = { readonly a: string; b?: number };
+type Mapped = { [K in keyof T]: boolean };
+// { readonly a: boolean; b?: boolean } — модификаторы сохранены
+```
+
+Чтобы сбросить — явно используйте `-readonly` и `-?`.

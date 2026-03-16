@@ -1,65 +1,48 @@
-# Функция assert
+# Assert-функции
 
-Assert-функция — это специальная функция, которая:
-
-Проверяет условие в рантайме.
-Выбрасывает ошибку `throw Error`, если условие не истинно.
-Сообщает компилятору TypeScript, что после успешного выполнения переменная имеет определённый тип (сужает тип).
-
-Это мощнее, чем утверждение типа `as`, которое не выполняет проверок в runtime.
+Assert-функция — специальная функция, которая:
+1. Проверяет условие **в рантайме**
+2. Бросает ошибку (`throw`), если условие ложно
+3. Сообщает компилятору, что после успешного вызова переменная имеет определённый тип
 
 ```ts
-// Пример: утверждаем, что value является строкой
 function assertIsString(value: unknown): asserts value is string {
-    if (typeof value !== 'string') {
-        throw new Error('Ошибка: значение не является строкой!');
-    }
-    // Если функция не выбросила ошибку, TypeScript считает value типом string
+  if (typeof value !== 'string') {
+    throw new Error('Not a string');
+  }
 }
+
+let val: unknown = getData();
+assertIsString(val);
+val.toUpperCase(); // OK — тип сужен до string
 ```
 
-| Характеристика | Type Guard | Assert-функция |
-| :--- | :--- | :--- |
-| **Возвращаемое значение** | `boolean` (`true`/`false`) | `void` (или ничего) |
-| **При неудаче** | Возвращает `false` | **Выбрасывает ошибку** (`throw`) |
-| **Использование** | В `if`-условиях (`if (isString(val))`) | Для **раннего выхода** из кода |
+## Assert vs Type Guard
 
-Пример использования: Валидация данных
+| | Type Guard | Assert |
+|---|---|---|
+| Сигнатура | `(x): x is T` → `boolean` | `(x): asserts x is T` → `void` |
+| При неудаче | Возвращает `false` | Бросает ошибку |
+| Паттерн | `if (isString(val)) { ... }` | Ранний выход: `assert(val); ...` |
+| Narrowing | Expression-level (внутри `if`) | Statement-level (после вызова) |
+
+## asserts condition (без `is`)
+
+Можно утверждать произвольное условие:
+
 ```ts
-interface User {
-  name: string;
-  age: number;
+function assert(condition: unknown, msg?: string): asserts condition {
+  if (!condition) throw new Error(msg ?? 'Assertion failed');
 }
 
-function assertIsUser(obj: unknown): asserts obj is User {
-  if (typeof obj !== 'object' || obj === null) {
-    throw new Error('Это не объект');
-  }
-  const user = obj as Record<string, unknown>;
-  if (typeof user.name !== 'string' || typeof user.age !== 'number') {
-    throw new Error('Неверная структура объекта User');
-  }
-}
-
-function processData(data: unknown) {
-  try {
-    assertIsUser(data); // Проверяем и сужаем тип
-    // Здесь TypeScript знает, что data - это User
-    console.log(`Имя: ${data.name}, Возраст: ${data.age}`);
-  } catch (e) {
-    console.error('Ошибка валидации:', e.message);
-  }
+function process(x: string | null) {
+  assert(x !== null, 'x is null');
+  x.toUpperCase(); // OK — null исключён
 }
 ```
-⚠️ Важные моменты
-Ответственность на вас: TypeScript доверяет вашей логике. Если проверка написана неверно, компилятор это не поймает.
-Используйте try/catch: Так как assert-функции выбрасывают ошибки, их нужно обрабатывать.
-Не путайте с as: as — это чисто компиляционная подсказка без проверок. assert — это runtime-проверка, которая помогает компилятору.
 
-Type Guard отвечает на вопрос «верно ли?»
-Assert отвечает на вопрос «может ли код продолжаться?»
+## Важные нюансы
 
-Формально
-
-asserts — это statement-level narrowing
-boolean — это expression-level result
+- **TypeScript доверяет вашей логике** — если проверка написана неверно, компилятор это не поймает. Ответственность за корректность на вас.
+- **Не путать с `as`**: `as` — чисто compile-time подсказка без рантайм-проверки. `asserts` — реальная проверка + сужение типа.
+- Assert-функции удобны для валидации данных на границах системы (API responses, user input).

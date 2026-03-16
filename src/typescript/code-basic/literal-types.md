@@ -1,49 +1,57 @@
 # Literal Types
 
-TypeScript поддерживает литеральные типы.
-Они доступны для `boolean`, `number`, `string`, `BigInt`
+Литеральные типы — типы, представляющие **одно конкретное значение**. Доступны для `string`, `number`, `boolean`, `bigint`.
 
 ```ts
-type Hexlet = 'hexlet';
+type Hexlet = 'hexlet';   // множество из одного элемента {"hexlet"}
 type One = 1;
 type False = false;
 type BigN = 100n;
 ```
 
-С точки зрения теории множеств, такой тип представляет собой множество, которое состоит из одного элемента.
-
-## String enums
+## Вывод литеральных типов
 
 ```ts
-enum OrderStatus {
-  Created = 'Created',
-  Paid = 'Paid',
-  Shipped = 'Shipped',
-  Delivered = 'Delivered',
-}
+const x = 'hello';  // тип: "hello" — const не может измениться
+let y = 'hello';    // тип: string  — let может измениться
 ```
-В случае с Enum — это не так. Перечисления — это конструкция языка, которая остается существовать в коде после трансляции кода в JavaScript.
-По этой причине некоторые разработчики используют вместо них Union Types, которые позволяют сделать практически то же самое с помощью строковых литералов.
 
+`const` для примитивов автоматически выводит литеральный тип, `let` — расширяет до базового.
 
-## Приведение к литеральному типу
-Приведение к типу к литеральному типа производится через Type Assertion `as const`
+## `as const`
 
+Приводит значение к литеральному типу + делает всё `readonly`:
 
 ```ts
-const ormConfig = {
-    type: 'mysql',
-    host: 'localhost',
-    port: 5432,
-} as const
+const config = {
+  type: 'mysql',
+  host: 'localhost',
+  port: 5432,
+} as const;
+// type: { readonly type: "mysql"; readonly host: "localhost"; readonly port: 5432 }
 ```
 
-На выходе мы получаем тип с неизменяемыми `readonly` полями и литеральными типами в значении.
-Такая техника применима к массивам - она превращает их в кортежи.
-Также применима к простым типам, например `string`
+- Для массивов — превращает в readonly tuple.
+- Для объектов — все поля `readonly` + литеральные типы значений.
+- Для примитивов — сужает тип: `let x = 'test' as const` → тип `"test"`.
+
+## Enum vs Union of Literals
+
 ```ts
-const str = 'test' as const;
+// Enum — остаётся в скомпилированном JS как объект
+enum Status { Created = 'Created', Paid = 'Paid' }
 
-type Str = typeof str; // 'test'
+// Union of literals — стирается при компиляции (zero runtime cost)
+type Status = 'Created' | 'Paid';
 ```
 
+Многие предпочитают union of literals: нет рантайм-артефакта, проще tree-shaking, работает с `as const` для объектов.
+
+## Template Literal Types
+
+TypeScript позволяет строить литеральные типы из шаблонов:
+
+```ts
+type EventName = 'click' | 'scroll';
+type Handler = `on${Capitalize<EventName>}`; // "onClick" | "onScroll"
+```

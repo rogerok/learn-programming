@@ -1,14 +1,42 @@
-# Readonly arrays
+# Readonly Arrays
 
-В TypeScript работа с неизменяемыми массивами встроена в систему типов. Чтобы гарантировать неизменяемость, массив помечается модификатором `readonly`:
-
+Модификатор `readonly` запрещает мутирующие операции массива:
 
 ```ts
 function process(numbers: readonly number[]) {
-numbers.push(1); // Error!
+  numbers.push(1);    // Error — push не существует
+  numbers[0] = 5;     // Error — index signature readonly
+  numbers.sort();     // Error — sort мутирует
 }
 ```
-В этом случае TypeScript выдает ошибку, что тип readonly number[] не содержит метода `push`.
 
+## Альтернативный синтаксис
 
-Модификатор `readonly` запрещает изменение массива, но не запрещает изменение объектов, которые находятся внутри массива:
+```ts
+readonly number[]    // краткий
+ReadonlyArray<number> // generic-форма
+```
+
+## readonly не рекурсивен
+
+`readonly` защищает сам массив, но **не** вложенные объекты:
+
+```ts
+const users: readonly { name: string }[] = [{ name: 'Alice' }];
+users.push({ name: 'Bob' }); // Error
+users[0].name = 'Eve';       // OK — объект внутри мутабелен
+```
+
+Для глубокой иммутабельности нужен рекурсивный тип или библиотека (e.g. `DeepReadonly`).
+
+## Совместимость
+
+`number[]` присваивается `readonly number[]` (мутабельный → иммутабельный — безопасно). Обратное — нет:
+
+```ts
+const mutable: number[] = [1, 2];
+const immutable: readonly number[] = mutable;     // OK
+const back: number[] = immutable;                  // Error
+```
+
+Это следствие ковариантности: `number[]` — подтип `readonly number[]` (имеет все методы readonly + дополнительные мутирующие).
