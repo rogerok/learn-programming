@@ -1,4 +1,9 @@
-## Полиморфизм
+---
+tags: [oop, polymorphism, typescript, inheritance, interfaces]
+aliases: [Полиморфизм]
+---
+
+# Полиморфизм
 
 ### Ключевые аспекты полиморфизма:
 
@@ -27,54 +32,44 @@ class Shape {
     }
 }
 
-// Класс-наследник: Круг
 class Circle extends Shape {
     private radius: number;
-
     constructor(radius: number) {
         super();
         this.radius = radius;
     }
-
     public area(): number {
-        return Math.PI * this.radius ** 2; // Формула площади круга
+        return Math.PI * this.radius ** 2;
     }
 }
 
-// Класс-наследник: Прямоугольник
 class Rectangle extends Shape {
     private width: number;
     private height: number;
-
     constructor(width: number, height: number) {
         super();
         this.width = width;
         this.height = height;
     }
-
     public area(): number {
-        return this.width * this.height; // Формула площади прямоугольника
+        return this.width * this.height;
     }
 }
 
-// Использование полиморфизма
+// Полиморфизм: один тип массива, разное поведение при вызове area()
 const shapes: Shape[] = [new Circle(5), new Rectangle(4, 6)];
-
 shapes.forEach((shape) => {
     console.log(`Площадь фигуры: ${shape.area()}`);
 });
-
 ```
 
 ### Глубокие аспекты полиморфизма:
 
 1. **Принцип подстановки Лисков (Liskov Substitution Principle, LSP):**
    Ключевой принцип, поддерживающий полиморфизм. Объект любого подкласса должен быть заменяемым на объект родительского класса, не нарушая поведения программы.
-   Например:
    ```typescript
    const shape: Shape = new Circle(5);
    console.log(shape.area()); // Корректно, если соблюдён LSP
-
    ```
 2. **Связь с инкапсуляцией:**
    Полиморфизм позволяет скрывать детали реализации, предоставляя общий интерфейс. Мы знаем, что у фигуры есть метод `area`, но не заботимся о том, как он реализован.
@@ -82,3 +77,53 @@ shapes.forEach((shape) => {
    Благодаря полиморфизму вы можете добавлять новые подклассы, не модифицируя существующий код. Это основа принципа **Open-Closed Principle (OCP)**: *класс открыт для расширения, но закрыт для модификации*.
 4. **Связь с Dependency Inversion Principle (DIP):**
    Код должен зависеть от абстракций, а не от конкретных реализаций. Полиморфизм помогает в этом, так как мы работаем с родительским классом или интерфейсом, а не с конкретными объектами.
+
+---
+
+## Практический пример из кода: массовое приветствие
+
+```typescript
+class Person {
+    public greeting() {
+        console.log(`Hello, my name is ${this.fullName}`);
+    }
+}
+
+class Employee extends Person {
+    greeting() {
+        console.log(`Hi, I'm employee ${this.fullName}`);
+    }
+}
+
+class Developer extends Employee {
+    greeting() {
+        console.log(`Hi, I'm developer ${this.fullName}`);
+    }
+}
+
+// Разные объекты в одном массиве типа Person
+const personList: Person[] = [developer, employee1, employee2, person];
+
+// Каждый вызывает свою реализацию greeting()
+const massGreeting = (personList: Person[]) => {
+    personList.forEach((person: Person) => person.greeting());
+};
+
+massGreeting(personList);
+```
+
+---
+
+## Ключевые моменты
+
+- Полиморфизм работает через **переопределение методов** в наследниках
+- Нужна общая база: родительский класс или интерфейс
+- Динамическая диспетчеризация — выбор метода происходит **в runtime**
+- Связан с LSP: подкласс не должен нарушать контракт базового класса
+
+## Связанные темы
+
+- [[inheritance]] — основа полиморфизма
+- [[interfaces]] — полиморфизм через интерфейсы
+- [[abstractClasses]] — абстрактные классы как база для полиморфизма
+- [[../solid/openClosedPrinciple|Open-Closed Principle]] — полиморфизм как основа OCP

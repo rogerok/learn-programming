@@ -1,5 +1,9 @@
-## Абстрактные классы
+---
+tags: [oop, abstract-classes, typescript, interfaces]
+aliases: [Абстрактные классы]
+---
 
+# Абстрактные классы
 
 Абстрактные классы — это концепция в ООП, которая позволяет создавать базовые классы, не предназначенные для непосредственного создания экземпляров, но используемые для организации наследования. Они помогают описывать общие шаблоны для других классов, при этом требуя, чтобы дочерние классы реализовывали специфические детали.
 
@@ -97,3 +101,110 @@ class AdminUser extends User {
 }
 
 ```
+
+---
+
+## Практический пример из кода
+
+### Паттерн Reader/Writer с абстрактными классами
+
+Классы `FileClient` и `HttpClient` реализуют как интерфейс `Reader`, так и абстрактный класс `Writer`:
+
+```typescript
+interface Reader {
+    read(url: string): void;
+}
+
+abstract class Writer {
+    abstract write(data: []): void;
+}
+
+class FileClient extends Writer implements Reader {
+    read(url: string): void {
+        console.log(`File client is reading url: ${url}`);
+    }
+
+    write(data: []): void {
+        console.log(`File client is writing data: ${data}`);
+    }
+}
+
+class HttpClient extends Writer implements Reader {
+    read(url: string): void {
+        console.log(`Http client is reading url: ${url}`);
+    }
+
+    write(data: []): void {
+        console.log(`Http client is writing data: ${data}`);
+    }
+}
+```
+
+### Обобщённый абстрактный репозиторий
+
+```typescript
+abstract class Repository<T> {
+    abstract create(data: T): void;
+    abstract get(data: T): void;
+    abstract delete(data: T): void;
+    abstract update(data: T): void;
+}
+
+class UserRepo extends Repository<User> {
+    create(user: User): void { console.log(`User created: ${JSON.stringify(user)}`); }
+    delete(user: User): void { console.log(`User deleted: ${JSON.stringify(user)}`); }
+    get(user: User): void { console.log(`User fetched: ${JSON.stringify(user)}`); }
+    update(user: User): void { console.log(`User updated: ${JSON.stringify(user)}`); }
+}
+```
+
+### Абстрактный класс с частичной реализацией (шаблонный метод)
+
+```typescript
+abstract class Reader2 {
+    abstract read(url: string): void;
+
+    // Готовые методы, доступные всем наследникам
+    checkAvailability(url: string): boolean {
+        console.log(`Check availability: ${url}`);
+        return true;
+    }
+
+    handleError(error: Error): void {
+        console.log(`Error reading data: ${error.message}`);
+    }
+}
+
+class HttpClient2 extends Writer2 implements Reader2 {
+    write(data: []): void {
+        if (this.checkWritePermission()) {
+            console.log(`HttpClient is writing data: ${data}`);
+        }
+    }
+
+    read(url: string): void {
+        if (this.checkAvailability(url)) {
+            console.log(`HttpClient is reading from url: ${url}`);
+        }
+    }
+
+    checkAvailability(url: string): boolean { return true; }
+    handleReadError(error: Error): void { console.log(error.message); }
+}
+```
+
+---
+
+## Ключевые моменты
+
+- `abstract class` — нельзя создать напрямую через `new`
+- Абстрактные методы (`abstract method()`) **обязаны** быть реализованы в наследниках
+- Конкретные методы в абстрактном классе доступны всем наследникам без реализации
+- Класс может одновременно `extends` абстрактный класс и `implements` интерфейс
+- Используй абстрактные классы когда нужно **общее состояние + обязательный контракт**
+
+## Связанные темы
+
+- [[interfaces]] — интерфейсы, разница с абстрактными классами
+- [[inheritance]] — наследование
+- [[polymorphism]] — полиморфизм через абстракции
