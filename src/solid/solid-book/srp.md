@@ -1,3 +1,8 @@
+---
+tags: [solid, srp, single-responsibility, design-patterns]
+aliases: [SRP книга, Единая ответственность]
+---
+
 # [Single responsibility principle](https://solidbook.vercel.app/srp)
 
 ## Принцип единой ответственности

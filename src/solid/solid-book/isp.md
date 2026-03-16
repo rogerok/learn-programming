@@ -1,3 +1,8 @@
+---
+tags: [solid, isp, interface-segregation, design-patterns]
+aliases: [ISP книга, Разделение интерфейса]
+---
+
 # [Принцип разделения интерфейса](https://solidbook.vercel.app/isp)
 
 **Сущности не должны зависеть от интерфейсов, которые они не используют**

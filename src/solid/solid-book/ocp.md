@@ -1,3 +1,8 @@
+---
+tags: [solid, ocp, open-closed, design-patterns]
+aliases: [OCP книга, Открытость-закрытость]
+---
+
 # [Open–Closed Principle](https://solidbook.vercel.app/ocp)
 
 **Принцип открытости-закрытости** - согласно ему модули должны быть открыты для расширения, но закрыты для модификации.

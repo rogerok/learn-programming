@@ -1,3 +1,8 @@
+---
+tags: [solid, lsp, liskov-substitution, design-patterns]
+aliases: [LSP книга, Принцип Лисков]
+---
+
 # [Принцип подстановки Барбары Лисков](https://solidbook.vercel.app/lsp)
 
 Принцип вводит ограничение на иерархии объектов.
