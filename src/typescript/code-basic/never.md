@@ -1,3 +1,8 @@
+---
+tags: [typescript, never, type-system]
+aliases: [Тип never]
+---
+
 # never
 
 `never` — **пустое множество** (bottom type). Не содержит ни одного значения.

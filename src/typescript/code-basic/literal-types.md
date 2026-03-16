@@ -1,3 +1,8 @@
+---
+tags: [typescript, literal-types, type-system]
+aliases: [Литеральные типы]
+---
+
 # Literal Types
 
 Литеральные типы — типы, представляющие **одно конкретное значение**. Доступны для `string`, `number`, `boolean`, `bigint`.

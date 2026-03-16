@@ -1,3 +1,8 @@
+---
+tags: [typescript, classes, visibility, private, protected, public]
+aliases: [Видимость членов класса]
+---
+
 # Модификаторы доступа членов класса
 
 | Модификатор | Доступ |

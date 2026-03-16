@@ -1,3 +1,8 @@
+---
+tags: [typescript, assert, type-narrowing]
+aliases: [assert TypeScript]
+---
+
 # Assert-функции
 
 Assert-функция — специальная функция, которая:

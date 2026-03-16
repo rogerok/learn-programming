@@ -1,3 +1,8 @@
+---
+tags: [typescript, type-system, advanced]
+aliases: [Система типов TypeScript]
+---
+
 # Что такое система типов
 
 **Тип** — классификация данных, определяющая:

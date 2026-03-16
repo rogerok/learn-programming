@@ -1,3 +1,8 @@
+---
+tags: [typescript, void, functions]
+aliases: [Тип void]
+---
+
 # void
 
 ## Зачем void, если есть undefined

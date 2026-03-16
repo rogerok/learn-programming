@@ -1,3 +1,8 @@
+---
+tags: [typescript, spread, rest, arrays]
+aliases: [Spread оператор]
+---
+
 # Spread-оператор и типизация
 
 ## Проблема: spread массива в функцию с фиксированными параметрами

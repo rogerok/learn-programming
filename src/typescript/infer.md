@@ -1,3 +1,7 @@
+---
+tags: [typescript, infer, conditional-types, generics, advanced]
+aliases: [infer keyword, TypeScript infer]
+---
 
 # **Mastering TypeScript's `infer` Keyword: A Deep Dive into Advanced Type Inference**
 (для простоты infer R можно думать как "вытяни тип в R")

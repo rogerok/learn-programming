@@ -1,3 +1,8 @@
+---
+tags: [typescript, unknown, type-safety]
+aliases: [Тип unknown]
+---
+
 # unknown
 
 `unknown` — top type в TypeScript (наряду с `any`). Любое значение присваивается `unknown`, но `unknown` не присваивается ничему, кроме `unknown` и `any`.

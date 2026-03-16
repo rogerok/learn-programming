@@ -1,3 +1,8 @@
+---
+tags: [typescript, readonly, arrays]
+aliases: [ReadOnly массивы]
+---
+
 # Readonly Arrays
 
 Модификатор `readonly` запрещает мутирующие операции массива:

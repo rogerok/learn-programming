@@ -1,3 +1,8 @@
+---
+tags: [typescript, intersection-types, generics]
+aliases: [Пересечение типов]
+---
+
 # Intersection Types (`&`)
 
 Пересечение создаёт тип, значения которого удовлетворяют **всем** исходным типам одновременно.

@@ -1,3 +1,8 @@
+---
+tags: [typescript, summary, type-system]
+aliases: [TypeScript полный конспект]
+---
+
 # TypeScript — Полный конспект
 
 ## Оглавление

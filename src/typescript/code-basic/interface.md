@@ -1,3 +1,8 @@
+---
+tags: [typescript, interfaces]
+aliases: [Интерфейсы TypeScript]
+---
+
 # Интерфейсы
 
 ## Контракт для классов

@@ -1,3 +1,8 @@
+---
+tags: [typescript, mapped-types, modifiers]
+aliases: [Модификаторы маппинга]
+---
+
 # Mapping Modifiers
 
 При сопоставлении (mapped types) можно изменять модификаторы свойств: `readonly` и `?`.

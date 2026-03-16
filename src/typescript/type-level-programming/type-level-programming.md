@@ -1,3 +1,8 @@
+---
+tags: [typescript, type-level-programming, generics, conditional-types, infer]
+aliases: [Type-level программирование, TypeScript продвинутое]
+---
+
 # [Type-level программирование в TypeScript: практические кейсы и обзор возможностей](https://habr.com/ru/articles/871336/)
 
 **Распределительные условные типы (Distributive Conditional Types)**

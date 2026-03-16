@@ -1,3 +1,8 @@
+---
+tags: [typescript, object-types, type-system]
+aliases: [Тип object]
+---
+
 # Типы object, Object, {}
 
 Три похожих типа с разным значением:

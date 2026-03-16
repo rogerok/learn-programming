@@ -1,3 +1,8 @@
+---
+tags: [typescript, type-hierarchy, type-system]
+aliases: [Иерархия типов]
+---
+
 # Иерархия типов
 
 ## Полная иерархия (от узкого к широкому)

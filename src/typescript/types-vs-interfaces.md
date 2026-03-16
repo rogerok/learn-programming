@@ -1,3 +1,8 @@
+---
+tags: [typescript, types, interfaces, type-vs-interface]
+aliases: [Type vs Interface, Types vs Interfaces]
+---
+
 ## Type VS Interface
 
 ### Интерфейсы

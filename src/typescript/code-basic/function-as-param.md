@@ -1,3 +1,8 @@
+---
+tags: [typescript, functions, higher-order]
+aliases: [Функции как параметры]
+---
+
 # Типизация функций-параметров
 
 ## Проблема типа `Function`
