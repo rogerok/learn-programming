@@ -1,3 +1,8 @@
+---
+tags: [mvc, architecture, design-patterns, typescript]
+aliases: [MVC, Model-View-Controller]
+---
+
 ## Model-View-Controller
 
 
