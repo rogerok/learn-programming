@@ -3,3 +3,5 @@
 .obsidian/plugins/obsidian-git/data.json
 node_modules/
 dist/
+.idea/
+*.base

@@ -1,7 +1,7 @@
 ---
-tags: [tips, ddd, entity, value-object]
+tags: [architecture, ddd, entity, value-object, domain-driven-design]
+aliases: [Entity vs Value Object]
 ---
-
 # Разница между Entity и Value Object
 
 Entity - это "живой объект с идентичностью".

@@ -28,4 +28,5 @@ aliases: [SOLID]
 
 ## Связанные темы
 
-- [[../OOP/MOC]] — ООП: четыре принципа
+- [[../oop/MOC|OOP]] — ООП: четыре принципа и паттерны
+- [[../architecture/MOC|Architecture]] — MVC, MVVM, DDD

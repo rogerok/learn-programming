@@ -1,7 +1,7 @@
 ---
-tags: [tips, architecture, ddd, clean-architecture]
+tags: [architecture, ddd, clean-architecture, domain-driven-design]
+aliases: [Clean Architecture, Чистая архитектура, DDD]
 ---
-
 # Чистая архитектура + DDD в контексте TypeScript
 
 🗂 1. Domain Layer — мозг приложения
