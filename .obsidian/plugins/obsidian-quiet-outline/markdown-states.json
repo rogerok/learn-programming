@@ -219,5 +219,47 @@
       }
     },
     "expandedKeys": []
+  },
+  "src/01-javascript/core/oop-in-js/arrow-functions.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 6,
+        "ch": 41
+      },
+      "to": {
+        "line": 6,
+        "ch": 41
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/cs/computer-system/2.chapter/2.1/2.1.1 . Шестнадцатеричная система счисления.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 64,
+        "ch": 0
+      },
+      "to": {
+        "line": 64,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/09-practice/using-zod-with-classes.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 3,
+        "ch": 0
+      },
+      "to": {
+        "line": 3,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
   }
 }
