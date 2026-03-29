@@ -120,6 +120,24 @@ Mini-project or practical tasks. Include test cases where possible.
 
 (Repeat for each card)
 
+## Anki Export File
+
+Along with the embedded cards in the chapter note, always create a separate
+import-ready file **next to the chapter** (same folder):
+
+- Filename: `anki-cards.txt`
+- Format: tab-separated, importable via Anki `File → Import`
+
+```
+#separator:tab
+#notetype:Basic
+#deck:<Topic Name>
+#tags column:3
+Question text	Answer text	tag1::tag2
+```
+
+Do NOT place Anki files in `~/Documents` or any location outside the repo.
+
 ## Related Topics
 
 - [[topic 1]]
