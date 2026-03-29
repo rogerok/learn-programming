@@ -43,3 +43,31 @@ aliases: [React]
 - [[../mobx/MOC|MobX]]
 - [[../../02-typescript/MOC|TypeScript]]
 - [[../../04-architecture/MOC|Architecture]]
+
+## Sources
+
+### Под капотом
+- [How React Works — детальный разбор](https://incepter.github.io/how-react-works/)
+- [Let's learn how modern JavaScript frameworks work by building one](https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/)
+
+### Архитектура компонентов
+- [Decoupling UI and Logic in React: Headless Components](https://itnext.io/decoupling-ui-and-logic-in-react-a-clean-code-approach-with-headless-components-82e46b5820c)
+- [React Advanced: Decoupling your components in the right way](https://dev.to/argonauta/react-advance-decoupling-your-components-in-the-right-way-4pkn)
+- [Улучшаем дизайн React приложения с помощью Compound components](https://habr.com/ru/companies/alfa/articles/647013/)
+- [Попытка создать идеальный компонент формы](https://habr.com/ru/articles/813551/)
+
+### Производительность
+- [Оптимизация React: useTransition, useDeferredValue и useOptimistic](https://habr.com/ru/articles/870748/)
+- [5 tips to effectively optimize INP in React](https://calendar.perfplanet.com/2024/5-tips-to-effectively-optimize-inp-in-react/)
+- [How To Improve INP: React](https://kurtextrem.de/posts/improve-inp-react)
+
+### Server Components и Suspense
+- [React Server Components, without a framework?](https://timtech.blog/posts/react-server-components-rsc-no-framework/)
+- [Wait for pending: A Suspense algorithm exploration](https://dev.to/alexandereardon/wait-for-pending-a-not-great-alternative-suspense-algorithm-1gdl)
+
+### Блоги
+- [Developer Way — Nadia Makarevich](https://www.developerway.com/)
+- [Vladimir Klepov — статьи про React](https://blog.thoughtspile.tech/tags/react/)
+
+### Книги
+- [Fluent React — O'Reilly](https://www.oreilly.com/library/view/fluent-react/9781098138707/)

@@ -64,3 +64,34 @@ aliases: [TypeScript]
 
 - [[../01-javascript/MOC|JavaScript]]
 - [[../03-oop/MOC|OOP]]
+
+## Sources
+
+### Основы и система типов
+- [TypeScript в деталях. Часть 1](https://habr.com/ru/companies/timeweb/articles/685954/)
+- [TypeScript в деталях (шпаргалка)](https://my-js.org/docs/cheatsheet/mastering-ts/)
+- [Продвинутые методы TypeScript в реальных проектах](https://habr.com/ru/companies/timeweb/articles/906842/)
+- [Понять TypeScript c помощью теории множеств](https://habr.com/ru/articles/713800/)
+- [Typescript: принцип подстановки функций](https://habr.com/ru/articles/779458/)
+- [The Concise TypeScript Book](https://github.com/gibbok/typescript-book)
+
+### Продвинутые типы
+- [TypeScript: infer и conditional types](https://habr.com/ru/articles/778190/)
+- [Вывод типов с as const и ключевым словом infer](https://habr.com/ru/companies/ruvds/articles/493716/)
+- [Type-level программирование в TypeScript](https://habr.com/ru/articles/871336/)
+- [Рецепты TypeScript: подстановка параметров в путь](https://habr.com/ru/companies/cloud_ru/articles/860764/)
+- [Learn Advanced TypeScript Types (curry/ramda)](https://medium.com/free-code-camp/typescript-curry-ramda-types-f747e99744ab)
+- [Учимся писать сложные TypeScript типы на примере роутинга](https://habr.com/ru/articles/735542/)
+
+### Тестирование и декораторы
+- [Testing Types in TypeScript](https://frontendmasters.com/blog/testing-types-in-typescript/)
+- [Мощь декораторов TypeScript на живых примерах](https://habr.com/ru/articles/707496/)
+- [Mastering Concurrency and Parallelism in TypeScript](https://dev.to/shafayeat/mastering-concurrency-and-parallelism-in-typescript-1bgf)
+
+### TypeScript + React
+- [Intermediate TypeScript: Build Strongly Typed Polymorphic Components](https://www.freecodecamp.org/news/build-strongly-typed-polymorphic-components-with-react-and-typescript/)
+- [Typesafe Routing with React-Router](https://iamsahaj.xyz/blog/typesafe-routing-with-react-router/)
+
+### Видео
+- [YouTube: Matt Pocock — TypeScript канал](https://www.youtube.com/@mattpocockuk)
+- [YouTube: Функциональное программирование на TypeScript (плейлист)](https://www.youtube.com/playlist?list=PLuPevXgCPUIMbCxBEnc1dNwboH6e2ImQo)

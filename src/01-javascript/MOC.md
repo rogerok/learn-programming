@@ -175,3 +175,25 @@ aliases: [JavaScript]
 - [[../02-typescript/MOC|TypeScript]]
 - [[../03-oop/MOC|OOP]]
 - [[../08-internals/jit-compilation|JIT-компиляция в V8]]
+
+## Sources
+
+### Основы и концепции
+- [JavaScript Visualized: Promise Execution](https://lydiahallie.framer.website/blog/promise-execution) — визуализация работы промисов и event loop
+- [Паттерны реактивности в современном JavaScript](https://habr.com/ru/articles/757770/)
+- [Все, что вам нужно знать о Proxy в JavaScript](https://webdevblog.ru/proxy/)
+- [Array Grouping in JavaScript: Object.groupBy()](https://dmitripavlutin.com/javascript-array-group/)
+- [What Removing Object Properties Tells Us About JavaScript](https://www.smashingmagazine.com/2023/10/removing-object-properties-javascript/)
+- [Web Workers: Параллельные вычисления](https://habr.com/ru/articles/767494/)
+
+### Паттерны и практика
+- [🧩 Patterns for JavaScript & Node.js — Шемсединов](https://github.com/tshemsedinov/Patterns-JavaScript)
+- [JS. Валидация данных. Пишем свой YUP](https://habr.com/ru/articles/800713/)
+- [Let's learn how modern JavaScript frameworks work by building one](https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/)
+- [33 Concepts Every JavaScript Developer Should Know](https://github.com/leonardomso/33-js-concepts)
+- [How to parse HTML in JavaScript](https://blog.apify.com/javascript-parse-html/)
+
+### Блоги
+- [Dmitri Pavlutin — статьи про JavaScript](https://dmitripavlutin.com/)
+- [2ality – JavaScript and more — Dr. Axel Rauschmayer](https://2ality.com/index.html)
+- [HowProgrammingWorks — Тимур Шемсединов](https://github.com/HowProgrammingWorks/Index)

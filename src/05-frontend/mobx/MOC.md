@@ -31,3 +31,12 @@ aliases: [MobX]
 
 - [[../react/MOC|React]]
 - [[../../04-architecture/MOC|Architecture (MVC, MVVM)]]
+
+## Sources
+
+- [Как MobX делает объекты реактивными с помощью Proxy](https://habr.com/ru/companies/gnivc/articles/893108/)
+- [Под капотом у MobX. Пишем свою реактивную библиотеку с нуля](https://habr.com/ru/articles/689374/)
+- [Реализация архитектуры Redux на MobX](https://habr.com/ru/articles/546628/)
+- [Отладка и мониторинг в MobX: trace, introspection и spy](https://habr.com/ru/companies/gnivc/articles/855346/)
+- [Как организовать API при помощи декларативных конфигов](https://github.com/mobxjs-ru/api-by-config/tree/main)
+- [Репозиторий с примерами использования MobX](https://github.com/mobxjs-ru)
