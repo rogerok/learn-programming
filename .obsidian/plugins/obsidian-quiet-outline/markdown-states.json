@@ -289,5 +289,19 @@
       }
     },
     "expandedKeys": []
+  },
+  "src/cs/computer-system/2.chapter/2.2/2.2-overview.md": {
+    "scroll": 802.6080729166666,
+    "cursor": {
+      "from": {
+        "line": 3,
+        "ch": 0
+      },
+      "to": {
+        "line": 3,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
   }
 }
