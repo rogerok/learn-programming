@@ -263,7 +263,7 @@
     "expandedKeys": []
   },
   "src/cs/computer-system/2.chapter/2.1/2.1-overview.md": {
-    "scroll": 941.0732009925558,
+    "scroll": 0,
     "cursor": {
       "from": {
         "line": 812,
@@ -291,7 +291,21 @@
     "expandedKeys": []
   },
   "src/cs/computer-system/2.chapter/2.2/2.2-overview.md": {
-    "scroll": 802.6080729166666,
+    "scroll": 697.0994475138122,
+    "cursor": {
+      "from": {
+        "line": 3,
+        "ch": 0
+      },
+      "to": {
+        "line": 3,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/cs/computer-system/2.chapter/2.2/2.2-exercises.md": {
+    "scroll": 25.476190476190474,
     "cursor": {
       "from": {
         "line": 3,
