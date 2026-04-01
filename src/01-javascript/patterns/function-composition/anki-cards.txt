@@ -1,0 +1,18 @@
+#separator:tab
+#notetype:Basic
+#deck:JavaScript::Functional Programming
+#tags column:3
+Что такое каррирование (currying)?	Преобразование функции нескольких аргументов в цепочку функций, каждая из которых принимает один аргумент. f(a, b, c) становится f(a)(b)(c).	javascript::functional-programming::currying
+Какой ключевой механизм JavaScript делает каррирование возможным?	Замыкания (closures). Каждая возвращённая функция замыкается на ранее переданных аргументах.	javascript::functional-programming::currying
+Почему при каррировании данные передаются последним аргументом?	Чтобы частичное применение создавало осмысленные специализированные функции. Например, filter(predicate) возвращает функцию, ожидающую массив — это полезно. filter(array) вернёт функцию, ожидающую предикат — это бесполезно.	javascript::functional-programming::currying
+Чем каррирование отличается от частичного применения (partial application)?	Каррирование превращает f(a, b, c) в f(a)(b)(c) — цепочку унарных функций. Частичное применение фиксирует часть аргументов и возвращает функцию с меньшей арностью. Каррированная функция автоматически поддерживает частичное применение.	javascript::functional-programming::currying
+Что делает compose(f, g)(x)?	Вычисляет f(g(x)). Сначала применяется g к x, затем f к результату. Порядок выполнения — справа налево.	javascript::functional-programming::composition
+В каком порядке выполняются функции в compose(a, b, c)(x)?	Справа налево: сначала c(x), потом b(результат), потом a(результат). Эквивалентно a(b(c(x))).	javascript::functional-programming::composition
+Что такое ассоциативность композиции и почему она важна?	compose(f, compose(g, h)) === compose(compose(f, g), h). Это свойство позволяет свободно группировать функции в пайплайне, извлекать подкомпозиции и рефакторить без изменения поведения.	javascript::functional-programming::composition
+Что такое pointfree-стиль?	Стиль написания функций без явного упоминания данных (аргументов). Вместо const f = x => toUpper(x) пишется const f = toUpper. Достигается через композицию и каррирование.	javascript::functional-programming::pointfree
+Как работает функция trace для отладки композиции?	const trace = curry((tag, x) => { console.log(tag, x); return x; }). Она логирует промежуточное значение с меткой и возвращает его без изменений, не нарушая пайплайн.	javascript::functional-programming::composition
+Что такое identity-функция (id) и зачем она нужна?	const id = x => x — возвращает аргумент без изменений. Это тождественный морфизм: compose(id, f) === compose(f, id) === f. Используется для проверки законов категории и как нейтральный элемент композиции.	javascript::functional-programming::category-theory
+Чем pipe отличается от compose?	Порядком выполнения. compose(f, g)(x) = f(g(x)) — справа налево. pipe(g, f)(x) = f(g(x)) — слева направо. pipe читается в порядке выполнения.	javascript::functional-programming::composition
+Как реализовать variadic compose через reduceRight?	const compose = (...fns) => (x) => fns.reduceRight((acc, fn) => fn(acc), x). Начальное значение — входные данные x, каждая функция применяется к накопленному результату справа налево.	javascript::functional-programming::composition
+Какие два закона должна соблюдать категория в теории категорий?	1) Ассоциативность композиции: compose(f, compose(g, h)) === compose(compose(f, g), h). 2) Тождественный морфизм: compose(id, f) === compose(f, id) === f.	javascript::functional-programming::category-theory
+Как вставить trace в compose-пайплайн для отладки?	Вставить trace('label') между функциями в compose: compose(f, trace('after g'), g, h). Это покажет значение после выполнения g и перед выполнением f.	javascript::functional-programming::composition
