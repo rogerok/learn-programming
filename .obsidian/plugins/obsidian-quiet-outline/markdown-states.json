@@ -305,7 +305,7 @@
     "expandedKeys": []
   },
   "src/cs/computer-system/2.chapter/2.2/2.2-exercises.md": {
-    "scroll": 25.476190476190474,
+    "scroll": 5.615384615384615,
     "cursor": {
       "from": {
         "line": 3,
@@ -313,6 +313,48 @@
       },
       "to": {
         "line": 3,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/functors-and-containers/functors-and-containers.md": {
+    "scroll": 216.55124223602485,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/functors-and-containers/functors-and-containers.md": {
+    "scroll": 616.209756097561,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch08-functors-and-containers/functors-and-containers.md": {
+    "scroll": 1018.8295454545455,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
         "ch": 0
       }
     },

@@ -1,0 +1,16 @@
+#separator:tab
+#notetype:Basic
+#deck:Functional Programming::Monads
+#tags column:3
+Какую проблему решают монады?	Вложенность контейнеров. Когда функция внутри map возвращает контейнер, получается контейнер-в-контейнере (например, Maybe(Maybe(x))). Монады убирают лишний слой через chain.	fp::monads::basics
+Что делает метод join?	join снимает один слой вложенности контейнера. Maybe(Maybe(42)).join() возвращает Maybe(42). Если внутри не контейнер, возвращает внутреннее значение как есть.	fp::monads::join
+Как связаны chain, map и join?	chain(fn) = map(fn).join(). chain применяет функцию через map (получая вложенный контейнер), а затем join убирает лишний слой.	fp::monads::chain
+Когда использовать map, а когда chain?	map -- когда функция возвращает обычное значение. chain -- когда функция возвращает контейнер (Maybe, Either, IO). chain не допускает вложенности.	fp::monads::chain
+Что такое монада простыми словами?	Монада -- это pointed functor (контейнер с of и map) плюс метод chain (или join), который позволяет строить плоские цепочки из функций, возвращающих контейнеры.	fp::monads::definition
+Как Promise.then связан с монадами?	then работает как chain: если колбэк возвращает Promise, then автоматически разворачивает его, не создавая Promise(Promise(x)). Это монадическое поведение.	fp::monads::promise
+Как Array.flatMap связан с монадами?	flatMap = map + flat (join). Если функция в map возвращает массив, получается массив массивов. flatMap разворачивает один уровень вложенности -- аналогично chain.	fp::monads::array
+Назови три закона монад.	1) Левая идентичность: M.of(x).chain(f) === f(x). 2) Правая идентичность: m.chain(M.of) === m. 3) Ассоциативность: m.chain(f).chain(g) === m.chain(x => f(x).chain(g)).	fp::monads::laws
+Можно ли выразить map через chain?	Да: m.map(fn) эквивалентен m.chain(x => M.of(fn(x))). chain мощнее map -- он может делать все то же самое плюс разворачивать вложенность.	fp::monads::chain
+Что происходит при вызове chain на Left?	Ничего -- chain на Left, как и map, игнорирует переданную функцию и возвращает тот же Left. Ошибка проскальзывает через всю цепочку.	fp::monads::either
+Чем отличается Pointed Functor от обычного Functor?	Pointed Functor имеет метод of для помещения значения в контейнер. Обычный Functor имеет только map. Монада = Pointed Functor + join/chain.	fp::monads::definition
+Почему safeProp требует chain, а не map?	Потому что safeProp возвращает Maybe: safeProp('x')(obj) дает Maybe(value). Если использовать map, получим Maybe(Maybe(value)). chain разворачивает вложенность.	fp::monads::chain

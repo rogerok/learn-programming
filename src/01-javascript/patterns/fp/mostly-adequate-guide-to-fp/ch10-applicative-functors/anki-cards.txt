@@ -1,0 +1,16 @@
+#separator:tab
+#notetype:Basic
+#deck:Functional Programming::Applicative Functors
+#tags column:3
+Какую проблему решает метод ap (Applicative Functor)?	ap решает проблему применения функции внутри контейнера к значению внутри другого контейнера. map не справляется с этим, потому что ожидает обычную функцию снаружи, а не обёрнутую.	fp::applicative-functors::ap
+Как реализован ap для Maybe?	Maybe.prototype.ap = function(otherMaybe) { return this.isNothing ? this : otherMaybe.map(this._value); }. Если функции нет (isNothing) — short-circuit. Иначе — применяем функцию к другому контейнеру через map.	fp::applicative-functors::maybe
+Что произойдёт при вызове Maybe.of(add).ap(Maybe.of(null)).ap(Maybe.of(3))?	Результат — Maybe(null). На втором шаге Maybe.of(null).map(add) даст Maybe(null), и дальше цепочка «проскальзывает».	fp::applicative-functors::maybe
+Что такое liftA2 и зачем он нужен?	liftA2(fn, f1, f2) = f1.map(fn).ap(f2) — утилита, которая «поднимает» обычную каррированную функцию двух аргументов в мир контейнеров. Вместо F.of(fn).ap(a).ap(b) пишем liftA2(fn, a, b).	fp::applicative-functors::liftA2
+Что означает «lift» в liftA2?	«Lift» (поднять) — поднять обычную функцию из мира голых значений в мир контейнеров. «A2» — Applicative, 2 аргумента. liftA3 — для трёх аргументов.	fp::applicative-functors::liftA2
+В чём ключевое отличие Applicative от Monad?	Applicative (ap) — аргументы независимы друг от друга, можно вычислять параллельно. Monad (chain) — каждый шаг зависит от результата предыдущего, только последовательно.	fp::applicative-functors::vs-monad
+Какой аналог аппликативного паттерна есть у Promise?	Promise.all([p1, p2]).then(([a, b]) => fn(a, b)) — аппликативный паттерн. Промисы независимы и выполняются параллельно. В отличие от .then(x => fetch(x)), где каждый шаг зависит от предыдущего (монадический паттерн).	fp::applicative-functors::promise
+Что такое «принцип минимальной силы» в контексте Functor / Applicative / Monad?	Используй самую слабую абстракцию, которая решает задачу: map если достаточно, ap для независимых контейнеров, chain только если шаги зависят друг от друга. Слабее = проще + больше возможностей для оптимизации.	fp::applicative-functors::principle
+Сформулируй закон Identity для Applicative.	A.of(id).ap(v) === v. Применение функции-тождества через ap не меняет контейнер.	fp::applicative-functors::laws
+Сформулируй закон Homomorphism для Applicative.	A.of(f).ap(A.of(x)) === A.of(f(x)). Если и функция, и значение чистые, оборачивание в контейнер не меняет результат.	fp::applicative-functors::laws
+Чем отличаются сигнатуры map, ap и chain?	map: (a -> b) -> F(a) -> F(b) — функция снаружи. ap: F(a -> b) -> F(a) -> F(b) — функция внутри. chain: (a -> F(b)) -> F(a) -> F(b) — функция возвращает контейнер.	fp::applicative-functors::signatures
+Почему TypeScript не может выразить обобщённый интерфейс Applicative?	TypeScript не поддерживает Higher-Kinded Types (HKT). Нельзя написать interface Applicative<F> { of<A>(a: A): F<A> } — F<A> невалидно. Библиотека fp-ts обходит это через паттерн «type classes as dictionaries».	fp::applicative-functors::typescript
