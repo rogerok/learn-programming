@@ -347,7 +347,35 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch08-functors-and-containers/functors-and-containers.md": {
-    "scroll": 1018.8295454545455,
+    "scroll": 249.15,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/functiona-programming-in-ts/17.category-theory.md": {
+    "scroll": 175.54132231404958,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/mostly-adquate-guide-fp/readme.md": {
+    "scroll": 395.0603448275862,
     "cursor": {
       "from": {
         "line": 0,

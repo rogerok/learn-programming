@@ -1,0 +1,16 @@
+#separator:tab
+#notetype:Basic
+#deck:Functional Programming::Natural Transformations
+#tags column:3
+Что такое natural transformation в программировании?	Это функция вида F<A> -> G<A>, которая меняет функтор-контейнер вокруг значения, но сохраняет совместимость с map.	fp::natural-transformations::definition
+Какой закон должен выполнять natural transformation?	nt(fa.map(f)) === nt(fa).map(f). Неважно, сначала применить map, а потом преобразовать контейнер, или сначала преобразовать контейнер, а потом применить map.	fp::natural-transformations::law
+Почему natural transformation называют морфизмом между функторами?	Потому что она переводит один функтор F в другой функтор G, сохраняя структуру map, то есть действует не на конкретное значение, а на контейнер вокруг него.	fp::natural-transformations::category-theory
+Чем natural transformation отличается от обычного преобразования значения?	Обычная функция меняет A -> B, а natural transformation меняет F<A> -> G<A>, сохраняя A тем же самым типом.	fp::natural-transformations::definition
+Почему arrayToMaybe может быть natural transformation, но не изоморфизмом?	arrayToMaybe совместима с map, но может потерять элементы массива, поэтому обратного преобразования без потерь нет.	fp::natural-transformations::isomorphism
+Что такое изоморфизм в контексте преобразований типов?	Это пара преобразований to и from, где from(to(a)) === a и to(from(b)) === b, то есть данные не теряются при движении туда-обратно.	fp::natural-transformations::isomorphism
+Зачем приводить Maybe и Either к Task в асинхронной цепочке?	Чтобы гомогенизировать эффекты: отсутствие значения и ошибки становятся failed task, а успешное значение продолжает плоскую цепочку через chain.	fp::natural-transformations::task
+Что делает maybeToTask?	Преобразует Maybe<A> в Task<E, A>: Nothing становится rejected Task, Just(a) становится успешным Task.of(a).	fp::natural-transformations::maybe
+Что делает eitherToTask?	Преобразует Either<E, A> в Task<E, A>: Left(e) становится rejected Task, Right(a) становится успешным Task.of(a).	fp::natural-transformations::either
+Почему TypeScript не выражает F<A> -> G<A> полностью обобщённо?	В TypeScript нет встроенных Higher-Kinded Types, поэтому generic-параметр F нельзя применить как type constructor F<A>.	fp::natural-transformations::typescript
+Как проверить закон naturality для arrayToMaybe?	Сравнить arrayToMaybe(xs.map(f)) и arrayToMaybe(xs).map(f). Для пустого массива обе стороны дают Nothing, для непустого обе стороны дают Just(f(xs[0])).	fp::natural-transformations::law
+Какая практическая польза natural transformations?	Они помогают переводить разные контейнеры к одному общему контейнеру, уменьшать вложенность и продолжать композицию через chain.	fp::natural-transformations::practice
