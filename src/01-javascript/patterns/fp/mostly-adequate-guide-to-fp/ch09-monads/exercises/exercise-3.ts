@@ -17,7 +17,7 @@
  *   npx tsx exercise-3.ts
  */
 
-import { Right, Left, type Either } from './containers.ts';
+import { Right, Left, type Either } from "./containers.ts";
 
 // ---------------------------------------------------------------------------
 // Типы данных
@@ -59,12 +59,9 @@ const validateUsername = (data: UserData): Either<string, UserData> => {
 
 // ---------------------------------------------------------------------------
 // Задание 3.2 — validatePassword
-//
-// Напиши функцию validatePassword(data), которая проверяет data.password:
-//   1. Должно быть строкой               → Left('Пароль должен быть строкой')
-//   2. Минимум 8 символов                → Left('Пароль должен содержать минимум 8 символов')
+//роль должен содержать минимум 8 символов')
 //   3. Должен содержать хотя бы одну цифру → Left('Пароль должен содержать хотя бы одну цифру')
-//   4. Должен содержать хотя бы одну букву → Left('Пароль должен содержать хотя бы одну букву')
+//   4. Должен содержать хотя бы одну букву → Left('Парольдолжен содержать хотя бы одну букву')
 //   5. Иначе                             → Right(data)
 //
 // Пример:
@@ -152,7 +149,7 @@ const registerUser = (data: UserData): RegisterResult => {
 //   firstErrorWins({ username: 'alice', password: 'secret42', email: 'a@b.ru' }) → 'ok'
 // ---------------------------------------------------------------------------
 
-type FieldName = 'username' | 'password' | 'email' | 'ok';
+type FieldName = "username" | "password" | "email" | "ok";
 
 const firstErrorWins = (data: UserData): FieldName => {
   // Подсказка: в fold для Left получаешь сообщение об ошибке.
@@ -188,103 +185,231 @@ function test(description: string, actual: unknown, expected: unknown): void {
   }
 }
 
-function foldEither(either: Either<string, UserData> | undefined): string | undefined {
+function foldEither(
+  either: Either<string, UserData> | undefined,
+): string | undefined {
   if (!either) return undefined;
   if (either instanceof Left) return `LEFT:${either._value}`;
-  return 'RIGHT';
+  return "RIGHT";
 }
 
-console.log('\n--- Упражнение 3: Either chain — валидационный пайплайн ---\n');
+console.log("\n--- Упражнение 3: Either chain — валидационный пайплайн ---\n");
 
 // 3.1 validateUsername
-console.log('3.1 validateUsername:');
-test('корректный username',    foldEither(validateUsername({ username: 'alice42', password: '', email: '' })), 'RIGHT');
-test('однобуквенный',          foldEither(validateUsername({ username: 'ab', password: '', email: '' })),
-  'LEFT:Имя пользователя должно содержать от 3 до 20 символов');
-test('слишком длинный',        foldEither(validateUsername({ username: 'a'.repeat(21), password: '', email: '' })),
-  'LEFT:Имя пользователя должно содержать от 3 до 20 символов');
-test('спецсимволы',            foldEither(validateUsername({ username: 'user!', password: '', email: '' })),
-  'LEFT:Имя пользователя должно содержать только буквы и цифры');
-test('не строка',              foldEither(validateUsername({ username: 42, password: '', email: '' })),
-  'LEFT:Имя пользователя должно быть строкой');
-test('русское имя',            foldEither(validateUsername({ username: 'Алиса', password: '', email: '' })), 'RIGHT');
-test('ровно 3 символа — ok',   foldEither(validateUsername({ username: 'ali', password: '', email: '' })), 'RIGHT');
-test('ровно 20 символов — ok', foldEither(validateUsername({ username: 'a'.repeat(20), password: '', email: '' })), 'RIGHT');
+console.log("3.1 validateUsername:");
+test(
+  "корректный username",
+  foldEither(
+    validateUsername({ username: "alice42", password: "", email: "" }),
+  ),
+  "RIGHT",
+);
+test(
+  "однобуквенный",
+  foldEither(validateUsername({ username: "ab", password: "", email: "" })),
+  "LEFT:Имя пользователя должно содержать от 3 до 20 символов",
+);
+test(
+  "слишком длинный",
+  foldEither(
+    validateUsername({ username: "a".repeat(21), password: "", email: "" }),
+  ),
+  "LEFT:Имя пользователя должно содержать от 3 до 20 символов",
+);
+test(
+  "спецсимволы",
+  foldEither(validateUsername({ username: "user!", password: "", email: "" })),
+  "LEFT:Имя пользователя должно содержать только буквы и цифры",
+);
+test(
+  "не строка",
+  foldEither(validateUsername({ username: 42, password: "", email: "" })),
+  "LEFT:Имя пользователя должно быть строкой",
+);
+test(
+  "русское имя",
+  foldEither(validateUsername({ username: "Алиса", password: "", email: "" })),
+  "RIGHT",
+);
+test(
+  "ровно 3 символа — ok",
+  foldEither(validateUsername({ username: "ali", password: "", email: "" })),
+  "RIGHT",
+);
+test(
+  "ровно 20 символов — ok",
+  foldEither(
+    validateUsername({ username: "a".repeat(20), password: "", email: "" }),
+  ),
+  "RIGHT",
+);
 
 // 3.2 validatePassword
-console.log('\n3.2 validatePassword:');
-test('корректный пароль',      foldEither(validatePassword({ username: '', password: 'secret42', email: '' })), 'RIGHT');
-test('слишком короткий',       foldEither(validatePassword({ username: '', password: 'sec1', email: '' })),
-  'LEFT:Пароль должен содержать минимум 8 символов');
-test('нет цифры',              foldEither(validatePassword({ username: '', password: 'secretsecret', email: '' })),
-  'LEFT:Пароль должен содержать хотя бы одну цифру');
-test('нет буквы',              foldEither(validatePassword({ username: '', password: '12345678', email: '' })),
-  'LEFT:Пароль должен содержать хотя бы одну букву');
-test('не строка',              foldEither(validatePassword({ username: '', password: 12345678, email: '' })),
-  'LEFT:Пароль должен быть строкой');
-test('ровно 8 символов — ok',  foldEither(validatePassword({ username: '', password: 'secret4!', email: '' })), 'RIGHT');
+console.log("\n3.2 validatePassword:");
+test(
+  "корректный пароль",
+  foldEither(
+    validatePassword({ username: "", password: "secret42", email: "" }),
+  ),
+  "RIGHT",
+);
+test(
+  "слишком короткий",
+  foldEither(validatePassword({ username: "", password: "sec1", email: "" })),
+  "LEFT:Пароль должен содержать минимум 8 символов",
+);
+test(
+  "нет цифры",
+  foldEither(
+    validatePassword({ username: "", password: "secretsecret", email: "" }),
+  ),
+  "LEFT:Пароль должен содержать хотя бы одну цифру",
+);
+test(
+  "нет буквы",
+  foldEither(
+    validatePassword({ username: "", password: "12345678", email: "" }),
+  ),
+  "LEFT:Пароль должен содержать хотя бы одну букву",
+);
+test(
+  "не строка",
+  foldEither(validatePassword({ username: "", password: 12345678, email: "" })),
+  "LEFT:Пароль должен быть строкой",
+);
+test(
+  "ровно 8 символов — ok",
+  foldEither(
+    validatePassword({ username: "", password: "secret4!", email: "" }),
+  ),
+  "RIGHT",
+);
 
 // 3.3 validateEmail
-console.log('\n3.3 validateEmail:');
-test('корректный email',       foldEither(validateEmail({ username: '', password: '', email: 'user@mail.ru' })), 'RIGHT');
-test('нет @',                  foldEither(validateEmail({ username: '', password: '', email: 'usermail.ru' })),
-  'LEFT:Email должен содержать @');
-test('нет точки после @',      foldEither(validateEmail({ username: '', password: '', email: 'user@nodot' })),
-  'LEFT:Email должен содержать точку после @');
-test('не строка',              foldEither(validateEmail({ username: '', password: '', email: 42 })),
-  'LEFT:Email должен быть строкой');
+console.log("\n3.3 validateEmail:");
+test(
+  "корректный email",
+  foldEither(
+    validateEmail({ username: "", password: "", email: "user@mail.ru" }),
+  ),
+  "RIGHT",
+);
+test(
+  "нет @",
+  foldEither(
+    validateEmail({ username: "", password: "", email: "usermail.ru" }),
+  ),
+  "LEFT:Email должен содержать @",
+);
+test(
+  "нет точки после @",
+  foldEither(
+    validateEmail({ username: "", password: "", email: "user@nodot" }),
+  ),
+  "LEFT:Email должен содержать точку после @",
+);
+test(
+  "не строка",
+  foldEither(validateEmail({ username: "", password: "", email: 42 })),
+  "LEFT:Email должен быть строкой",
+);
 
 // 3.4 registerUser
-console.log('\n3.4 registerUser:');
+console.log("\n3.4 registerUser:");
 {
-  const valid = registerUser({ username: 'alice', password: 'secret42', email: 'alice@mail.ru' });
-  test('все данные верны → success',           (valid as { success: boolean })?.success, true);
-  test('все данные верны → user есть',         !!(valid as { user?: unknown })?.user,  true);
+  const valid = registerUser({
+    username: "alice",
+    password: "secret42",
+    email: "alice@mail.ru",
+  });
+  test(
+    "все данные верны → success",
+    (valid as { success: boolean })?.success,
+    true,
+  );
+  test(
+    "все данные верны → user есть",
+    !!(valid as { user?: unknown })?.user,
+    true,
+  );
 
-  const badUsername = registerUser({ username: 'al', password: 'secret42', email: 'alice@mail.ru' });
-  test('плохой username → success false',      (badUsername as { success: boolean })?.success, false);
-  test('плохой username → ошибка про username',
-    (badUsername as { error?: string })?.error?.includes('пользователя'), true);
+  const badUsername = registerUser({
+    username: "al",
+    password: "secret42",
+    email: "alice@mail.ru",
+  });
+  test(
+    "плохой username → success false",
+    (badUsername as { success: boolean })?.success,
+    false,
+  );
+  test(
+    "плохой username → ошибка про username",
+    (badUsername as { error?: string })?.error?.includes("пользователя"),
+    true,
+  );
 
-  const badPassword = registerUser({ username: 'alice', password: 'short', email: 'alice@mail.ru' });
-  test('плохой пароль → success false',        (badPassword as { success: boolean })?.success, false);
-  test('плохой пароль → ошибка про пароль',
-    (badPassword as { error?: string })?.error?.includes('Пароль'), true);
+  const badPassword = registerUser({
+    username: "alice",
+    password: "short",
+    email: "alice@mail.ru",
+  });
+  test(
+    "плохой пароль → success false",
+    (badPassword as { success: boolean })?.success,
+    false,
+  );
+  test(
+    "плохой пароль → ошибка про пароль",
+    (badPassword as { error?: string })?.error?.includes("Пароль"),
+    true,
+  );
 
-  const badEmail = registerUser({ username: 'alice', password: 'secret42', email: 'invalid' });
-  test('плохой email → success false',         (badEmail as { success: boolean })?.success, false);
-  test('плохой email → ошибка про email',
-    (badEmail as { error?: string })?.error?.includes('Email'), true);
+  const badEmail = registerUser({
+    username: "alice",
+    password: "secret42",
+    email: "invalid",
+  });
+  test(
+    "плохой email → success false",
+    (badEmail as { success: boolean })?.success,
+    false,
+  );
+  test(
+    "плохой email → ошибка про email",
+    (badEmail as { error?: string })?.error?.includes("Email"),
+    true,
+  );
 }
 
 // 3.5 firstErrorWins
-console.log('\n3.5 firstErrorWins — первая ошибка останавливает цепочку:');
+console.log("\n3.5 firstErrorWins — первая ошибка останавливает цепочку:");
 test(
-  'ошибка на username — останавливается на нём',
-  firstErrorWins({ username: 'a', password: 'nope11', email: 'bad' }),
-  'username'
+  "ошибка на username — останавливается на нём",
+  firstErrorWins({ username: "a", password: "nope11", email: "bad" }),
+  "username",
 );
 test(
-  'username ok, ошибка на password',
-  firstErrorWins({ username: 'alice', password: 'nope', email: 'bad' }),
-  'password'
+  "username ok, ошибка на password",
+  firstErrorWins({ username: "alice", password: "nope", email: "bad" }),
+  "password",
 );
 test(
-  'username и password ok, ошибка на email',
-  firstErrorWins({ username: 'alice', password: 'secret42', email: 'bad' }),
-  'email'
+  "username и password ok, ошибка на email",
+  firstErrorWins({ username: "alice", password: "secret42", email: "bad" }),
+  "email",
 );
 test(
-  'все ok → ok',
-  firstErrorWins({ username: 'alice', password: 'secret42', email: 'a@b.ru' }),
-  'ok'
+  "все ok → ok",
+  firstErrorWins({ username: "alice", password: "secret42", email: "a@b.ru" }),
+  "ok",
 );
 
 // Итог
 console.log(`\nРезультат: ${passed} пройдено, ${failed} провалено`);
 if (failed === 0) {
-  console.log('Все тесты пройдены!');
+  console.log("Все тесты пройдены!");
 } else {
-  console.log('Есть ошибки — исправь TODO и запусти снова.');
+  console.log("Есть ошибки — исправь TODO и запусти снова.");
   process.exit(1);
 }
