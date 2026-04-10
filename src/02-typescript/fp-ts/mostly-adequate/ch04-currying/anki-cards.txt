@@ -1,0 +1,10 @@
+#separator:tab
+#notetype:Basic
+#deck:TypeScript::fp-ts::Currying
+#tags column:3
+Что такое currying?	Currying — это преобразование функции нескольких аргументов в цепочку функций по одному аргументу.	fp-ts::currying::basics
+Чем partial application отличается от currying?	Currying — это форма функции, а partial application — применение части аргументов к функции такой формы.	fp-ts::currying::partial-application
+Почему `data-last` важен в `fp-ts`?	Он делает функции удобными для частичного применения и естественно встраивает их в `pipe`.	fp-ts::currying::data-last
+Почему currying помогает `pipe` и `flow`?	После частичного применения функции становятся ближе к форме `A -> B`, и их проще соединять в pipeline.	fp-ts::currying::composition
+Почему default params не заменяют currying?	Default params не дают стабильной композиционной формы API и не создают предсказуемую цепочку частичных применений.	fp-ts::currying::api-design
+Как currying помогает в коде с `TaskEither`?	Он позволяет строить маленькие pure helpers, которые затем легко поднимать внутрь эффекта через `map`.	fp-ts::currying::effects

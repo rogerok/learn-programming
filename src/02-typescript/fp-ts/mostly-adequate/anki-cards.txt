@@ -1,0 +1,12 @@
+#separator:tab
+#notetype:Basic
+#deck:TypeScript::fp-ts::Pure Functions
+#tags column:3
+Какие два признака есть у pure function?	Для одинаковых входов pure function возвращает одинаковый результат и не производит observable side effects.	fp-ts::pure-functions::basics
+Почему `Date.now()` считается эффектом?	Потому что функция читает внешнее состояние системы, которое не определяется её аргументами.	fp-ts::pure-functions::effects
+Что даёт referential transparency на практике?	Она позволяет заменять выражение его значением без изменения поведения программы и рассуждать о коде через подстановку.	fp-ts::pure-functions::referential-transparency
+Когда нужен `Reader<R, A>`?	Когда нужно сделать зависимости явными и передавать окружение как вход, а не читать его скрыто.	fp-ts::pure-functions::reader
+В чём разница между `IO`, `Task` и `TaskEither`?	`IO` описывает sync effect, `Task` — lazy async effect, `TaskEither` — lazy async effect с явной ошибкой.	fp-ts::pure-functions::effects
+Почему memoization корректна только для pure functions?	Потому что кэширование предполагает стабильное соответствие между входом и результатом; impure function может возвращать разные значения для одного и того же входа.	fp-ts::pure-functions::memoization
+Что значит "отделить описание эффекта от исполнения"?	Сначала представить effect как значение через `IO`, `Task` или `TaskEither`, а запускать его только на краю программы.	fp-ts::pure-functions::effects
+Как hidden dependencies ломают чистоту функции?	Результат начинает зависеть не только от аргументов, но и от внешнего окружения, поэтому поведение нельзя понять по одним входам и сигнатуре.	fp-ts::pure-functions::dependencies

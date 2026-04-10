@@ -471,5 +471,75 @@
       }
     },
     "expandedKeys": []
+  },
+  "src/02-typescript/fp-ts/mostly-adequate/ch03-pure-functions.md": {
+    "scroll": 9.346570397111913,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/hindley-milner/hindley-milner.md": {
+    "scroll": 313.75,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch12-traversing-the-stone/traversing-the-stone.md": {
+    "scroll": 381.77272727272725,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying.md": {
+    "scroll": 124.3,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying-rewrite.md": {
+    "scroll": 94.86889460154242,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
   }
 }

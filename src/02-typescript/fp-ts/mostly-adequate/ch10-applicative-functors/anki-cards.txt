@@ -1,0 +1,11 @@
+#separator:tab
+#notetype:Basic
+#deck:TypeScript::fp-ts::Applicative
+#tags column:3
+Когда `Applicative` подходит лучше, чем `Monad`?	Когда значения или эффекты независимы друг от друга и их не нужно строить через результат предыдущего шага.	fp-ts::applicative::vs-monad
+Какую проблему решает `ap`?	Он применяет функцию внутри контекста `F<(a) => b>` к значению внутри контекста `F<a>`, сохраняя тот же вид контекста.	fp-ts::applicative::ap
+Чем `ap` отличается от `map`?	`map` ожидает обычную функцию снаружи контекста, а `ap` работает, когда функция тоже уже находится внутри контекста.	fp-ts::applicative::map-vs-ap
+Зачем нужны `sequenceT` и `sequenceS`?	Они собирают несколько независимых effectful-значений в tuple или record без ручной цепочки `ap`.	fp-ts::applicative::sequence
+Что даёт `apS`?	Он позволяет пошагово собирать record в applicative-style, не скатываясь в monadic зависимость.	fp-ts::applicative::aps
+Почему `liftA2` и `liftA3` в `fp-ts` не стоит делать основным API?	Они полезны как историческая интуиция из книги, но в современном `fp-ts` чаще практичнее `ap`, `sequenceT`, `sequenceS` и `apS`.	fp-ts::applicative::lifta
+Что показывают `ApplyPar` и `ApplySeq` на `Task` или `TaskEither`?	Они показывают, что независимые эффекты можно комбинировать в одной applicative-форме, но с разной семантикой исполнения: параллельной или последовательной.	fp-ts::applicative::apply-par-seq

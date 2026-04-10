@@ -56,6 +56,16 @@ aliases: [TypeScript]
 
 - [[unsound/unsound|TypeScript Unsound: несоответствия и дыры в типах]]
 
+## fp-ts и функциональный стиль
+
+- [[fp-ts/fp-ts-roadmap|Study Plan: fp-ts]]
+- [[fp-ts/fp-ts-phase-1-2|fp-ts -- Теория и Core Types]]
+- [[fp-ts/mostly-adequate/ch03-pure-functions|Pure Functions через призму fp-ts]]
+- [[fp-ts/mostly-adequate/ch04-currying/ch04-currying|Currying через призму fp-ts]]
+- [[fp-ts/mostly-adequate/ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]]
+- [[fp-ts/mostly-adequate/ch09-monads/ch09-monads|Монадические луковицы через призму fp-ts]]
+- [[fp-ts/mostly-adequate/ch10-applicative-functors/ch10-applicative-functors|Аппликативные функторы через призму fp-ts]]
+
 ## Полный конспект
 
 - [[basics/code-basic/FULL-SUMMARY|TypeScript: полный конспект]]
