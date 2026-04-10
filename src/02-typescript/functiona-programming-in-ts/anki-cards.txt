@@ -1,0 +1,14 @@
+#separator:tab
+#notetype:Basic
+#deck:TypeScript::Functional Programming in TS::Group
+#tags column:3
+Что такое `Group` в functional programming?	Это `Monoid`, в котором для каждого элемента существует обратный элемент `inverse`, нейтрализующий его относительно той же операции.	typescript::fp::group::definition
+Какие законы обязан удовлетворять `Group`?	Законы `associativity` и `identity` из `Monoid`, а также два закона обратимости: `concat(a, inverse(a)) === empty` и `concat(inverse(a), a) === empty`.	typescript::fp::group::laws
+Почему `Group` нельзя сводить к фразе "у нас есть undo"?	Потому что кроме идеи отмены нужны строгие algebraic laws: замкнутая операция, associativity, identity и inverse для каждого элемента без скрытого внешнего контекста.	typescript::fp::group::intuition
+Почему `number` со сложением образует `Group`?	Потому что сложение ассоциативно, `0` является identity, а для каждого числа `x` существует inverse `-x`.	typescript::fp::group::examples
+Почему `boolean` с XOR образует `Group`?	Потому что XOR ассоциативен, `false` является identity, а каждый элемент обратен самому себе.	typescript::fp::group::examples
+Почему `string` с конкатенацией это `Monoid`, но не `Group`?	У строк есть ассоциативная операция и identity `""`, но для произвольной строки нет inverse, который возвращал бы к `""`.	typescript::fp::group::counterexamples
+Почему `number` с вычитанием не образует `Group`?	Потому что вычитание неассоциативно, значит структура не дотягивает даже до `Semigroup`.	typescript::fp::group::counterexamples
+Что означает, что inverse определяется относительно операции?	Один и тот же тип может быть `Group` или не быть им в зависимости от выбранной операции; inverse существует не "для типа вообще", а для пары "тип + операция".	typescript::fp::group::definition
+Зачем в `Group` проверять обратимость и слева, и справа?	Потому что корректный inverse должен нейтрализовать элемент в обоих направлениях: `a <> inverse(a)` и `inverse(a) <> a`.	typescript::fp::group::laws
+Какой практический смысл `Group` в программировании?	Он помогает моделировать reversible transformations, `undo/redo`, diff/apply/revert и другие сценарии, где изменения можно безопасно комбинировать и отменять.	typescript::fp::group::practice
