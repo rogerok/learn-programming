@@ -139,37 +139,7 @@ High-level map of the topic, key concepts and relationships.
 
 Detailed explanations with code examples, diagrams, edge cases.
 Split into logical subsections.
-
-## Exercises
-
-Mini-project or practical tasks. Include test cases where possible.
-
-## Anki Cards
-
-> [!tip] Flashcards
-> Q: question
-> A: answer
-
-(Repeat for each card)
-
-## Anki Export File
-
-Along with the embedded cards in the chapter note, always create a separate
-import-ready file **next to the chapter** (same folder):
-
-- Filename: `anki-cards.txt`
-- Format: tab-separated, importable via Anki `File → Import`
 ```
-
-#separator:tab
-#notetype:Basic
-#deck:<Topic Name>
-#tags column:3
-Question text Answer text tag1::tag2
-
-```
-
-Do NOT place Anki files in `~/Documents` or any location outside the repo.
 
 ## Related Topics
 
@@ -179,6 +149,27 @@ Do NOT place Anki files in `~/Documents` or any location outside the repo.
 
 - links
 ```
+
+Exercises and Anki cards for a chapter must be created as separate files next to the chapter note, not embedded inside the chapter itself.
+
+### Companion files for chapters
+
+Along with the chapter, always create these separate files **next to the chapter** (same folder):
+
+- Exercises file: `exercises.md`
+  - Contains the practical tasks and test cases for that chapter
+- Anki export file: `anki-cards.txt`
+  - Format: tab-separated, importable via Anki `File → Import`
+
+```text
+#separator:tab
+#notetype:Basic
+#deck:<Topic Name>
+#tags column:3
+Question text	Answer text	tag1::tag2
+```
+
+Do NOT place Anki files in `~/Documents` or any location outside the repo.
 
 ## Learning Stack
 

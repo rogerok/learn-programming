@@ -361,7 +361,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/17.category-theory.md": {
-    "scroll": 169.09504132231405,
+    "scroll": 181.15625,
     "cursor": {
       "from": {
         "line": 0,
@@ -403,7 +403,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/18.magma,semigroup,monoid.md": {
-    "scroll": 309.8510638297872,
+    "scroll": 132.05475504322766,
     "cursor": {
       "from": {
         "line": 0,
@@ -501,7 +501,7 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch12-traversing-the-stone/traversing-the-stone.md": {
-    "scroll": 381.77272727272725,
+    "scroll": 385.5,
     "cursor": {
       "from": {
         "line": 0,
@@ -530,6 +530,62 @@
   },
   "src/02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying-rewrite.md": {
     "scroll": 94.86889460154242,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch13-monoids-bring-it-all-together/monoids-bring-it-all-together.md": {
+    "scroll": 44.03636363636364,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/MOC.md": {
+    "scroll": 177.15151515151516,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/functiona-programming-in-ts/20.group.md": {
+    "scroll": 681.0327868852459,
+    "cursor": {
+      "from": {
+        "line": 36,
+        "ch": 9
+      },
+      "to": {
+        "line": 37,
+        "ch": 55
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/functiona-programming-in-ts/25.kind,higher-kinded_type.md": {
+    "scroll": 63.2,
     "cursor": {
       "from": {
         "line": 0,
