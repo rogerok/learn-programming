@@ -178,6 +178,7 @@ Exercises and Anki cards must not be embedded in the chapter body. If they are n
 - Use mermaid diagrams for architecture, data flow, and concept relationships
 - Start with simple examples, then build complexity
 - Use real-world analogies to ground abstract concepts
+- In the end of chapter, write model that written this chapter
 
 ## Quality checklist before submitting
 

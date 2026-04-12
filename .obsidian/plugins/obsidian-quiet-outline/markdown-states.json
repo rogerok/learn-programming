@@ -515,7 +515,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying.md": {
-    "scroll": 124.3,
+    "scroll": 249.2127659574468,
     "cursor": {
       "from": {
         "line": 0,
@@ -594,6 +594,20 @@
       "to": {
         "line": 0,
         "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/functiona-programming-in-ts/fp-ts-hkt-type-classes-functors.md": {
+    "scroll": 380.15699052132703,
+    "cursor": {
+      "from": {
+        "line": 278,
+        "ch": 111
+      },
+      "to": {
+        "line": 278,
+        "ch": 111
       }
     },
     "expandedKeys": []

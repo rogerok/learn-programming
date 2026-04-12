@@ -148,7 +148,8 @@ Split into logical subsections.
 ## Sources
 
 - links
-```
+
+````
 
 Exercises and Anki cards for a chapter must be created as separate files next to the chapter note, not embedded inside the chapter itself.
 
@@ -167,7 +168,7 @@ Along with the chapter, always create these separate files **next to the chapter
 #deck:<Topic Name>
 #tags column:3
 Question text	Answer text	tag1::tag2
-```
+````
 
 Do NOT place Anki files in `~/Documents` or any location outside the repo.
 
@@ -181,7 +182,7 @@ Do NOT place Anki files in `~/Documents` or any location outside the repo.
 
 ## Available Agents
 
-This vault has custom agents in `.claude/agents/`. Important rules:
+This vault has custom agents in `.codex/agents/`. Important rules:
 
 - **Never invoke agents automatically.** Only invoke an agent when the user explicitly asks for it or when a slash command requires it.
 - **Never chain multiple agents in one turn** unless the user explicitly says to.
