@@ -13,3 +13,4 @@ Create practical exercises for: $ARGUMENTS
 4. Do not write an `Exercises` section into the chapter file
 5. Use the `reviewer` agent to verify test cases are correct
 6. Report to the user (in Russian): exercise count, difficulty levels, file location
+7. Write test cases in vitest

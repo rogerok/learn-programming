@@ -1,0 +1,21 @@
+#separator:tab
+#notetype:Basic
+#deck:Functional Programming::Traversable
+#tags column:3
+Что нужно реализовать, чтобы тип стал Traversable?	Тип должен быть функтором (map) и реализовать traverse(of, fn) и sequence(of). Внутренний тип должен быть аппликативным функтором (of, map, ap). Аналог: «Applicative = Pointed + ap», «Traversable = Functor + traverse/sequence».	fp::traversable::definition
+Что делает sequence в контексте Traversable?	sequence переворачивает порядок вложенных типов: t(f(a)) -> f(t(a)). Внутренний функтор становится внешним, а внешняя структура оказывается внутри.	fp::traversable::sequence
+Какая сигнатура у sequence?	sequence :: (Traversable t, Applicative f) => (a -> f a) -> t (f a) -> f (t a). Первый аргумент — конструктор of аппликатива, второй — traversable с аппликативами внутри.	fp::traversable::sequence
+Зачем sequence принимает параметр of?	Для случаев вроде Left, где внутри нет аппликативного значения. of нужен чтобы обернуть «пустой» случай во внешний контейнер: of(Left(error)) создаёт, например, IO(Left(error)).	fp::traversable::sequence
+Как реализован sequence для Right<E, A>?	Right.sequence(of) вызывает this.$value.map(x => new Right(x)) — делает map по внутреннему функтору, оборачивая значение обратно в Right. Внешний контейнер получается «бесплатно» из внутреннего.	fp::traversable::implementation
+Как реализован sequence для Left<E, A>?	Left.sequence(of) вызывает of(this) — оборачивает весь Left во внешний контейнер через переданный конструктор, потому что внутри Left нет функтора для map.	fp::traversable::implementation
+Чем отличается Array<Maybe<A>> от Maybe<Array<A>> семантически?	Array<Maybe<A>> — коллекция, где каждый элемент может отсутствовать (толерантный подход). Maybe<Array<A>> — либо весь массив есть, либо ничего нет (всё-или-ничего).	fp::traversable::semantics
+Что делает traverse и чем отличается от sequence?	traverse = map + sequence в одном шаге. Сигнатура: traverse(of, fn, structure). Вместо двух операций (map(fn) затем sequence(of)) делает обход и сбор эффектов за один проход.	fp::traversable::traverse
+Как работает реализация traverse для List через reduce?	reduce начинает с of(List([])), на каждом шаге: fn(a).map(b => bs => bs.concat(b)).ap(acc). map превращает значение в функцию-конкатенацию, ap применяет её к аккумулятору внутри аппликатива.	fp::traversable::implementation
+Почему traverse использует ap, а не chain?	ap комбинирует независимые эффекты (концептуально параллельно), chain требует последовательности. Для traverse важна независимость: мы обходим структуру, собирая эффекты, а не строим цепочку зависимостей.	fp::traversable::traverse
+Как traverse связан с Promise.all?	Promise.all делает одну конкретную версию traverse: Array<Promise<A>> → Promise<Array<A>>. Traversable обобщает эту идею на любые комбинации контейнеров и эффектов.	fp::traversable::analogy
+В чём разница между partition и validate через traverse?	partition (через map) даёт Array<Either<E, A>> — отдельные результаты для каждого элемента. validate (через traverse) даёт Either<E, Array<A>> — всё или ничего, первая ошибка останавливает всё.	fp::traversable::semantics
+Что говорит закон Identity для Traversable?	compose(sequence(Identity.of), map(Identity.of)) ≡ Identity.of. Если эффект тривиальный (Identity), sequence не меняет структуру данных.	fp::traversable::laws
+Что говорит закон Composition для Traversable?	sequence через композицию двух функторов F и G равносильно двум последовательным sequence — сначала для F, потом для G. Можно разбивать сложные traverse на простые.	fp::traversable::laws
+Что говорит закон Naturality для Traversable?	compose(nt, sequence(F.of)) ≡ compose(sequence(G.of), map(nt)). Порядок «переворачивания» и «преобразования контейнера» не важен для любого natural transformation nt.	fp::traversable::laws
+Когда использовать traverse вместо map?	Когда после map получается тип F<G<H<...>>>, где G и H хочется поменять местами. Особенно когда F — коллекция (Array, List, Map), а G — эффект (Task, IO, Maybe, Either).	fp::traversable::practice
+Как с помощью chain + traverse выровнять IO<Maybe<IO<Node>>> в IO<Maybe<Node>>?	traverse(IO.of, fn) работает с Maybe внутри: для Just вызывает fn и переворачивает Maybe<IO<A>> в IO<Maybe<A>>. Внешний chain выравнивает IO<IO<...>> в IO<...>.	fp::traversable::practice

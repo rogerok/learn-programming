@@ -108,17 +108,9 @@ High-level map of the topic, key concepts and relationships.
 Detailed explanations with code examples, diagrams, edge cases.
 Split into logical subsections.
 
-## Exercises
+## Exercises Files
 
-Mini-project or practical tasks. Include test cases where possible.
-
-## Anki Cards
-
-> [!tip] Flashcards
-> Q: question
-> A: answer
-
-(Repeat for each card)
+Mini-project or practical tasks. Include test cases where possible. Always create in separate folder
 
 ## Anki Export File
 
@@ -127,13 +119,14 @@ import-ready file **next to the chapter** (same folder):
 
 - Filename: `anki-cards.txt`
 - Format: tab-separated, importable via Anki `File → Import`
-
 ```
+
 #separator:tab
 #notetype:Basic
 #deck:<Topic Name>
 #tags column:3
-Question text	Answer text	tag1::tag2
+Question text Answer text tag1::tag2
+
 ```
 
 Do NOT place Anki files in `~/Documents` or any location outside the repo.
@@ -186,5 +179,4 @@ Slash commands in `.claude/commands/`:
 - `/cards <topic>` — generate Anki flashcards for a topic
 - `/exercise <topic>` — create a practical exercise with tests
 - `/check` — review my solution and give feedback
-- `/quiz <topic>` — interactive comprehension check: I explain, you probe gaps
 - `/plan <topic>` — structured study roadmap with topics, order, and sources

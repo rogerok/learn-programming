@@ -1,0 +1,26 @@
+#separator:tab
+#notetype:Basic
+#deck:Functional Programming::Functors in fp-ts
+#tags column:3
+Что такое функтор в программировании?	Тип F, для которого определена операция map: (A → B) → F<A> → F<B>. map поднимает (lift) обычную функцию до работы внутри контейнера, сохраняя его структуру.	fp::functor::definition
+Какие два закона должен соблюдать Functor?	1) Identity: map(id) = id — маппинг тождественной функции не меняет контейнер. 2) Composition: map(g ∘ f) = map(g) ∘ map(f) — маппинг композиции равен композиции маппингов.	fp::functor::laws
+Как Either ведёт себя как функтор?	map для Either трансформирует только Right. Left проходит насквозь без изменений. Это согласуется с семантикой: Left — ошибка, Right — успешное значение.	fp::functor::either
+Что такое Kind (род типа)?	Kind классифицирует типы по арности: * — конкретный тип (string), * → * — конструктор с одним параметром (Option), * → * → * — с двумя (Either). Kind показывает форму типа, а не его значение.	fp::kind::definition
+Что такое Higher-Kinded Type (HKT)?	HKT — тип, параметризованный type constructor'ом (kind (* → *) → *). Например, Functor<F>, где F — произвольный контейнер. TypeScript не поддерживает HKT нативно.	fp::hkt::definition
+Почему TypeScript не может выразить обобщённый Functor<F>?	В TypeScript generic-параметр может быть только конкретным типом (kind *), но не type constructor'ом (kind * → *). Запись F<A> где F — параметр вызывает ошибку "Type 'F' is not generic".	fp::hkt::typescript-limitation
+Что такое type class?	Спецификация поведения для группы типов. В отличие от OOP-интерфейса, type class привязывает поведение к типу извне, не требуя наследования. Пример: Show<A> с методом toString.	fp::type-class::definition
+Чем type class instance отличается от type class?	Type class — контракт (интерфейс), type class instance — конкретная реализация для конкретного типа. Например, Show<number> = { toString: a => a.toString() } — это instance.	fp::type-class::instance
+Чем type class отличается от OOP-интерфейса?	В OOP: class MyList implements Mappable — поведение привязано к объекту. В FP: const myListFunctor: Functor1<'MyList'> = {...} — поведение отделено от типа. Тип и его поведение развязаны.	fp::type-class::vs-oop
+Как fp-ts кодирует HKT в TypeScript?	Через строковый реестр URItoKind: каждый тип регистрируется как пара "ключ → конкретный тип" через module augmentation (interface merging). Kind<'Option', A> восстанавливает Option<A>.	fp::fp-ts::hkt-encoding
+Что такое URItoKind в fp-ts?	Интерфейс-реестр, связывающий строковые ключи с конкретными типами. declare module 'fp-ts/HKT' { interface URItoKind<A> { Option: Option<A> } } регистрирует Option.	fp::fp-ts::uri-to-kind
+Зачем в fp-ts есть Functor1 и Functor2?	Functor1 — для типов kind * → * (Option, Array). Functor2 — для типов kind * → * → * (Either). Разные интерфейсы нужны, потому что TypeScript не может обобщить по числу type-параметров.	fp::fp-ts::functor1-functor2
+Что делает функция lift в контексте функтора?	lift принимает Functor instance и возвращает функцию, которая поднимает (A → B) до (F<A> → F<B>). lift(optionFunctor)(increment)(some(12)) = some(13).	fp::functor::lift
+Почему композиция двух функторов — тоже функтор?	Если F и G — функторы, то map для F<G<A>> = composeR(mapG, mapF). Законы identity и composition выполняются автоматически, если исходные функторы их соблюдают.	fp::functor::composition
+Как в fp-ts v2 работать с вложенными контейнерами типа Option<Array<A>>?	Через вложенные map: pipe(data, O.map(A.map(f))). Регистрация отдельного URI для составного типа не нужна. getFunctorComposition deprecated.	fp::functor::composition-practice
+Что такое Bifunctor?	Функтор для типов с двумя параметрами. Определяет bimap: (A → C, B → D) → F<A,B> → F<C,D>. Позволяет трансформировать обе стороны Either одновременно.	fp::bifunctor::definition
+Как map и mapLeft связаны с bimap?	map = bimap(id, g) — трансформирует только Right. mapLeft = bimap(f, id) — трансформирует только Left. bimap(id, id) = identity. bimap — более общая операция.	fp::bifunctor::map-mapleft
+Когда использовать bimap вместо map + mapLeft?	На границах слоёв: когда Either<Error, Date> нужно преобразовать в Either<DomainError, Timestamp>. bimap делает это за один шаг, а не два.	fp::bifunctor::practice
+Чем ковариантный функтор отличается от контравариантного?	Ковариантный (map): (A → B) → F<A> → F<B> — направление сохраняется, для «производителей». Контравариантный (contramap): (B → A) → F<A> → F<B> — направление обращается, для «потребителей».	fp::contravariant::vs-covariant
+Почему Predicate<A> контравариантен?	Predicate потребляет значение типа A. Если есть Predicate<number> и функция string → number (length), через contramap получаем Predicate<string>. Стрелка обращается: string → number, но Pred<number> → Pred<string>.	fp::contravariant::predicate
+Какие типы в fp-ts контравариантны?	Predicate<A>, Eq<A>, Ord<A> — все «потребители» значений. contramap позволяет строить сложные предикаты, сравнения и сортировки из простых: Eq<string> → Eq<User> через геттер поля.	fp::contravariant::examples
+Как через contramap создать Eq<User> из Eq<string>?	contramap((u: User) => u.name)(stringEq) — если умеешь сравнивать строки и знаешь как извлечь строку из User, то умеешь сравнивать User'ов по имени.	fp::contravariant::eq-example

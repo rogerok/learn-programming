@@ -501,14 +501,14 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch12-traversing-the-stone/traversing-the-stone.md": {
-    "scroll": 385.5,
+    "scroll": 414.4127604166667,
     "cursor": {
       "from": {
-        "line": 0,
+        "line": 4,
         "ch": 0
       },
       "to": {
-        "line": 0,
+        "line": 4,
         "ch": 0
       }
     },
@@ -543,14 +543,14 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch13-monoids-bring-it-all-together/monoids-bring-it-all-together.md": {
-    "scroll": 44.03636363636364,
+    "scroll": 61.350911458333336,
     "cursor": {
       "from": {
-        "line": 0,
+        "line": 4,
         "ch": 0
       },
       "to": {
-        "line": 0,
+        "line": 4,
         "ch": 0
       }
     },
@@ -608,6 +608,34 @@
       "to": {
         "line": 278,
         "ch": 111
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch11-natural-transformations/natural-transformations.md": {
+    "scroll": 92.01116071428571,
+    "cursor": {
+      "from": {
+        "line": 26,
+        "ch": 0
+      },
+      "to": {
+        "line": 26,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch12-traversable/traversable.md": {
+    "scroll": 73.05013020833333,
+    "cursor": {
+      "from": {
+        "line": 4,
+        "ch": 0
+      },
+      "to": {
+        "line": 4,
+        "ch": 0
       }
     },
     "expandedKeys": []
