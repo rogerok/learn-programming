@@ -1,0 +1,14 @@
+#separator:tab
+#notetype:Basic
+#deck:FP Course::07 fp-ts Practice
+#tags column:3
+Чем pipe отличается от flow в fp-ts?	<code>pipe(value, f, g)</code> — принимает значение первым аргументом и сразу вычисляет результат. <code>flow(f, g)</code> — принимает только функции и возвращает новую функцию (point-free). pipe — когда значение есть, flow — когда нужна переиспользуемая функция.	fp::fp-ts::pipe-flow
+Как O.fromNullable работает?	Конвертирует nullable значение в Option: <code>O.fromNullable(null)</code> → none, <code>O.fromNullable(undefined)</code> → none, <code>O.fromNullable(42)</code> → some(42). Мост из мира nullable в мир Option.	fp::fp-ts::option
+Как E.tryCatch работает?	<code>E.tryCatch(() => riskyOp(), (err) => errorMsg)</code>. Если функция выполнилась — right(результат). Если бросила исключение — left(errorMsg). Мост из мира исключений в мир Either.	fp::fp-ts::either
+Что такое TaskEither и зачем он нужен?	<code>TaskEither&lt;E, A&gt; = () => Promise&lt;Either&lt;E, A&gt;&gt;</code>. Ленивая async-операция с типизированной ошибкой. Объединяет async (Task) и обработку ошибок (Either). Заменяет try/catch + async/await.	fp::fp-ts::taskEither
+Как конвертировать Option → Either?	<code>pipe(option, E.fromOption(() => 'error message'))</code>. None превращается в Left с указанной ошибкой, Some(x) — в Right(x). Добавляет информацию о причине отсутствия значения.	fp::fp-ts::conversion
+Как конвертировать Either → TaskEither?	<code>TE.fromEither(either)</code>. Оборачивает синхронный Either в ленивый TaskEither. Полезно для "повышения" типа: синхронная валидация → async-цепочка.	fp::fp-ts::conversion
+Чем TE.ApplyPar отличается от TE.ApplySeq?	ApplyPar запускает TaskEither параллельно (как Promise.all). ApplySeq — последовательно. Для независимых запросов используйте ApplyPar для лучшей производительности.	fp::fp-ts::taskEither::parallel
+Когда НЕ стоит использовать fp-ts?	1) Тривиальные операции (user.name вместо pipe). 2) Единственная проверка на null (?./?? вместо Option). 3) Функции без ошибок (не заворачивайте в Either). 4) Слишком длинные pipe (разбейте на именованные функции). 5) Весь проект (fp-ts — для ядра бизнес-логики).	fp::fp-ts::antipatterns
+Как выглядит типичный слоистый API-клиент на fp-ts?	Слои: (1) HTTP: url → TaskEither&lt;ApiError, Response&gt;, (2) Parse: Response → TaskEither&lt;ApiError, unknown&gt;, (3) Validate: unknown → Either&lt;ApiError, T&gt;, (4) Business: T → Either&lt;ApiError, T&gt;. Собираются через pipe + chain + fromEither.	fp::fp-ts::architecture
+Как работает паттерн "постепенное повышение типа"?	Начинаем с простого типа и "повышаем" по мере необходимости: обычное значение → Option (может отсутствовать) → Either (может быть ошибка) → TaskEither (async + ошибка). На каждом шаге используется fromOption, fromEither, tryCatch.	fp::fp-ts::patterns
