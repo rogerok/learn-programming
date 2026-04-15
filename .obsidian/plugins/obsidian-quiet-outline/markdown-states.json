@@ -627,7 +627,7 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch12-traversable/traversable.md": {
-    "scroll": 73.05013020833333,
+    "scroll": 73.52864583333333,
     "cursor": {
       "from": {
         "line": 4,
@@ -635,6 +635,20 @@
       },
       "to": {
         "line": 4,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/cs/computer-system/2.chapter/2.3/2.3-overview.md": {
+    "scroll": 44.50645804893416,
+    "cursor": {
+      "from": {
+        "line": 3,
+        "ch": 0
+      },
+      "to": {
+        "line": 3,
         "ch": 0
       }
     },
