@@ -641,7 +641,35 @@
     "expandedKeys": []
   },
   "src/cs/computer-system/2.chapter/2.3/2.3-overview.md": {
-    "scroll": 44.50645804893416,
+    "scroll": 42.794921875,
+    "cursor": {
+      "from": {
+        "line": 3,
+        "ch": 0
+      },
+      "to": {
+        "line": 3,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-course/07-fp-ts-practice/exercises.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 3,
+        "ch": 0
+      },
+      "to": {
+        "line": 3,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-course/07-fp-ts-practice/fp-ts-practice.md": {
+    "scroll": 6.201649620587265,
     "cursor": {
       "from": {
         "line": 3,

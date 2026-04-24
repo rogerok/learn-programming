@@ -180,3 +180,67 @@ Slash commands in `.claude/commands/`:
 - `/exercise <topic>` — create a practical exercise with tests
 - `/check` — review my solution and give feedback
 - `/plan <topic>` — structured study roadmap with topics, order, and sources
+
+# Skills Integration
+
+## What skills are
+
+Skills are topic-specific instruction files that teach agents _how_ to write about a domain.
+They live in `.claude/skills/` and are read by the `author` agent before writing a chapter.
+
+A skill overrides the author's defaults for that topic: which patterns to use, how to structure
+explanations, what examples to show, and in what order.
+
+## Skills directory
+
+```
+.claude/
+├── skills/
+│   └── dsl-writer/
+│       ├── SKILL.md                  ← main guide (patterns, decision tree, code examples)
+│       └── references/
+│           ├── patterns.md           ← full pattern catalogue (8 patterns + tradeoffs)
+│           ├── external-dsl.md       ← lexer → parser → AST → interpreter walkthrough
+│           └── real-world-examples.md ← Knex, Zod, RxJS, Effect, Prisma annotated
+├── agents/
+│   ├── author.md
+│   ├── researcher.md
+│   ├── reviewer.md
+│   ├── exercise-author.md
+│   ├── exercise-checker.md
+│   └── methodist.md
+└── commands/
+    └── dsl.md                        ← /dsl slash command
+```
+
+## How the author agent uses skills
+
+The `author` agent checks `.claude/skills/` before writing any chapter.
+If a skill folder matches the topic, it reads the skill and uses it as the primary guide.
+
+The check is simple:
+
+- Topic mentions "DSL", "domain-specific language", "builder pattern", "fluent API",
+  "pipeline DSL", "rule engine", "query builder" → read `dsl-writer/SKILL.md`
+
+## Adding new skills
+
+To teach the vault about a new topic domain, create a new skill folder:
+
+```
+.claude/skills/your-topic/
+├── SKILL.md
+└── references/
+    └── ...
+```
+
+Then update this file with the trigger keywords for the new skill.
+
+## Slash commands
+
+| Command        | What it does                                             |
+| -------------- | -------------------------------------------------------- |
+| `/dsl <topic>` | Writes a DSL chapter using the dsl-writer skill directly |
+
+To add a slash command: create a `.md` file in `.claude/commands/` with the prompt template.
+Use `$ARGUMENTS` as the placeholder for what follows the command name.
