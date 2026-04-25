@@ -7,24 +7,38 @@ aliases: [SOLID]
 
 5 принципов объектно-ориентированного проектирования.
 
-## Принципы
+## Как читать
 
-- [[singleResponsibility/singleResponsibility|SRP]] — Single Responsibility: один класс — одна задача
-- [[openClosed/openClosed|OCP]] — Open-Closed: открыт для расширения, закрыт для изменения
-- [[liskovSubstitution/liskovSubstitution|LSP]] — Liskov Substitution: подкласс заменяет родителя без поломок
-- [[interfaceSegregation/interfaceSegregation|ISP]] — Interface Segregation: маленькие специфичные интерфейсы
-- [[dependencyInversion/dependencyInversion|DIP]] — Dependency Inversion: зависеть от абстракций, не от реализаций
+Каждый принцип представлен в двух уровнях:
+1. **Основы** — определение, мотивация, практические примеры на TypeScript/React
+2. **Углублённо** — связанные паттерны проектирования (Facade, Proxy, Factory, Decorator, Adapter и др.)
 
-## Углублённый разбор (solid-book)
+> [!tip] Рекомендуемый порядок
+> Сначала прочитай основной файл принципа, затем — углублённый разбор из solid-book.
 
-- [[solid-book/srp|SRP: паттерны Фасад, Прокси, Выделение класса]]
-- [[solid-book/ocp|OCP: паттерны Фабрика, Стратегия, Декоратор]]
-- [[solid-book/lsp|LSP: контрактное программирование]]
-- [[solid-book/isp|ISP: паттерн Адаптер, множественное наследование]]
+## SRP — Single Responsibility
 
-## OCP примеры
+- [[singleResponsibility/singleResponsibility|Основы: определение, примеры (Student, ReportExporter)]]
+- [[solid-book/srp|Углублённо: Extract Class, Facade, Proxy]]
 
-- [[openClosed/openClosed|Weapon, фильтрация списков, уведомления в React]]
+## OCP — Open-Closed
+
+- [[openClosed/openClosed|Основы: Weapon, React Notification, фильтрация списков]]
+- [[solid-book/ocp|Углублённо: Abstract Factory, Strategy, Decorator, ограничения]]
+
+## LSP — Liskov Substitution
+
+- [[liskovSubstitution/liskovSubstitution|Основы: Rectangle/Square, Bird/Penguin, пред/постусловия]]
+- [[solid-book/lsp|Углублённо: контрактное программирование, User/Guest иерархия]]
+
+## ISP — Interface Segregation
+
+- [[interfaceSegregation/interfaceSegregation|Основы: PaymentProvider, Programmer/Freelancer]]
+- [[solid-book/isp|Углублённо: Adapter, TypeScript mixins, реальные примеры]]
+
+## DIP — Dependency Inversion
+
+- [[dependencyInversion/dependencyInversion|Основы: MusicAPI, Logger, Database, React Logger (4 примера)]]
 
 ## Связанные темы
 

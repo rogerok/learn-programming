@@ -681,5 +681,19 @@
       }
     },
     "expandedKeys": []
+  },
+  "src/02-typescript/fp-ts/fp-ts-turorial/4.IO.md": {
+    "scroll": 260.70437017994857,
+    "cursor": {
+      "from": {
+        "line": 144,
+        "ch": 27
+      },
+      "to": {
+        "line": 144,
+        "ch": 27
+      }
+    },
+    "expandedKeys": []
   }
 }

@@ -4,6 +4,10 @@ tags: [react, internals, fiber, reconciler]
 
 # [Build your own react](https://pomb.us/build-your-own-react/)
 
+> [!info] Context
+> Пошаговая реализация мини-React (Didact): createElement, render, Fiber, reconciliation, hooks.
+> Пререквизиты: [[advanced/6.Deep dive into diffing and reconciliation|Diffing и reconciliation]], useState, JSX как синтаксический сахар, DOM API
+
 **Steps**
 
 * **Step 1**: The `createElement` Function

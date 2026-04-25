@@ -2,6 +2,12 @@
 tags: [tips, mobx, http, request]
 ---
 
+# HTTP Request Store с MobX
+
+> [!info] Context
+> Паттерн: MobX-стор для HTTP-запросов с валидацией через Zod и обработкой ошибок через fp-ts Either.
+> Пререквизиты: базовый MobX (`makeAutoObservable`, `autorun`), `zod` schema validation, `fp-ts` Either
+
 ```typescript
 import {z, ZodTypeAny} from "zod";
 import {pipe} from "fp-ts/function";

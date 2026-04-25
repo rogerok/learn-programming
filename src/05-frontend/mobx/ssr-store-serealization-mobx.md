@@ -2,7 +2,13 @@
 tags: [tips, mobx, ssr, serialization]
 ---
 
-# Key Points About MobX SSR Serialization:
+# MobX SSR Serialization
+
+> [!info] Context
+> Как сериализовать MobX-сторы для SSR: проблема Proxy, toJSON, snapshot-подход.
+> Пререквизиты: [[dk-ssr-and-ssg|SSR и SSG с MobX]] или [[mobx-ssr|MobX SSR]], JSON serialization
+
+## Key Points
 1. Why It's Needed
 MobX creates observable objects with internal proxies and metadata
 These cannot be directly `JSON.stringify'd` or sent over the network

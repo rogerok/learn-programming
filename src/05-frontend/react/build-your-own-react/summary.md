@@ -4,6 +4,10 @@ tags: [react, internals, summary]
 
 # Build Your Own React - Summary
 
+> [!info] Context
+> Краткое резюме реализации Didact. Читать после основной статьи.
+> Пререквизит: [[build-your-own-react|Build Your Own React — полная версия]]
+
 This document summarizes the process of building a simplified React-like library, **Didact**, step by step.
 
 ---

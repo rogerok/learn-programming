@@ -5,6 +5,10 @@ aliases: [SRP книга, Единая ответственность]
 
 # [Single responsibility principle](https://solidbook.vercel.app/srp)
 
+> [!info] Context
+> Углублённый разбор SRP с паттернами проектирования (Extract Class, Facade, Proxy).
+> Пререквизит: [[../singleResponsibility/singleResponsibility|SRP — основы]]
+
 ## Принцип единой ответственности
 
 Означает, что у модуля (часть кода обособленная от других) есть только одна причина для изменения, весь код который меняется по этой причине должен быть собран в этом модуле.

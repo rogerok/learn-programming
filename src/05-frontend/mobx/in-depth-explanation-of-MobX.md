@@ -4,6 +4,10 @@ tags: [mobx, reactive, state-management]
 
 # Becoming fully reactive: an in-depth explanation of MobX
 
+> [!info] Context
+> Теоретические основы MobX: реактивность, derivations, atoms, transactions. Точка входа в MobX.
+> Пререквизиты: базовый JavaScript (объекты, функции), желательно: Observer pattern
+
 [original](https://medium.com/hackernoon/becoming-fully-reactive-an-in-depth-explanation-of-mobservable-55995262a254)
 
 ## Core concepts of mobx

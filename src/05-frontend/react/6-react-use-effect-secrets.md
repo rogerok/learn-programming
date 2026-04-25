@@ -4,6 +4,10 @@ tags: [react, useEffect, hooks]
 
 # [6 React useEffect Secrets That Professional Teams Use (But Never Document)](https://javascript.plainenglish.io/6-react-useeffect-secrets-that-professional-teams-use-but-never-document-432609f2ea2a)
 
+> [!info] Context
+> Продвинутые паттерны useEffect: AbortController, useLayoutEffect, cleanup, race conditions.
+> Пререквизиты: базовые React hooks (useEffect, useRef, useState, useCallback), Promises, async/await
+
 ## You can use abort controller also for aborting event listeners, timeouts, timers
 
 Custom hook for abort effect

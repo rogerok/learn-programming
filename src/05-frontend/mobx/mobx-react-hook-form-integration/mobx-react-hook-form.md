@@ -5,6 +5,10 @@ aliases: [MobxForm, MobX + React Hook Form]
 
 # Интеграция MobX с React Hook Form
 
+> [!info] Context
+> Паттерн связывания MobX-сторов с react-hook-form: двусторонняя синхронизация, валидация.
+> Пререквизиты: базовый MobX (`makeAutoObservable`, `observer`), react-hook-form, TypeScript
+
 Автор оригинала: [js2me](https://github.com/js2me)
 
 Паттерн: оборачиваем `react-hook-form` в MobX-класс, чтобы состояние формы (`isValid`, `errors`, `values`) стало observable и реагировало на изменения в компонентах автоматически.

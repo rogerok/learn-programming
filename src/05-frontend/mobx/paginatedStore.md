@@ -2,6 +2,12 @@
 tags: [tips, mobx, pagination, store]
 ---
 
+# Paginated Store
+
+> [!info] Context
+> Обобщённый MobX-стор для пагинации: загрузка страниц, статусы, generic-типизация.
+> Пререквизиты: базовый MobX (`makeAutoObservable`, `runInAction`), TypeScript generics
+
 ```typescript
 import { makeAutoObservable, runInAction } from "mobx";
 

@@ -2,6 +2,12 @@
 tags: [tips, http, service, mobx]
 ---
 
+# HTTP Service (Axios wrapper)
+
+> [!info] Context
+> Обёртка над axios с обработкой ошибок, refresh-токенами и редиректами. Сниппет для проектов.
+> Пререквизиты: axios, async/await, TypeScript
+
 ```typescript
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 import Router from "next/router";

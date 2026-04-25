@@ -4,6 +4,10 @@ tags: [mobx, reactive, state-management, internals]
 
 # MobX в 50 строчек кода
 
+> [!info] Context
+> Реализация ядра MobX с нуля: observable, autorun, reaction. Помогает понять внутреннюю механику.
+> Пререквизит: [[in-depth-explanation-of-MobX|In-depth explanation of MobX]], TypeScript, Observer pattern
+
 [оригинал](https://mobx-cookbook.github.io/mobx-inside)
 
 ## Шаг 1

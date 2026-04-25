@@ -2,6 +2,12 @@
 tags: [tips, mobx, ssr, nextjs]
 ---
 
+# MobX SSR с Next.js App Router
+
+> [!info] Context
+> Архитектура SSR с MobX в Next.js App Router: гидратация, серверные/клиентские сторы.
+> Пререквизиты: [[dk-ssr-and-ssg|SSR и SSG с MobX]], Next.js App Router, `makeAutoObservable`
+
 ```typescript
 // PROJECT STRUCTURE FOR APP ROUTER
 /*
