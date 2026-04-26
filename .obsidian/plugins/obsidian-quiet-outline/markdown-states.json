@@ -361,7 +361,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/17.category-theory.md": {
-    "scroll": 181.15625,
+    "scroll": 169.09504132231405,
     "cursor": {
       "from": {
         "line": 0,
@@ -403,7 +403,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/18.magma,semigroup,monoid.md": {
-    "scroll": 132.05475504322766,
+    "scroll": 305.2093023255814,
     "cursor": {
       "from": {
         "line": 0,
@@ -417,7 +417,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/15.ADT,Pattern-Matching.md": {
-    "scroll": 120.74285714285715,
+    "scroll": 125.26,
     "cursor": {
       "from": {
         "line": 0,
@@ -431,7 +431,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/11.Either.md": {
-    "scroll": 47.990950226244344,
+    "scroll": 0,
     "cursor": {
       "from": {
         "line": 0,
@@ -445,7 +445,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/13.linked-list.md": {
-    "scroll": 16.263736263736263,
+    "scroll": 0,
     "cursor": {
       "from": {
         "line": 0,
@@ -571,7 +571,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/20.group.md": {
-    "scroll": 681.0327868852459,
+    "scroll": 283.5,
     "cursor": {
       "from": {
         "line": 36,
@@ -692,6 +692,48 @@
       "to": {
         "line": 144,
         "ch": 27
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/functiona-programming-in-ts/36.Task-and-asynchronous-side-effects.md": {
+    "scroll": 6.923076923076923,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/functiona-programming-in-ts/32.covariant-contravariant-functors.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-course/09-task-either/task-either.md": {
+    "scroll": 198.29268292682926,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
       }
     },
     "expandedKeys": []
