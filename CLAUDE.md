@@ -196,12 +196,14 @@ explanations, what examples to show, and in what order.
 ```
 .claude/
 ├── skills/
-│   └── dsl-writer/
-│       ├── SKILL.md                  ← main guide (patterns, decision tree, code examples)
-│       └── references/
-│           ├── patterns.md           ← full pattern catalogue (8 patterns + tradeoffs)
-│           ├── external-dsl.md       ← lexer → parser → AST → interpreter walkthrough
-│           └── real-world-examples.md ← Knex, Zod, RxJS, Effect, Prisma annotated
+│   ├── dsl-writer/
+│   │   ├── SKILL.md                  ← main guide (patterns, decision tree, code examples)
+│   │   └── references/
+│   │       ├── patterns.md           ← full pattern catalogue (8 patterns + tradeoffs)
+│   │       ├── external-dsl.md       ← lexer → parser → AST → interpreter walkthrough
+│   │       └── real-world-examples.md ← Knex, Zod, RxJS, Effect, Prisma annotated
+│   └── v8-internals/
+│       └── SKILL.md                  ← V8 pipeline, GC, memory model, array kinds, strings
 ├── agents/
 │   ├── author.md
 │   ├── researcher.md
@@ -222,6 +224,8 @@ The check is simple:
 
 - Topic mentions "DSL", "domain-specific language", "builder pattern", "fluent API",
   "pipeline DSL", "rule engine", "query builder" → read `dsl-writer/SKILL.md`
+- Topic mentions "v8", "javascript engine", "движок v8", "jit", "turbofan", "ignition",
+  "hidden classes", "garbage collection", "оптимизации v8" → read `v8-internals/SKILL.md`
 
 ## Adding new skills
 

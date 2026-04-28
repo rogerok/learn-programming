@@ -8,6 +8,7 @@ aliases: [Internals, Внутренности JS]
 ## V8 / JavaScript Engine
 
 - [[jit-compilation|JIT-компиляция в V8: Ignition, TurboFan, Hidden Classes]]
+- [[v8-engine-internals|V8 Engine Internals: пайплайн, память, GC, массивы, строки]]
 
 ## Связанные темы
 
