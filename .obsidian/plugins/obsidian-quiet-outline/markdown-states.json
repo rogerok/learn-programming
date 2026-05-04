@@ -389,14 +389,14 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch09-monads/monads.md": {
-    "scroll": 317.9398496240602,
+    "scroll": 127.79017857142857,
     "cursor": {
       "from": {
-        "line": 0,
+        "line": 4,
         "ch": 0
       },
       "to": {
-        "line": 0,
+        "line": 4,
         "ch": 0
       }
     },
@@ -459,7 +459,7 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch10-applicative-functors/applicative-functors.md": {
-    "scroll": 417.84615384615387,
+    "scroll": 459.4687767322498,
     "cursor": {
       "from": {
         "line": 0,
@@ -571,7 +571,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/functiona-programming-in-ts/20.group.md": {
-    "scroll": 283.5,
+    "scroll": 311.21875,
     "cursor": {
       "from": {
         "line": 36,
@@ -683,15 +683,15 @@
     "expandedKeys": []
   },
   "src/02-typescript/fp-ts/fp-ts-turorial/4.IO.md": {
-    "scroll": 260.70437017994857,
+    "scroll": 127.33907382127481,
     "cursor": {
       "from": {
-        "line": 144,
-        "ch": 27
+        "line": 140,
+        "ch": 0
       },
       "to": {
-        "line": 144,
-        "ch": 27
+        "line": 140,
+        "ch": 0
       }
     },
     "expandedKeys": []
@@ -726,6 +726,146 @@
   },
   "src/02-typescript/fp-course/09-task-either/task-either.md": {
     "scroll": 1025.205357142857,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-course/06-applicative/applicative.md": {
+    "scroll": 402.0419161676647,
+    "cursor": {
+      "from": {
+        "line": 13,
+        "ch": 133
+      },
+      "to": {
+        "line": 13,
+        "ch": 133
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-course/04-category-theory/category-theory.md": {
+    "scroll": 549.3863636363636,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-course/05-monad/monad.md": {
+    "scroll": 289.3798363095238,
+    "cursor": {
+      "from": {
+        "line": 136,
+        "ch": 197
+      },
+      "to": {
+        "line": 136,
+        "ch": 197
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/functiona-programming-in-ts/34.IO.md": {
+    "scroll": 0.9751142712036567,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-ts/mostly-adequate/ch09-monads/ch09-monads.md": {
+    "scroll": 10.787430351686538,
+    "cursor": {
+      "from": {
+        "line": 25,
+        "ch": 13
+      },
+      "to": {
+        "line": 25,
+        "ch": 13
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/core/async/5.asynchronous-flow.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/05-frontend/react/advanced/5.Memoization with useMemo, useCallback and React.memo.md": {
+    "scroll": 352.3666666666667,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/05-frontend/react/refactor-like-a-superhero/09-functional-pipeline.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-ts/mostly-adequate/ch10-applicative-functors/ch10-applicative-functors.md": {
+    "scroll": 649.8233695652174,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-ts/mostly-adequate/ch10-applicative-functors/ch10-research-brief.md": {
+    "scroll": 60.417910447761194,
     "cursor": {
       "from": {
         "line": 0,
