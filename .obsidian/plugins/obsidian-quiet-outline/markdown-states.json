@@ -877,5 +877,19 @@
       }
     },
     "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/cps/cps.md": {
+    "scroll": 308.875,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
   }
 }
