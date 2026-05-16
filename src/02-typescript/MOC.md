@@ -60,6 +60,7 @@ aliases: [TypeScript]
 
 - [[fp-ts/fp-ts-roadmap|Study Plan: fp-ts]]
 - [[fp-ts/fp-ts-phase-1-2|fp-ts -- Теория и Core Types]]
+- [[functiona-programming-in-ts/reflection-without-remorse|Reflection without Remorse: скрытые последовательности операций]]
 - [[fp-ts/mostly-adequate/ch03-pure-functions|Pure Functions через призму fp-ts]]
 - [[fp-ts/mostly-adequate/ch04-currying/ch04-currying|Currying через призму fp-ts]]
 - [[fp-ts/mostly-adequate/ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]]

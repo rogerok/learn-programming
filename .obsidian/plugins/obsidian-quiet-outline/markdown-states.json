@@ -347,7 +347,7 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch08-functors-and-containers/functors-and-containers.md": {
-    "scroll": 284.12885662431944,
+    "scroll": 844.9069767441861,
     "cursor": {
       "from": {
         "line": 0,
@@ -389,7 +389,7 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch09-monads/monads.md": {
-    "scroll": 127.79017857142857,
+    "scroll": 37.21336459554514,
     "cursor": {
       "from": {
         "line": 4,
@@ -459,7 +459,7 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch10-applicative-functors/applicative-functors.md": {
-    "scroll": 459.4687767322498,
+    "scroll": 646.1634241245137,
     "cursor": {
       "from": {
         "line": 0,
@@ -739,7 +739,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/fp-course/06-applicative/applicative.md": {
-    "scroll": 402.0419161676647,
+    "scroll": 212.39271255060729,
     "cursor": {
       "from": {
         "line": 13,
@@ -753,7 +753,7 @@
     "expandedKeys": []
   },
   "src/02-typescript/fp-course/04-category-theory/category-theory.md": {
-    "scroll": 549.3863636363636,
+    "scroll": 163.5,
     "cursor": {
       "from": {
         "line": 0,
@@ -879,7 +879,63 @@
     "expandedKeys": []
   },
   "src/01-javascript/patterns/fp/cps/cps.md": {
-    "scroll": 308.875,
+    "scroll": 384.75,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/01-javascript/patterns/fp/fp-example-app/fp-example-app.md": {
+    "scroll": 257.5,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "2026-05-08.md": {
+    "scroll": 0,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-course/02-types-adt-option/types-adt-option.md": {
+    "scroll": 537.5384615384615,
+    "cursor": {
+      "from": {
+        "line": 0,
+        "ch": 0
+      },
+      "to": {
+        "line": 0,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
+  },
+  "src/02-typescript/fp-course/03-functor/functor.md": {
+    "scroll": 331.5139664804469,
     "cursor": {
       "from": {
         "line": 0,
