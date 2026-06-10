@@ -1,0 +1,37 @@
+#separator:tab
+#notetype:Basic
+#deck:CS::CSAPP::3.2 Program Encodings
+#tags column:3
+Какую роль в GCC pipeline играет команда `gcc -Og -o p p1.c p2.c`?	Она запускает весь pipeline: preprocessing, compilation в assembly, assembly в object files, linking с библиотеками и создание executable `p`.	cs::csapp::machine-code::gcc
+Что делает GCC driver?	`gcc` как driver вызывает несколько инструментов toolchain: preprocessor, compiler, assembler и linker.	cs::csapp::machine-code::gcc
+Что создает команда `gcc -Og -S mstore.c`?	Assembly file `mstore.s`; pipeline останавливается после compilation и до assembler.	cs::csapp::machine-code::assembly
+Что создает команда `gcc -Og -c mstore.c`?	Relocatable object file `mstore.o`; compiler и assembler уже отработали, linker еще не запускался.	cs::csapp::machine-code::object-code
+Зачем в CS:APP 3.2 используется `-Og`?	Чтобы получить реалистичный compiler output, который все еще достаточно близок к структуре исходного C-кода для учебного анализа.	cs::csapp::machine-code::optimization
+Почему `-O2` или `-O3` хуже подходят для первого чтения assembly?	Они могут сильнее перестраивать код: inline, удалять переменные, менять циклы и порядок вычислений, поэтому связь с source code становится менее очевидной.	cs::csapp::machine-code::optimization
+Что такое `.s` файл?	Текстовый assembly input для assembler: содержит инструкции и assembler directives.	cs::csapp::machine-code::assembly
+Что такое `.o` файл?	Relocatable object file в binary format: содержит машинные байты и служебную информацию для linker, но обычно не является самостоятельной программой.	cs::csapp::machine-code::object-code
+Что такое executable file в контексте 3.2?	Связанный файл, который ОС может загрузить и запустить; содержит машинный код, metadata, startup/runtime information и ссылки на библиотеки.	cs::csapp::machine-code::executable
+Что делает `objdump -d`?	Дизассемблирует секции машинного кода из object или executable file и показывает bytes вместе с assembly-представлением.	cs::csapp::machine-code::objdump
+Почему `objdump` не восстанавливает исходный C-код?	Он декодирует машинные bytes в инструкции; локальные имена, C-типы и структура source code в общем случае уже потеряны.	cs::csapp::machine-code::disassembly
+Что означает команда GDB `x/24xb multstore`?	Examine memory: показать 24 единицы в hexadecimal format, каждая единица byte, начиная с адреса symbol `multstore`. Число 24 берется с запасом; конкретная длина функции зависит от toolchain.	cs::csapp::machine-code::gdb
+Что такое ISA?	Instruction Set Architecture: контракт, описывающий инструкции, регистры, формат инструкций и их влияние на видимое состояние машины.	cs::csapp::machine-code::isa
+Почему ISA-модель выглядит последовательной, хотя CPU может выполнять инструкции сложнее?	ISA задает наблюдаемое поведение как последовательное выполнение; микроархитектура может использовать pipeline, speculation и out-of-order execution, сохраняя этот контракт.	cs::csapp::machine-code::isa
+Что хранит `%rip` в x86-64?	Instruction pointer: адрес следующей инструкции, которую должна выполнить программа.	cs::csapp::x86-64::registers
+Для чего нужны general-purpose registers в x86-64?	Они хранят целые числа, адреса, временные значения, аргументы функций, local values и return values.	cs::csapp::x86-64::registers
+Для чего нужны condition codes / flags?	Они сохраняют информацию о результатах арифметических и логических операций, которую используют conditional jumps и conditional moves.	cs::csapp::x86-64::flags
+Как machine code относится к C-типам?	Machine code обычно не хранит C-типы: остаются bytes, addresses, registers и размеры операций; смысл задают инструкции, compiler и соглашения.	cs::csapp::machine-code::types
+Что означает `(%rbx)` в AT&T syntax?	Memory operand: обратиться к памяти по адресу, который хранится в register `%rbx`.	cs::csapp::assembly::att
+В чем главное отличие порядка операндов AT&T и Intel syntax?	AT&T обычно пишет `source, destination`; Intel обычно пишет `destination, source`.	cs::csapp::assembly::syntax
+Как AT&T `movq %rax, (%rbx)` записывается в Intel syntax?	`mov QWORD PTR [rbx], rax`; обе формы означают запись значения `rax` в память по адресу `rbx`.	cs::csapp::assembly::syntax
+Почему байты из твоего `objdump` могут отличаться от байтов в CS:APP?	Версия GCC, target options, PIE, security features вроде `endbr64`, ABI и platform settings могут менять конкретный machine code.	cs::csapp::machine-code::toolchain
+Что такое `endbr64` в контексте упражнений 3.2?	Дополнительная инструкция, которую современные toolchains могут вставлять для защитных механизмов; она меняет bytes, но не отменяет связь bytes -> instructions -> behavior.	cs::csapp::machine-code::toolchain
+Почему object file и executable показывают разные адреса в disassembly?	Object file еще relocatable; linker позже размещает код, связывает symbols и заполняет targets вызовов в executable.	cs::csapp::machine-code::linking
+Почему вызов `mult2` в object file может содержать placeholder bytes?	Assembler еще не знает финальный адрес `mult2`; linker разрешит symbol и relocation при создании executable.	cs::csapp::machine-code::linking
+Что такое assembler directives?	Строки вроде `.file`, `.text`, `.globl`, `.type`, `.size`, которые управляют assembler/linker и не являются обычными CPU-инструкциями.	cs::csapp::assembly::directives
+Почему executable обычно больше, чем код твоих функций?	Он содержит startup code, metadata, dynamic linking information, sections, symbols/debug info при наличии и связи с runtime/libraries.	cs::csapp::machine-code::executable
+Какой главный учебный вывод CS:APP 3.2?	C-программа проходит через toolchain и становится машинными bytes; assembly и disassembly помогают читать эти bytes и связывать их с поведением программы.	cs::csapp::machine-code::summary
+В строке `4: e8 00 00 00 00 call 9 <multstore+0x9>` где offset, где bytes, где instruction?	Offset: `4:`. Bytes: `e8 00 00 00 00`. Instruction/disassembly: `call 9 <multstore+0x9>`.	cs::csapp::machine-code::objdump
+Почему `.globl multstore` не является CPU-инструкцией?	Это assembler directive: она сообщает assembler/linker о symbol visibility, но CPU не исполняет ее как instruction.	cs::csapp::assembly::directives
+Что меняет инструкция AT&T `movq %rax, (%rbx)` в machine state?	Она записывает 8-byte значение из `%rax` в память по адресу, который хранится в `%rbx`; регистр `%rbx` остается адресом.	cs::csapp::assembly::att
+Что меняет инструкция `call mult2` на высоком уровне?	Она передает управление функции `mult2` и сохраняет информацию для возврата; детали stack/calling convention изучаются позже.	cs::csapp::assembly::call
+Что означает `48 89 d3` в строке `1: 48 89 d3 mov %rdx,%rbx`?	Это machine-code bytes одной инструкции; `objdump` декодирует их как `mov %rdx,%rbx`.	cs::csapp::machine-code::bytes

@@ -1,0 +1,40 @@
+#separator:tab
+#notetype:Basic
+#deck:CS::CSAPP::3.3 Data Formats
+#tags column:3
+Какой главный вопрос решает CS:APP 3.3 «Форматы данных»?	Сколько байтов берет конкретная машинная операция и как этот размер связан с C-типом, ABI и суффиксом assembly-инструкции.	cs::csapp::machine-code::data-formats
+Что означает `byte` в терминологии x86/Intel?	`byte` означает 8 bits, то есть 1 byte; в integer assembly suffix обычно `b`.	cs::csapp::x86-64::data-size
+Что означает `word` в терминологии x86/Intel?	`word` означает 16 bits, то есть 2 bytes; в integer assembly suffix обычно `w`.	cs::csapp::x86-64::data-size
+Что означает `double word` в терминологии x86/Intel?	`double word` означает 32 bits, то есть 4 bytes; в integer assembly suffix обычно `l`.	cs::csapp::x86-64::data-size
+Что означает `quad word` в терминологии x86/Intel?	`quad word` означает 64 bits, то есть 8 bytes; в integer assembly suffix обычно `q`.	cs::csapp::x86-64::data-size
+Почему x86 `word` не означает 64-bit machine word?	В x86 это исторический термин из 16-bit архитектуры: `word` закреплен за 16 bits, даже на `x86-64`.	cs::csapp::x86-64::terminology
+Какой размер у C `char` в таблице CS:APP 3.3 для x86-64/Linux?	`char` занимает 1 byte и соответствует machine-level `byte`, suffix `b`.	cs::csapp::c::sizeof
+Какой размер у C `short` в таблице CS:APP 3.3 для x86-64/Linux?	`short` занимает 2 bytes и соответствует machine-level `word`, suffix `w`.	cs::csapp::c::sizeof
+Какой размер у C `int` в таблице CS:APP 3.3 для x86-64/Linux?	`int` занимает 4 bytes и соответствует machine-level `double word`, suffix `l`.	cs::csapp::c::sizeof
+Какой размер у C `long` в таблице CS:APP 3.3 для x86-64/Linux?	`long` занимает 8 bytes и соответствует machine-level `quad word`, suffix `q`.	cs::csapp::c::sizeof
+Какой размер у pointer в таблице CS:APP 3.3 для x86-64/Linux?	Pointer занимает 8 bytes и соответствует machine-level `quad word`, suffix `q`.	cs::csapp::c::pointers
+Почему `char *` и `int *` обычно имеют одинаковый размер на x86-64/Linux?	Оба хранят адрес; размер pointer value не зависит от размера объекта, на который он указывает.	cs::csapp::c::pointers
+Почему `int *p` занимает 8 bytes, но `*p = x` для `int` записывает 4 bytes?	`p` сам является 8-byte адресом, а `*p` имеет тип `int`, поэтому размер записываемого объекта равен 4 bytes.	cs::csapp::c::pointers
+Что означает suffix `b` в integer assembly-инструкции?	Операция работает с 1 byte.	cs::csapp::assembly::suffixes
+Что означает suffix `w` в integer assembly-инструкции?	Операция работает с 2 bytes, то есть x86 `word`.	cs::csapp::assembly::suffixes
+Что означает suffix `l` в integer assembly-инструкции?	Операция работает с 4 bytes, то есть x86 `double word`; это не означает C `long` на x86-64/Linux.	cs::csapp::assembly::suffixes
+Что означает suffix `q` в integer assembly-инструкции?	Операция работает с 8 bytes, то есть x86 `quad word`.	cs::csapp::assembly::suffixes
+Почему `movl` не означает C `long` в CS:APP на x86-64/Linux?	В integer assembly suffix `l` означает 32-bit `double word`, а C `long` в LP64 обычно занимает 8 bytes и чаще соответствует `q`.	cs::csapp::assembly::pitfalls
+Сколько байтов записывает `movb $0, (%rdi)`?	1 byte по адресу, который хранится в `%rdi`.	cs::csapp::assembly::mov
+Сколько байтов записывает `movw $0, (%rdi)`?	2 bytes по адресу, который хранится в `%rdi`.	cs::csapp::assembly::mov
+Сколько байтов записывает `movl $0, (%rdi)`?	4 bytes по адресу, который хранится в `%rdi`.	cs::csapp::assembly::mov
+Сколько байтов записывает `movq $0, (%rdi)`?	8 bytes по адресу, который хранится в `%rdi`.	cs::csapp::assembly::mov
+В `void store_int(int *p, int x) { *p = x; }` какой размер store ожидается на x86-64/Linux?	4-byte store, например `movl`, потому что записывается объект типа `int`.	cs::csapp::assembly::c-mapping
+В `void store_long(long *p, long x) { *p = x; }` какой размер store ожидается на x86-64/Linux?	8-byte store, например `movq`, потому что записывается объект типа `long` в LP64.	cs::csapp::assembly::c-mapping
+В `void set_pointer(long **dst, long *src) { *dst = src; }` какой размер store ожидается на x86-64/Linux?	8-byte store, например `movq`, потому что записывается pointer value.	cs::csapp::assembly::c-mapping
+Что такое LP64 data model на уровне `int`, `long` и pointer?	`int` = 4 bytes, `long` = 8 bytes, pointer = 8 bytes.	cs::csapp::abi::lp64
+Что такое LLP64 caveat на уровне `long` и pointer?	В LLP64 pointer обычно 8 bytes, но `long` остается 4 bytes; это характерно для Windows x64.	cs::csapp::abi::llp64::caveat
+Почему таблица CS:APP 3.3 не является универсальным законом C?	Размеры фундаментальных типов зависят от platform ABI; таблица описывает конкретную x86-64/Linux-style модель курса.	cs::csapp::abi::data-model
+Какой размер у C `float` в таблице CS:APP 3.3?	`float` занимает 4 bytes и соответствует single precision, suffix `s` в floating-point context.	cs::csapp::floating-point::float
+Какой размер у C `double` в таблице CS:APP 3.3?	`double` занимает 8 bytes и соответствует double precision, suffix `l` в floating-point context.	cs::csapp::floating-point::double
+Почему suffix `l` может быть ловушкой при floating-point и integer-инструкциях?	В integer context `l` означает 4-byte double word, а в floating-point context может относиться к double precision; смысл зависит от семейства инструкций.	cs::csapp::assembly::pitfalls
+Почему `float` и `double` не стоит объяснять только через integer `movb/w/l/q`?	Floating-point операции часто используют отдельные SSE/AVX-инструкции и XMM-регистры, а не только integer instruction family.	cs::csapp::floating-point::assembly::caveat
+Что важно помнить про `long double` в CS:APP 3.3?	Это platform-specific caveat: на x86-64 System V часто хранится 80-bit extended precision с padding до `sizeof(long double) == 16`; на других ABI может быть иначе.	cs::csapp::floating-point::long-double::caveat
+Какие три уровня чаще всего смешивают при ошибках в CS:APP 3.3?	C type, ABI data model и assembly instruction suffix.	cs::csapp::machine-code::pitfalls
+Какой первый вопрос полезно задавать при чтении assembly-инструкции из раздела 3.3?	«Какой размер операции?» Затем уже связывать инструкцию с C-типом, адресом и ABI.	cs::csapp::assembly::reading
+Чем размер pointer отличается от размера pointed value?	Размер pointer говорит, сколько байтов занимает адрес; размер pointed value говорит, сколько байтов занимает объект по этому адресу.	cs::csapp::c::pointers

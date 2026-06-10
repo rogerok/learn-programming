@@ -7,6 +7,7 @@ allowed-tools: Read, Write, Glob, Grep, Bash, WebSearch, WebFetch, Task
 
 Do NOT run all steps automatically. Execute ONLY Step 1 now.
 After completing each step, stop and ask the user (in Russian) whether to proceed to the next step.
+Use stop-slop skill
 
 ## Step 1: Research (agent: researcher)
 

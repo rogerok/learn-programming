@@ -18,7 +18,8 @@ aliases: [CS:APP, Computer Systems]
 | 2.2 | Integer Representations | Done |
 | 2.3 | Integer Arithmetic | Done |
 | 2.4 | Floating Point (IEEE 754) | -- |
-| 3 | Machine-Level Representation of Programs | -- |
+| 3.1 | Machine-Level Representation of Programs: Historical Perspective | Done |
+| 3.2 | Program Encodings | Done |
 | 4 | Processor Architecture | -- |
 | 5 | Optimizing Program Performance | -- |
 | 6 | The Memory Hierarchy | -- |
@@ -58,6 +59,25 @@ aliases: [CS:APP, Computer Systems]
 
 > [!warning] Ещё не написано
 > Следующий раздел: IEEE 754, float/double representation, rounding, FP arithmetic.
+
+## Глава 3: Machine-Level Representation of Programs
+
+### 3.1 Historical Perspective
+
+- [[3.chapter/3.1/3.1-overview|Обзор: история x86, IA32, AMD64/x86-64, обратная совместимость, закон Мура]]
+- [[3.chapter/3.1/exercises|Упражнения: термины x86, legacy/core/background, проверка архитектуры машины]]
+
+### 3.2 Program Encodings
+
+- [[3.chapter/3.2/3.2-overview|Обзор: GCC pipeline, -Og, assembly, object code, executable, objdump, gdb]]
+- [[3.chapter/3.2/exercises|Упражнения: .s/.o/executable, objdump, gdb bytes, AT&T vs Intel syntax]]
+- [[3.chapter/3.2/anki-cards.txt|Anki: команды toolchain, machine state, disassembly, syntax]]
+
+### 3.3 Data Formats
+
+- [[3.chapter/3.3/3.3-overview|Обзор: размеры C-типов, byte/word/double word/quad word, суффиксы b/w/l/q]]
+- [[3.chapter/3.3/exercises|Упражнения: sizeof, movb/movw/movl/movq, pointer size vs pointed value size]]
+- [[3.chapter/3.3/anki-cards.txt|Anki: форматы данных, суффиксы инструкций, LP64/LLP64]]
 
 ## Связанные темы
 
