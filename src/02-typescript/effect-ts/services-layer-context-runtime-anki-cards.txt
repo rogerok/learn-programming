@@ -1,0 +1,106 @@
+#separator:tab
+#notetype:Basic
+#deck:Effect-TS::04 Services и Layer
+#tags column:3
+Что такое сервис в Effect-TS?	Сервис — это контракт зависимости: имя/тег плюс форма методов, которые программа может запросить из окружения R.	effect-ts::services::definition
+Что такое Layer в Effect-TS?	Layer — это рецепт сборки сервиса или графа сервисов с мемоизацией, зависимостями и управлением ресурсами.	effect-ts::layer::definition
+Какую роль играет R в Effect<A, E, R> при dependency injection?	R показывает, какие сервисы нужно предоставить программе перед запуском. Если R не закрыт, программу нельзя безопасно запускать.	effect-ts::environment::r
+Почему DI в Effect считается типобезопасным?	Потому что недостающие зависимости видны в типе R и ловятся компилятором, а не всплывают как runtime-ошибка контейнера.	effect-ts::di::type-safety
+Какую проблему решает DI по сравнению с передачей db через все функции?	DI убирает prop drilling: промежуточные функции не обязаны принимать и передавать зависимости, которыми сами не пользуются.	effect-ts::di::prop-drilling
+Что означает prop drilling в контексте зависимостей?	Это протаскивание зависимости через несколько слоёв вызовов только ради листовой функции, которая реально её использует.	effect-ts::di::prop-drilling
+Что задаёт строка в Context.Tag('Pulse/HttpService')?	Уникальный runtime-идентификатор сервиса в Context; по нему Effect различает сервисы внутри окружения.	effect-ts::context-tag::name
+Почему имя Context.Tag должно быть уникальным?	Если два разных тега имеют одну строку-идентификатор, они могут конфликтовать в runtime-контексте.	effect-ts::context-tag::name
+Как обычно именовать Context.Tag в проекте?	С префиксом проекта или модуля, например 'Pulse/HttpService', чтобы снизить риск конфликтов.	effect-ts::context-tag::naming
+Что описывает второй generic-параметр в Context.Tag<Self, Shape>?	Shape — форму сервиса: readonly-поля и методы, которые получит потребитель.	effect-ts::context-tag::shape
+Зачем первый generic Context.Tag ссылается на сам класс сервиса?	Чтобы TypeScript корректно связывал тег с типом требования в R, например Effect<A, E, HttpService>.	effect-ts::context-tag::self
+Как достать сервис внутри Effect.gen?	Через yield* Service, например const http = yield* HttpService.	effect-ts::context-tag::access
+Что происходит с R после const http = yield* HttpService внутри программы?	В R появляется требование HttpService, если оно ещё не было закрыто.	effect-ts::environment::r
+Почему Effect.runPromise(probe) не должен компилироваться, если probe требует HttpService?	Потому что runPromise запускает только Effect с R = never; HttpService нужно сначала предоставить.	effect-ts::runtime::provide
+Что делает Effect.provideService(Tag, impl)?	Подкладывает готовую синхронную реализацию сервиса и убирает этот Tag из R программы.	effect-ts::provide::service
+Когда использовать Effect.provideServiceEffect?	Когда реализация сервиса строится эффектно: нужна асинхронная инициализация, логирование, чтение конфига или открытие ресурса.	effect-ts::provide::service-effect
+Что такое effectful constructor для сервиса?	Конструктор, который возвращает Effect со значением сервиса, а не готовый объект сразу.	effect-ts::services::constructor
+Как вывести форму Context.Tag из effectful constructor?	Через Effect.Effect.Success<typeof Constructor>, чтобы не дублировать Shape вручную.	effect-ts::context-tag::shape
+Какая реализация сервиса побеждает при вложенных provideService?	Ближайшая внутренняя реализация перекрывает внешнюю; это локальный override, а не конфликт.	effect-ts::provide::override
+Как читать тип Layer<ROut, E, RIn>?	ROut — какие сервисы Layer строит; E — ошибка сборки; RIn — какие зависимости нужны для сборки.	effect-ts::layer::type
+Чем Layer принципиально отличается от Effect.provideServiceEffect?	Layer мемоизирует сборку в графе зависимостей; provideServiceEffect вычисляет конструктор каждый раз, когда его подают.	effect-ts::layer::memoization
+Что делает Layer.effect(Tag, ctor)?	Создаёт Layer, который строит сервис Tag через эффектный конструктор ctor.	effect-ts::layer::effect
+Что делает Layer.succeed(Tag, value)?	Создаёт Layer из уже готового синхронного значения сервиса.	effect-ts::layer::succeed
+Как подать Layer программе?	Через Effect.provide(layer): требование программы к сервисам закрывается Layer-графом.	effect-ts::provide::effect
+Как подать зависимость одному Layer-у?	Через Layer.provide(depLayer): вход RIn конструктора закрывается другим Layer-ом.	effect-ts::layer::provide
+Главное различие Effect.provide и Layer.provide?	Effect.provide подаёт Layer программе; Layer.provide подаёт зависимость другому Layer-у при сборке графа.	effect-ts::provide::difference
+Что делает Layer.provide с зависимостью с точки зрения внешнего API Layer-а?	Он прячет зависимость внутри: наружу остаётся только сервис, который строит основной Layer.	effect-ts::layer::provide
+Почему цепочка нескольких Effect.provide может быть опасна?	Каждый provide может создать отдельный scope/MemoMap, из-за чего общие зависимости строятся несколько раз и ломается lifecycle.	effect-ts::provide::anti-pattern
+Как правильно подать несколько Layer-ов программе?	Сначала объединить их через Layer.mergeAll(...) или передать массив в один Effect.provide([...]).	effect-ts::layer::merge-all
+Что делает Layer.mergeAll?	Склеивает несколько Layer-ов в один общий граф, где общие Layer-ссылки мемоизируются и строятся один раз.	effect-ts::layer::merge-all
+Почему Logger.Default можно упомянуть в нескольких dependencies и не получить несколько Logger?	Если используется одна и та же Layer-ссылка внутри одного графа/MemoMap, Effect построит её один раз.	effect-ts::layer::memoization
+Когда использовать Layer.fresh?	Когда сознательно нужны разные экземпляры одного и того же Layer-а, например два независимых database pool.	effect-ts::layer::fresh
+Что делает Layer.fresh(L)?	Отключает обычное разделение экземпляра для L и заставляет построить свежую копию.	effect-ts::layer::fresh
+Почему Layer.fresh не стоит ставить "на всякий случай"?	Он ломает полезную мемоизацию и может случайно создать лишние подключения, файлы или фоновые процессы.	effect-ts::layer::fresh
+Что такое dependency leak в сервисе Effect?	Ситуация, когда метод сервиса внутри себя делает yield* другой зависимости, и эта зависимость всплывает наружу в R метода.	effect-ts::services::dependency-leak
+Главное правило против dependency leak?	Глобальные зависимости нужно брать в конструкторе Layer-а, а методы должны использовать уже замкнутые значения.	effect-ts::services::dependency-leak
+Почему yield* Database внутри метода UserRepository.getUser — ошибка для глобальной зависимости?	Layer.provide(DatabaseLive) закрывает Database только для конструктора, а метод будет требовать Database при каждом вызове.	effect-ts::services::dependency-leak
+Как исправить утечку Database из метода репозитория?	Сделать Layer.effect, взять const database = yield* Database в конструкторе и вернуть методы, которые используют database из замыкания.	effect-ts::services::constructor
+Когда зависимость допустимо брать внутри метода сервиса?	Когда это request-scoped значение, известное только на конкретном вызове: CurrentUser, RequestId, CurrentMonitor.	effect-ts::services::request-scoped
+Почему request-scoped зависимость нельзя брать в конструкторе глобального Layer-а?	Конструктор выполняется один раз, и значение "заморозится" для всех будущих запросов.	effect-ts::services::request-scoped
+Что даёт CurrentMonitor.provide(monitor) как static helper?	Короткий и явный способ закрыть request-scoped Context.Tag в точке, где monitor реально известен.	effect-ts::services::request-scoped
+Что делает Layer.provideMerge(dep)?	Одновременно подаёт зависимость основному Layer-у и оставляет эту зависимость доступной снаружи в ROut.	effect-ts::layer::provide-merge
+Когда нужен Layer.provideMerge вместо Layer.provide?	Когда зависимость нужна и сервису при сборке, и внешней программе напрямую.	effect-ts::layer::provide-merge
+Чем Effect.Service удобнее Context.Tag плюс отдельный Layer?	Effect.Service одновременно объявляет тег, выводит форму, создаёт .Default Layer и поддерживает dependencies.	effect-ts::effect-service::definition
+Для каких сервисов подходит Effect.Service?	Для глобальных сервисов, которые имеют каноническую реализацию и строятся один раз на runtime.	effect-ts::effect-service::use-case
+Для чего Effect.Service не подходит?	Для request-scoped значений вроде CurrentMonitor или CurrentUser, у которых нет одного глобального экземпляра.	effect-ts::effect-service::request-scoped
+Что такое Logger.Default у класса Effect.Service?	Готовый Layer, который строит сервис Logger по описанному constructor config.	effect-ts::effect-service::default
+Что делает поле dependencies в Effect.Service?	Закрывает зависимости конструктора через указанные Layer-ы, чтобы .Default был самодостаточным относительно этих зависимостей.	effect-ts::effect-service::dependencies
+Какие варианты конструктора поддерживает Effect.Service?	effect для эффектного конструктора, scoped для ресурсов со Scope, sync для синхронного конструктора, succeed для готового значения.	effect-ts::effect-service::constructors
+Когда выбрать effect в Effect.Service?	Когда сервис строится через Effect: может логировать, читать зависимости, выполнять async-инициализацию или падать типизированной ошибкой.	effect-ts::effect-service::constructors
+Когда выбрать scoped в Effect.Service?	Когда сервис открывает ресурс или запускает процесс, который должен закрыться вместе со Scope.	effect-ts::effect-service::scoped
+Когда выбрать sync в Effect.Service?	Когда сервис можно построить синхронной функцией без ожидаемых ошибок.	effect-ts::effect-service::constructors
+Когда выбрать succeed в Effect.Service?	Когда готовое значение сервиса уже есть и не требует вычислений.	effect-ts::effect-service::constructors
+Зачем нужен Service.make({...}) у Effect.Service?	Он создаёт корректную реализацию сервиса для Layer.succeed/тестов и проставляет внутренний _tag.	effect-ts::effect-service::make
+Почему в тестовом Layer.succeed часто пишут Logger.make({...}), а не просто объект?	Effect.Service ожидает внутренний идентификатор сервиса; make добавляет его типобезопасно.	effect-ts::effect-service::make
+Что такое default services в Effect?	Сервисы вроде Clock, Random, Console, Tracer, которые runtime предоставляет автоматически и которые не появляются в R.	effect-ts::default-services::definition
+Почему Clock.currentTimeMillis не добавляет Clock в R?	Clock — default service, поэтому runtime уже умеет предоставить его без явного Layer.	effect-ts::default-services::clock
+Что такое accessor в Effect?	Готовая функция/метод, которая достаёт сервис и вызывает его метод, например Clock.currentTimeMillis.	effect-ts::accessors::definition
+Как подменить Random локально в тесте?	Через Effect.withRandom(impl), например с Random.fixed([...]) для детерминированных значений.	effect-ts::default-services::random
+Как подменить Clock локально?	Через Effect.withClock(impl); в тестовой среде часто используют TestClock.	effect-ts::default-services::clock
+Почему accessors: true на собственных сервисах может быть опасен?	Accessor скрывает yield* Service внутри метода и может незаметно протащить зависимость наружу в R.	effect-ts::accessors::warning
+Практическое правило для accessors на своих сервисах?	Не включать их по умолчанию; лучше явно брать сервис в конструкторе и видеть зависимости.	effect-ts::accessors::practice
+Что делает Effect.serviceOption(Tag)?	Пытается достать сервис из Context как Option и не добавляет Tag в R, если сервиса нет.	effect-ts::optional-services::service-option
+Когда полезен Effect.serviceOption?	Когда зависимость действительно optional и дефолт/ветвление удобно решать в месте использования.	effect-ts::optional-services::service-option
+Минус Effect.serviceOption?	Дефолтное поведение легко продублировать в нескольких местах, если оно одинаковое.	effect-ts::optional-services::service-option
+Что такое Context.Reference?	Context.Tag со встроенным defaultValue: сервис можно yield*-ить без явного provide, потому что дефолт уже описан.	effect-ts::optional-services::context-reference
+Когда выбирать Context.Reference?	Для библиотечных или инфраструктурных optional-сервисов с разумным дефолтом.	effect-ts::optional-services::context-reference
+Когда лучше оставить Context.Tag вместо Context.Reference?	Когда optional-зависимость является частью бизнес-контракта и вызывающий должен явно видеть или закрывать её.	effect-ts::optional-services::context-tag
+Что такое scoped layer?	Layer, чей конструктор использует Scope для ресурса с finalizer-ом; ресурс живёт столько же, сколько scope Layer-а.	effect-ts::scoped-layer::definition
+Что делает Effect.acquireRelease(acquire, release)?	Открывает ресурс и регистрирует finalizer, который выполнится при закрытии Scope даже после ошибки.	effect-ts::scope::acquire-release
+Когда сработает finalizer scoped layer-а?	Когда закрывается Scope, в котором был построен Layer: после завершения программы или при runtime.dispose().	effect-ts::scope::finalizer
+Почему Storage с file handle должен быть scoped-сервисом?	Файл нужно открыть один раз на время жизни сервиса и гарантированно закрыть при остановке программы.	effect-ts::scoped-layer::storage
+Чем Effect.forkScoped отличается от Effect.fork внутри scoped layer?	forkScoped привязывает fiber к Scope сервиса; fork привязывается к текущему fiber конструктора и может завершиться сразу после сборки.	effect-ts::scope::fork-scoped
+Почему в Layer.scoped для фонового процесса нужен Effect.forkScoped?	Иначе фоновый fiber может умереть сразу после возврата объекта сервиса из конструктора.	effect-ts::scope::fork-scoped
+Что такое ManagedRuntime?	Долгоживущий runtime, который строит Layer-граф один раз, запускает много Effect-программ на этом графе и умеет закрывать ресурсы.	effect-ts::managed-runtime::definition
+Как создать ManagedRuntime?	ManagedRuntime.make(MainLive), где MainLive — собранный Layer-граф приложения.	effect-ts::managed-runtime::make
+Когда ManagedRuntime особенно нужен?	Когда есть несколько точек входа или много вызовов из внешнего фреймворка, и нельзя пересобирать сервисы на каждый запрос.	effect-ts::managed-runtime::use-case
+Строит ли ManagedRuntime.make(layer) сервисы сразу?	Нет, сборка ленится до первого запуска эффекта; можно прогреть через runtime.runPromise(Effect.void).	effect-ts::managed-runtime::lazy
+Что делает runtime.runPromise(eff)?	Запускает Effect на уже собранном или лениво собираемом Layer-графе ManagedRuntime.	effect-ts::managed-runtime::run-promise
+Зачем вызывать runtime.dispose()?	Чтобы закрыть Scope runtime: выполнить finalizer-ы, закрыть file handles и остановить forkScoped-фиберы.	effect-ts::managed-runtime::dispose
+Почему плохо писать runtime.runPromise(program.pipe(Effect.provide(MainLive)))?	Так создаётся новая вложенная сборка Layer-а, и сервисы runtime/MemoMap не переиспользуются.	effect-ts::managed-runtime::anti-pattern
+Что использовать для локального override внутри ManagedRuntime, если нужен provide?	Effect.provide(runtime), чтобы использовать MemoMap рантайма, а не пересобирать Layer заново.	effect-ts::managed-runtime::provide-runtime
+Что такое MemoMap в Effect Layer?	MemoMap — кеш построенных Layer-ов, благодаря которому один и тот же Layer-объект строится один раз в рамках графа/runtime.	effect-ts::memo-map::definition
+По какому ключу Effect мемоизирует Layer?	По ссылке на сам объект Layer, а не по тегу сервиса и не по параметрам фабрики.	effect-ts::memo-map::identity
+Почему Database.Default('localhost') дважды может построить два pool-а?	Каждый вызов фабрики возвращает новый Layer-объект; MemoMap видит две разные ссылки.	effect-ts::memo-map::identity
+Как гарантировать один экземпляр параметризованного Layer-а?	Сохранить Layer в переменную и передавать одну и ту же ссылку в dependencies/mergeAll.	effect-ts::memo-map::reuse
+Делят ли два ManagedRuntime один MemoMap по умолчанию?	Нет, у каждого ManagedRuntime свой MemoMap, поэтому один и тот же Layer может построиться отдельно.	effect-ts::memo-map::runtime
+Когда нужен Layer.makeMemoMap?	Когда несколько ManagedRuntime должны разделять одни и те же экземпляры Layer-ов.	effect-ts::memo-map::make
+Что делает Layer.launch(layer)?	Превращает Layer в долгоживущий Effect<never, E, R>, который держит сервисы запущенными до прерывания.	effect-ts::layer::launch
+Как мокать маленький сервис в тесте?	Через Layer.succeed(Tag, Tag.make({...})) с полной тестовой реализацией методов.	effect-ts::mocking::succeed
+Что делает Layer.mock(Tag, partial)?	Создаёт частичный мок: указанные методы работают, а неуказанные падают UnimplementedError-defect-ом при вызове.	effect-ts::mocking::layer-mock
+Когда Layer.mock особенно удобен?	Когда у сервиса много методов, а тест должен разрешить только конкретный путь выполнения.	effect-ts::mocking::layer-mock
+О чём сигналит частое использование Layer.mock для одного сервиса?	Сервис, вероятно, слишком большой; его стоит разбить по ответственности на меньшие сервисы.	effect-ts::mocking::service-size
+Почему Layer-моки лучше vi.mock для HttpService в Effect-программе?	Подмена идёт через типобезопасный DI-граф, без хрупкого мокания глобального fetch или ESM-модулей.	effect-ts::mocking::testing
+Как обычно собирать тестовый runtime?	Собрать TestLive через Layer.mergeAll(HttpTest, StorageInMemory, LoggerSilent/Default) и создать ManagedRuntime.make(TestLive).	effect-ts::testing::runtime
+Почему тестовый runtime тоже нужно dispose-ить?	Даже тестовые Layer-ы могут иметь scoped-ресурсы или forkScoped-фиберы; dispose закрывает их корректно.	effect-ts::testing::dispose
+Какой главный критерий: зависимость брать в конструкторе или методе?	Если значение глобальное и живёт весь runtime — в конструкторе. Если значение меняется на каждый запрос/операцию — в методе.	effect-ts::services::rule
+Как прочитать PulseProgram = Effect<void, PulseError, HttpService | Storage | Logger>?	Программа ничего не возвращает, может упасть PulseError и требует сервисы HttpService, Storage и Logger перед запуском.	effect-ts::pulse::program-type
+Что такое MainLive в архитектуре Pulse?	Production Layer-граф, обычно Layer.mergeAll(HttpService.Default, Storage.Default, Logger.Default), который закрывает зависимости приложения.	effect-ts::pulse::main-live
+Что такое MainTest в архитектуре Pulse?	Тестовый Layer-граф, где live-сервисы заменены управляемыми тестовыми реализациями, например HttpTest и StorageInMemory.	effect-ts::pulse::main-test
+Какой главный анти-паттерн урока про Layer?	Пересобирать Layer-граф на каждый запрос или цепочить provide так, что общие зависимости создаются несколько раз.	effect-ts::layer::anti-pattern
+Какой главный навык даёт тема Services и Layer?	Видеть зависимости как часть типа R, собирать их через Layer-граф один раз и подменять на границах программы.	effect-ts::services::summary

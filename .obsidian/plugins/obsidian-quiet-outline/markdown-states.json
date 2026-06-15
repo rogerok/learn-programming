@@ -1003,5 +1003,19 @@
       }
     },
     "expandedKeys": []
+  },
+  "src/cs/computer-system/3.chapter/3.3/3.3-overview.md": {
+    "scroll": 225.37203791469193,
+    "cursor": {
+      "from": {
+        "line": 3,
+        "ch": 0
+      },
+      "to": {
+        "line": 3,
+        "ch": 0
+      }
+    },
+    "expandedKeys": []
   }
 }
