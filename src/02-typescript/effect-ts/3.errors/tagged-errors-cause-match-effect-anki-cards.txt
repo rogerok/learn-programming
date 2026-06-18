@@ -2,123 +2,48 @@
 #notetype:Basic
 #deck:Effect-TS::03 Tagged Errors
 #tags column:3
-Что означает канал E в Effect<A, E, R> с точки зрения контракта?	E - это контракт ожидаемых actionable-ошибок: вызывающий видит, на какие провалы он может разумно отреагировать.	effect-ts::errors::e-channel
-Какой главный вопрос нужно задать, когда в E появляется новый класс ошибки?	"Кто и как будет это ловить?" Если нет конкретной реакции вызывающего, ошибка не должна жить в E.	effect-ts::errors::actionable
-Что такое actionable error?	Ошибка, на которую вызывающий может разумно отреагировать: повторить, подставить дефолт, переключиться на fallback, показать пользователю или записать метрику.	effect-ts::errors::actionable
-Что такое unactionable error?	Провал, на который данный вызывающий не может полезно отреагировать: баг программы, нарушенный инвариант, out of memory, лежащая инфраструктура без рабочего fallback.	effect-ts::errors::unactionable
-Почему unactionable errors вредно держать в E?	Они шумят в типе и вынуждают вызывающих писать catch "чтобы скомпилировалось", хотя осмысленной реакции у них нет.	effect-ts::errors::unactionable
-Куда в Effect обычно помещают unactionable errors?	В defect-канал, то есть в Cause.die, через Effect.die, Effect.dieMessage или Effect.orDie.	effect-ts::defects::die
-Какое ежедневное правило помогает не протаскивать ошибки слишком высоко по стеку?	Обрабатывай ошибку там, где известна реакция. Если верхние уровни не знают, что делать с ThumbnailError, не поднимай ее туда.	effect-ts::errors::discipline
-Что означает фраза "don't leak errors up the stack" в Effect-коде?	Не протаскивать внутренние ошибки модулей наверх без причины; оставлять в E только те ошибки, на которые следующий уровень действительно реагирует.	effect-ts::errors::discipline
-Если processImage обработал ThumbnailError дефолтом и DimensionError fallback-ом, но оставил MetadataError, какой смысл у E?	E стал точнее: MetadataError - единственная ошибка, которая реально важна вызывающему processImage.	effect-ts::errors::actionable
-Когда Effect.orDie может быть уместен для целой программы?	Когда на текущем уровне ни одна ошибка из E не actionable, и правильная реакция - завершиться через общий обработчик Cause/Sentry/logging.	effect-ts::defects::orDie
-Почему Effect.orDie нельзя ставить "просто чтобы скомпилировалось"?	Он переводит все ошибки E в defects и может скрыть actionable-ошибки, на которые вызывающий должен был отреагировать.	effect-ts::defects::orDie
-Что такое tagged-ошибка в Effect-стиле?	Ошибка-значение с устойчивым полем _tag, по которому TypeScript и Effect-комбинаторы могут сужать конкретный вариант ошибки.	effect-ts::tagged-errors::definition
-Зачем tagged-ошибке поле _tag?	_tag делает ошибку частью discriminated union: по нему работают catchTag, catchTags, Match.tag и exhaustiveness-проверки.	effect-ts::tagged-errors::_tag
-Что создает Data.TaggedError("Boom")<{ reason: string }>?	Класс ошибки с автоматическим _tag = "Boom", типизированными readonly-полями, объектным конструктором и yieldable-поведением внутри Effect.gen.	effect-ts::tagged-errors::data
-Как обычно объявляют tagged-ошибку через Data.TaggedError?	<code>class Boom extends Data.TaggedError("Boom")&lt;{ readonly reason: string }&gt; {}</code>	effect-ts::tagged-errors::syntax
-Почему имя класса и _tag обычно делают одинаковыми?	Это конвенция читаемости: NetworkError как класс и "NetworkError" как _tag легче искать, ловить и обсуждать на ревью.	effect-ts::tagged-errors::convention
-Почему поля tagged-ошибок обычно readonly?	Ошибка - это значение, описывающее причину провала. Ее не нужно мутировать после создания.	effect-ts::tagged-errors::readonly
-Что значит, что Data.TaggedError является yieldable error?	Инстанс ошибки можно yield* внутри Effect.gen как Effect.fail(error), без явного Effect.fail.	effect-ts::tagged-errors::yieldable
-Как записать провал Boom внутри Effect.gen через yieldable error?	<code>return yield* new Boom({ reason: "bad input" })</code>	effect-ts::tagged-errors::yieldable
-Зачем часто пишут return yield* new SomeError(...) внутри gen?	return помогает TypeScript правильно сужать дальнейший control flow: после такого провала код ниже считается недостижимым для этой ветки.	effect-ts::gen::return-yield-star
-Какой тип по смыслу имеет new NetworkError({ url, cause })?	Это и значение NetworkError, и Effect<never, NetworkError, never>, который можно yield* или pipe-ить.	effect-ts::tagged-errors::yieldable
-Что такое PulseError в уроке Pulse?	Экспортируемый union всех ожидаемых ошибок Pulse: NetworkError | HttpStatusError | BodyContractError | TimeoutError | ConfigParseError | StorageError.	effect-ts::pulse::errors
-Зачем держать общий alias PulseError?	Он задает дисциплину публичного E: наружу выходят только доменные ошибки Pulse, а не голые Error или unknown.	effect-ts::pulse::errors
-Какая ошибка Pulse описывает DNS/ECONNREFUSED/ECONNRESET?	NetworkError.	effect-ts::pulse::errors::network
-Какая ошибка Pulse описывает не тот HTTP-статус при пришедшем ответе?	HttpStatusError.	effect-ts::pulse::errors::http-status
-Какая ошибка Pulse описывает тело ответа, не соответствующее схеме?	BodyContractError.	effect-ts::pulse::errors::body-contract
-Какая ошибка Pulse описывает превышение timeout?	TimeoutError.	effect-ts::pulse::errors::timeout
-Какая ошибка Pulse описывает проблему чтения, JSON.parse или Schema-декодирования конфига?	ConfigParseError.	effect-ts::pulse::errors::config
-Какая ошибка Pulse описывает сбой записи в журнал/storage?	StorageError.	effect-ts::pulse::errors::storage
-Зачем в ошибках часто есть поле cause: unknown?	Чтобы сохранить исходную причину из внешнего мира, не загрязняя публичный доменный тип ошибки.	effect-ts::errors::cause-field
-Что делает Effect.catchTag("NetworkError", handler)?	Ловит только ошибки с _tag = "NetworkError"; в handler ошибка уже сужена до NetworkError.	effect-ts::catching::catchTag
-Что остается в E после catchTag("NetworkError") для Effect<A, NetworkError | TimeoutError, R>?	NetworkError исчезает, TimeoutError остается: Effect<A | B, TimeoutError | E2, R | R2> по смыслу результата handler.	effect-ts::catching::catchTag
-Чем catchTag отличается от try/catch в TypeScript?	catchTag ловит только названный typed-тег и дает суженный тип ошибки; try/catch ловит все подряд и обычно дает unknown.	effect-ts::catching::catchTag
-Почему catchTag не глушит programmer errors?	Defects находятся в Cause.die, а catchTag работает с ожидаемым fail-каналом E.	effect-ts::catching::defects
-Когда брать Effect.catchTags?	Когда нужно обработать несколько конкретных _tag-веток одним комбинатором, оставив неупомянутые ошибки в E.	effect-ts::catching::catchTags
-Что принимает Effect.catchTags?	Объект, где ключи - имена тегов, а значения - обработчики конкретных суженных ошибок.	effect-ts::catching::catchTags
-Что делает Effect.catchAll(handler)?	Ловит любую ошибку из E. Если handler возвращает успешное значение без новой ошибки, E очищается до never.	effect-ts::catching::catchAll
-Когда catchAll уместен?	Когда реакция на любой ожидаемый провал действительно одинаковая, например health-check возвращает 503 при любой ошибке.	effect-ts::catching::catchAll
-Почему catchAll опаснее catchTag?	Он может случайно поглотить больше ошибок, чем ты осознанно хотел обработать.	effect-ts::catching::catchAll
-Для чего нужен Effect.mapError?	Чтобы преобразовать класс ошибки без обработки успешного значения: например внутренний NetworkError заменить на внешний StorageError.	effect-ts::errors::mapError
-Чем mapError отличается от catchTag?	mapError переименовывает/трансформирует ошибку и требует ручного ветвления; catchTag обрабатывает конкретный тег и автоматически сужает тип.	effect-ts::errors::mapError
-Что такое Cause<E> в Effect?	Размеченное дерево причин падения fiber-а: Fail, Die, Interrupt, Empty, Parallel, Sequential.	effect-ts::cause::definition
-Где Cause появляется при выполнении программы?	В Exit.Failure: Effect.exit или runPromiseExit возвращают Failure(cause), где лежит дерево Cause.	effect-ts::cause::exit
-Что означает Cause с тегом Fail?	Ожидаемая typed-ошибка из канала E: Effect.fail или yield* над Data.TaggedError.	effect-ts::cause::fail
-Что означает Cause с тегом Die?	Defect: баг, нарушенный инвариант, Effect.die, Effect.dieMessage или непойманный throw в опасной обертке.	effect-ts::cause::die
-Что означает Cause с тегом Interrupt?	Fiber был прерван: например Fiber.interrupt, timeout или внешний signal-handler.	effect-ts::cause::interrupt
-Что означают Cause Parallel и Sequential?	Композицию нескольких причин: параллельные провалы разных fiber-ов или последовательный провал основного шага и finalizer-а.	effect-ts::cause::tree
-Что делает Effect.exit(program)?	Превращает Effect<A, E, R> в Effect<Exit<A, E>, never, R>: провал больше не в E, а внутри Exit как данные.	effect-ts::exit::effect-exit
-Когда полезен Effect.exit?	Когда нужно разобрать успех или Failure(cause) как значение, не дать ошибке коротко замкнуть текущую программу.	effect-ts::exit::effect-exit
-Что делает Effect.runPromiseExit(program)?	Запускает Effect и возвращает Promise<Exit<A, E>>, сохраняя typed-ошибку внутри Cause, а не превращая ее в rejected FiberFailure.	effect-ts::runtime::runPromiseExit
-Почему на границе с не-Effect-кодом лучше runPromiseExit, чем runPromise?	runPromise при провале rejected-ит служебную FiberFailure, а runPromiseExit дает доступ к исходному Cause<E>, из которого можно достать доменную ошибку.	effect-ts::runtime::runPromiseExit
-Что делает Effect.sandbox(program)?	Поднимает Cause<E> в обычный канал ошибок: Effect<A, E, R> становится Effect<A, Cause<E>, R>.	effect-ts::cause::sandbox
-Зачем использовать Effect.sandbox?	Чтобы обрабатывать Fail, Die, Interrupt через обычные catchTag/catchTags по тегам Cause.	effect-ts::cause::sandbox
-Как через sandbox поймать defect Die?	<code>program.pipe(Effect.sandbox, Effect.catchTag("Die", cause =&gt; ...))</code>	effect-ts::cause::sandbox
-Что делает Effect.unsandbox?	Обратное к sandbox: переносит Cause из E обратно в структуру обычного завершения Effect.	effect-ts::cause::unsandbox
-Что делает Effect.catchAllCause(handler)?	Передает handler полное Cause<E> без предварительного sandbox, чтобы обработать Fail/Die/Interrupt на уровне дерева причин.	effect-ts::cause::catchAllCause
-Когда брать catchAllCause вместо catchTag?	Когда нужно видеть не только expected E, но и defects/interruption, например в верхнем обработчике приложения.	effect-ts::cause::catchAllCause
-Что делает Cause.isDie(cause)?	Type guard, который проверяет, что причина содержит defect Die, и позволяет достать defect.	effect-ts::cause::guards
-Что делает Cause.isFailType(cause)?	Type guard для Cause.Fail; после проверки можно достать typed error из fail-ветки.	effect-ts::cause::guards
-Что делает Cause.isInterruptedOnly(cause)?	Проверяет, что Cause состоит только из прерывания, без Fail или Die.	effect-ts::cause::guards
-Для чего нужен Cause.pretty(cause)?	Для читаемого логирования дерева причин: Fail/Die/Interrupt, стеков и композиции Parallel/Sequential.	effect-ts::cause::pretty
-Что делает Cause.failureOption(cause)?	Возвращает Option<E> с первой typed Fail-ошибкой, если она есть в Cause.	effect-ts::cause::options
-Что делает Cause.dieOption(cause)?	Возвращает Option<unknown> с defect-значением, если в Cause есть Die.	effect-ts::cause::options
-Что делает Cause.interruptOption(cause)?	Возвращает Option<FiberId> с информацией о прерывании, если в Cause есть Interrupt.	effect-ts::cause::options
-Что делает Cause.squash(cause)?	Достает одну "главную" причину как unknown, с приоритетом Fail > Die > Interrupt.	effect-ts::cause::squash
-Когда Cause.squash особенно полезен?	На границе с legacy/не-Effect-кодом, где нужно бросить одно исключение наружу через throw.	effect-ts::cause::squash
-Что делает Effect.die(value)?	Создает defect: Effect<never, never, never>, который попадет в Cause.die, а не в E.	effect-ts::defects::die
-Что делает Effect.dieMessage(text)?	Создает defect с RuntimeException на основе строки; удобно для коротких assertion/invariant-проверок.	effect-ts::defects::dieMessage
-Что означает E = never после Effect.die?	В expected error channel ошибки нет; провал живет как defect и виден только через Cause-инструменты.	effect-ts::defects::die
-Почему divideOrDie(1, 0) не должен возвращать Error в E?	Деление на ноль в этой учебной функции трактуется как нарушенный инвариант/programmer error, значит это defect, а не recoverable path.	effect-ts::pulse::divideOrDie
-Как поймать defect от divideOrDie через exit?	Запустить <code>Effect.runPromise(Effect.exit(divideOrDie(1, 0)))</code>, получить Failure и проверить <code>Cause.isDie(exit.cause)</code>.	effect-ts::pulse::divideOrDie
-Почему Effect.catchTag("Error", ...) не поймает Effect.die(new Error(...))?	Потому что catchTag работает по _tag в expected E, а Error из die лежит в Cause.die как defect.	effect-ts::defects::catching
-Что делает Effect.orDie?	Преобразует Effect<A, E, R> в Effect<A, never, R>, переводя все expected E-ошибки в defects.	effect-ts::defects::orDie
-Когда полезен точечный catchTag(... => Effect.die(...))?	Когда один вариант из union оказался unactionable на этом уровне, а остальные ошибки нужно оставить в E.	effect-ts::defects::downgrade
-Что такое Match.value в effect/Match?	Старт чистого pattern matching по значению, например по tagged union без входа в Effect-канал.	effect-ts::match::value
-Что делает Match.tag("NetworkError", fn)?	Добавляет ветку для конкретного _tag; внутри fn ошибка сужена до NetworkError.	effect-ts::match::tag
-Что делает Match.exhaustive?	Завершает matcher и заставляет TypeScript проверить, что все варианты union разобраны.	effect-ts::match::exhaustive
-Почему Match.exhaustive полезен для formatAlert(error: PulseError)?	Если в PulseError добавят седьмую ошибку, компилятор потребует новую ветку форматирования.	effect-ts::match::exhaustive
-Когда Match.value лучше, чем Effect.matchEffect?	Когда ветвление чистое: на входе уже есть значение, а результат - обычное значение без побочных эффектов.	effect-ts::match::value
-Какой тип у formatAlert(error: PulseError)?	Чистая функция: (error: PulseError) => string.	effect-ts::pulse::formatAlert
-Почему formatAlert не должен возвращать Effect?	Он только превращает уже имеющуюся ошибку в строку и не делает побочных действий или запросов к сервисам.	effect-ts::pulse::formatAlert
-Что делает Match.when?	Матчит по форме или предикату поля, например { status: 200 } или { status: n => n >= 500 }.	effect-ts::match::when
-Когда ts-pattern может быть уместнее effect/Match?	Когда нужен более мощный матчинг по сложным формам вне Effect-кода; для tagged-ошибок effect/Match обычно короче и достаточно.	effect-ts::match::ts-pattern
-Что делает Effect.match?	Разбирает успех и expected-ошибку чистыми функциями, обе ветки возвращают обычное значение.	effect-ts::matchEffect::match
-Что делает Effect.matchEffect?	Разбирает успех и expected-ошибку эффектными обработчиками, где каждая ветка возвращает Effect.	effect-ts::matchEffect::matchEffect
-Когда брать Effect.matchEffect вместо Effect.match?	Когда хотя бы одна ветка делает эффектный шаг: Date.now через Effect.sync, запись в лог, обращение к сервису, Clock и т.п.	effect-ts::matchEffect::choice
-Какой тип по смыслу у recordResult(monitorId, probeEffect)?	Effect<MonitorEvent, never, R>: он превращает успех probe в ProbeSuccess, ошибку probe в ProbeFailure и очищает E.	effect-ts::pulse::recordResult
-Почему recordResult очищает E до never?	Потому что matchEffect обрабатывает обе ветки: и NetworkError/HttpStatusError/TimeoutError, и успешный ProbeResult превращаются в MonitorEvent.	effect-ts::pulse::recordResult
-Какие ошибки probeEffect обрабатывает recordResult в уроке?	NetworkError, HttpStatusError и TimeoutError.	effect-ts::pulse::recordResult
-Как recordResult выбирает reason для ProbeFailure?	По error._tag: TimeoutError -> "timeout", HttpStatusError -> "http-status", иначе NetworkError -> "network".	effect-ts::pulse::recordResult
-Почему ветки recordResult обернуты в Effect.sync?	Они читают Date.now(), а это побочный синхронный шаг; его нужно описать как Effect.	effect-ts::pulse::recordResult
-Что изменится в recordResult после появления Clock-сервиса?	Date.now() заменят на Clock.currentTimeMillis, и зависимость времени станет частью R вместо глобального вызова.	effect-ts::pulse::recordResult
-Что делает Effect.matchCause?	Разбирает успех и Cause-провал, позволяя увидеть Fail, Die и Interrupt, но с чистыми обработчиками.	effect-ts::matchEffect::matchCause
-Что делает Effect.matchCauseEffect?	Разбирает успех и Cause-провал эффектными обработчиками; самый гибкий вариант для верхнего error boundary.	effect-ts::matchEffect::matchCauseEffect
-Когда нужен matchCauseEffect?	Когда в одном обработчике нужно отдельно залогировать defects, interruptions и expected Fail-ошибки, возможно с эффектными действиями.	effect-ts::matchEffect::matchCauseEffect
-Когда внутри Effect.gen лучше catchTag рядом с yield*, а не общий matchEffect сверху?	Когда нужно обработать одну конкретную ошибку локального шага и продолжить линейный сценарий.	effect-ts::gen::catchTag
-Почему в index.ts после recordResult в E остается в основном ConfigParseError?	Пробинг-ошибки уже превращены в MonitorEvent внутри recordResult; до него может упасть декодирование конфига.	effect-ts::pulse::index
-Зачем верхний catchAll в index.ts вызывает formatAlert?	Чтобы на границе CLI превратить оставшуюся actionable-ошибку Pulse в понятное сообщение и завершить процесс.	effect-ts::pulse::index
-Почему runPromiseExit важен для адаптера probeOrThrow?	Адаптер для не-Effect-кода должен вернуть Promise или бросить исходную доменную ошибку, а не служебную FiberFailure.	effect-ts::interop::probeOrThrow
-Какой типичный алгоритм адаптера из Effect в Promise-or-throw?	runPromiseExit(program), затем Exit.match: onSuccess возвращает значение, onFailure логирует Cause.pretty и throw Cause.squash(cause).	effect-ts::interop::runPromiseExit
-Когда не нужно доставать Cause наружу руками?	Когда ты остаешься внутри Effect-платформы, например @effect/platform или @effect/cli: ошибка остается в E, а платформа сама свернет ее в ответ/вывод.	effect-ts::interop::boundaries
-Как коротко выбрать между catchTag, Match.value и matchEffect?	catchTag - обработать ошибку в Effect-канале; Match.value - чисто разобрать уже имеющееся значение; matchEffect - превратить успех/ошибку Effect в новый эффектный результат.	effect-ts::tools::choice
-Как коротко выбрать между exit, sandbox и catchAllCause?	exit - получить Exit как данные; sandbox - поднять Cause в E и ловить тегами; catchAllCause - обработать Cause напрямую без смены типа через sandbox.	effect-ts::cause::choice
-Как коротко выбрать между die, dieMessage и orDie?	die - defect из произвольного значения; dieMessage - короткий текстовый defect; orDie - перевести все ошибки E текущего Effect в defects.	effect-ts::defects::choice
-Почему tagged errors лучше голого Error для публичного E?	Они дают доменный смысл, сужение по _tag, исчерпывающий матчинг и читаемую сигнатуру вместо неструктурированного unknown/Error.	effect-ts::tagged-errors::benefits
-Какой главный навык чтения Effect-ошибок из этого урока?	Для каждой ошибки в E спрашивать: это actionable для текущего вызывающего или это defect/ошибка, которую надо обработать ниже?	effect-ts::lesson-03::summary
-Как проверить, что formatAlert не забыл вариант PulseError?	Полагаться на Match.exhaustive и запуск typecheck/build: новый тег в PulseError без ветки должен сломать компиляцию.	effect-ts::testing::exhaustive
-Как проверить, что catchTag сужает ошибку без as и instanceof?	В обработчике catchTag обратиться к полям конкретного класса, например error.url у NetworkError; TypeScript должен знать тип автоматически.	effect-ts::testing::catchTag
-Как проверить, что Effect.die ушел в defect, а не E?	Запустить Effect.exit и убедиться, что Failure содержит Cause, для которого Cause.isDie(cause) равно true.	effect-ts::testing::die
-Что означает "fail-канал" в этом уроке?	Ожидаемую typed-ошибку E, созданную через Effect.fail или yieldable Data.TaggedError.	effect-ts::errors::fail-channel
-Что означает "defect-канал" в этом уроке?	Неожиданный/unactionable провал в Cause.die, который не отображается в параметре E.	effect-ts::defects::channel
-Почему actionable vs unactionable - не свойство ошибки навсегда?	Одна и та же ошибка может быть actionable на одном уровне и unactionable на другом; решение зависит от вызывающего и доступной реакции.	effect-ts::errors::context
-Что значит "обработать ошибку у вызывающего"?	Тот код, который имеет контекст для решения, ставит catchTag/orElse/default/fallback рядом с вызовом и не протаскивает ошибку дальше.	effect-ts::errors::caller
-Почему BodyContractError иногда переводят в defect?	Если несоответствие схемы означает drift API или баг контракта, пользователь не может исправить ситуацию; ее нужно будить/логировать как defect.	effect-ts::defects::body-contract
-Почему NetworkError часто оставляют в E?	Вызывающий может ретраить, выбрать fallback, показать временную сетевую ошибку или записать метрику.	effect-ts::errors::network-actionable
-Почему ConfigParseError в main часто можно orDie или обработать наверху?	Если конфиг не парсится, приложение обычно не может продолжать; решение принимается на границе запуска.	effect-ts::errors::config
-Что значит E = never у recordResult, но R сохраняется?	Ошибки probe поглощены, но зависимости исходного probeEffect никуда не исчезли и остаются требованиями окружения.	effect-ts::type::r-preserved
-Почему Effect.matchEffect сохраняет R входного probeEffect?	Обработчики успеха/ошибки строят новый Effect, но исходные зависимости выполнения probeEffect все еще нужны для запуска программы.	effect-ts::type::r-preserved
-Какая разница между Fail и Die с точки зрения типа?	Fail несет E и виден в сигнатуре Effect<A, E, R>; Die несет unknown defect и не отражается в E.	effect-ts::cause::fail-vs-die
-Какая разница между Fail и Die с точки зрения обработки?	Fail ловится catchTag/catchAll в обычном E-канале; Die ловится через Cause-инструменты: exit, sandbox, catchAllCause, matchCauseEffect.	effect-ts::cause::fail-vs-die
+Что означает E в Effect<A, E, R> с точки зрения контракта?	E — контракт ожидаемых actionable-ошибок: вызывающий видит, на какие провалы он может разумно отреагировать.	effect-ts::errors::e-channel
+Какой главный вопрос задавать, когда добавляешь ошибку в E?	Кто и как будет это ловить? Если конкретной реакции нет, ошибку лучше обработать ниже или перевести в defect на границе.	effect-ts::errors::actionable
+Что такое actionable error?	Ошибка, на которую вызывающий может полезно отреагировать: повторить, дать fallback, показать пользователю, записать метрику или выбрать другой сценарий.	effect-ts::errors::actionable
+Что такое unactionable error?	Провал, на который данный вызывающий не может полезно отреагировать: баг, нарушенный инвариант, недоступная инфраструктура без fallback.	effect-ts::errors::unactionable
+Почему unactionable errors вредно держать в E?	Они шумят в типах и заставляют писать catch только ради компиляции, хотя осмысленной реакции нет.	effect-ts::errors::unactionable
+Куда в Effect обычно помещают unactionable errors?	В defect-канал Cause.die через Effect.die, Effect.dieMessage или Effect.orDie.	effect-ts::defects::die
+Что значит "не протаскивать ошибки вверх по стеку"?	Обрабатывать ошибку там, где известна реакция, и не раскрывать внутренние ошибки модулей уровням, которые не знают, что с ними делать.	effect-ts::errors::discipline
+Когда Effect.orDie уместен?	Когда на текущем уровне ни одна ошибка из E не actionable, и правильная реакция — завершиться через общий обработчик Cause/logging.	effect-ts::defects::orDie
+Почему Effect.orDie нельзя ставить просто "чтобы скомпилировалось"?	Он переводит все ошибки E в defects и может скрыть ошибки, на которые вызывающий должен был отреагировать.	effect-ts::defects::orDie
+Что такое tagged-ошибка в Effect-стиле?	Ошибка-значение с устойчивым полем _tag, по которому TypeScript и Effect-комбинаторы сужают конкретный вариант union.	effect-ts::tagged-errors
+Что создаёт Data.TaggedError("Boom")<{ reason: string }>?	Класс ошибки с _tag = "Boom", типизированными readonly-полями и возможностью использовать инстанс как yieldable failure внутри Effect.gen.	effect-ts::tagged-errors::data
+Почему имя класса и _tag обычно делают одинаковыми?	Так ошибку легче искать, ловить через catchTag и обсуждать: NetworkError как класс и "NetworkError" как тег совпадают.	effect-ts::tagged-errors::convention
+Что значит, что Data.TaggedError является yieldable error?	Инстанс ошибки можно yield* внутри Effect.gen как Effect.fail(error), без явной обёртки в Effect.fail.	effect-ts::tagged-errors::yieldable
+Зачем часто пишут return yield* new SomeError(...) внутри gen?	return помогает TypeScript понять, что ветка завершилась провалом и код ниже недостижим для этого пути.	effect-ts::gen::return-yield-star
+Зачем в ошибках часто есть поле cause: unknown?	Чтобы сохранить исходную причину из внешнего мира, но не протаскивать её как публичный неструктурированный тип ошибки.	effect-ts::errors::cause
+Что делает Effect.catchTag("NetworkError", handler)?	Ловит только ошибки с _tag = "NetworkError"; внутри handler тип ошибки уже сужен до NetworkError.	effect-ts::catching::catchTag
+Что остаётся в E после catchTag для одного варианта union?	Пойманный вариант исчезает из E, а непойманные ошибки остаются в типе результата.	effect-ts::catching::catchTag
+Чем catchTag отличается от try/catch?	catchTag ловит конкретный typed-тег в E и даёт суженный тип. try/catch ловит всё подряд и обычно приносит unknown.	effect-ts::catching::catchTag
+Когда использовать Effect.catchTags?	Когда нужно обработать несколько конкретных _tag-веток и оставить остальные ошибки в E.	effect-ts::catching::catchTags
+Когда использовать Effect.catchAll?	Когда реакция на любую ожидаемую ошибку из E действительно одинаковая. Иначе лучше catchTag/catchTags.	effect-ts::catching::catchAll
+Почему catchAll опаснее catchTag?	Он легко поглощает больше ошибок, чем планировалось, и может скрыть важную новую ветку E.	effect-ts::catching::catchAll
+Для чего нужен Effect.mapError?	Чтобы преобразовать ошибку на границе модуля, не трогая успешное значение: например внутренний NetworkError заменить на внешний StorageError.	effect-ts::errors::mapError
+Что такое Cause<E>?	Дерево причин завершения fiber-а: ожидаемый Fail(E), defect Die, Interrupt, а также Parallel/Sequential композиции причин.	effect-ts::cause
+Где появляется Cause при выполнении программы?	В Exit.Failure, если использовать Effect.exit или runPromiseExit. Там ошибка становится данными, а не short-circuit в E.	effect-ts::cause::exit
+Что означает Cause Fail?	Ожидаемая typed-ошибка из канала E, созданная через Effect.fail или yieldable Data.TaggedError.	effect-ts::cause::fail
+Что означает Cause Die?	Defect: непредвиденный провал, баг или нарушенный инвариант, который не отражается в E.	effect-ts::cause::die
+Что означает Cause Interrupt?	Fiber был прерван: например через Fiber.interrupt, timeout или внешний signal-handler.	effect-ts::cause::interrupt
+Что делает Effect.exit(program)?	Преобразует Effect<A, E, R> в Effect<Exit<A, E>, never, R>: провал больше не short-circuit, а лежит внутри Exit как данные.	effect-ts::exit
+Когда полезен Effect.exit?	Когда нужно разобрать успех и Failure(cause) как обычное значение и продолжить текущую программу.	effect-ts::exit
+Почему runPromiseExit полезен на границе с не-Effect-кодом?	Он даёт доступ к Exit и Cause<E>, а не просто rejected Promise со служебной FiberFailure.	effect-ts::runtime::runPromiseExit
+Что делает Effect.sandbox?	Поднимает Cause<E> в обычный канал ошибок: Effect<A, E, R> становится Effect<A, Cause<E>, R>.	effect-ts::cause::sandbox
+Когда использовать sandbox?	Когда нужно обрабатывать Fail, Die и Interrupt обычными catchTag/catchTags по тегам Cause.	effect-ts::cause::sandbox
+Что делает Effect.catchAllCause?	Передаёт handler полное Cause<E> без предварительного sandbox, чтобы обработать Fail/Die/Interrupt напрямую.	effect-ts::cause::catchAllCause
+Когда нужен catchAllCause вместо catchTag?	Когда обработчику важны не только expected E, но и defects/interruption, например в верхней границе приложения.	effect-ts::cause::catchAllCause
+Что делает Cause.pretty?	Даёт читаемое представление дерева причин для логирования: Fail, Die, Interrupt, стеки и композиция причин.	effect-ts::cause::pretty
+Что делает Cause.squash?	Достаёт одну главную причину как unknown. Это полезно на legacy-границе, где нужно бросить одно исключение наружу.	effect-ts::cause::squash
+Чем Fail и Die различаются на уровне типа?	Fail несёт E и виден в Effect<A, E, R>. Die несёт unknown defect и не отображается в параметре E.	effect-ts::cause::fail-vs-die
+Чем Fail и Die различаются по обработке?	Fail ловится catchTag/catchAll в E-канале. Die ловится через Cause-инструменты: exit, sandbox, catchAllCause, matchCauseEffect.	effect-ts::cause::fail-vs-die
+Что делает Match.value?	Запускает чистый pattern matching по уже имеющемуся значению, например tagged union ошибки или события.	effect-ts::match
+Зачем нужен Match.exhaustive?	Он заставляет TypeScript проверить, что все варианты union разобраны. При добавлении нового _tag компилятор потребует новую ветку.	effect-ts::match::exhaustive
+Когда Match.value лучше, чем Effect.matchEffect?	Когда вход уже является обычным значением, а результат тоже чистый и не требует Effect-шагов.	effect-ts::match
+Что делает Effect.match?	Разбирает успех и expected-ошибку чистыми функциями, обе ветки возвращают обычное значение.	effect-ts::matchEffect
+Что делает Effect.matchEffect?	Разбирает успех и expected-ошибку эффектными обработчиками, где каждая ветка возвращает Effect.	effect-ts::matchEffect
+Когда выбирать matchEffect вместо match?	Когда хотя бы одна ветка делает эффектный шаг: логирование, чтение времени, обращение к сервису, запись результата.	effect-ts::matchEffect
+Как коротко выбрать между catchTag, Match.value и matchEffect?	catchTag — обработать ошибку внутри E-канала; Match.value — чисто разобрать уже имеющееся значение; matchEffect — превратить успех/ошибку Effect в новый Effect.	effect-ts::tools::choice

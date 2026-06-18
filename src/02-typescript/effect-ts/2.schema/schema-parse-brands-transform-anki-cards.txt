@@ -2,85 +2,44 @@
 #notetype:Basic
 #deck:Effect-TS::25 Schema
 #tags column:3
-Что означает принцип parse-don't-validate?	Один раз на границе доверия превращаем <code>unknown</code> в строго типизированное значение. Дальше код работает с типом и инвариантами, а не повторяет проверки в каждом месте.	effect-ts::schema::parse-dont-validate
-Где в приложении обычно проходит граница доверия для Schema?	Там, где данные приходят извне: <code>JSON.parse</code>, HTTP body, env variables, файлы конфигурации, ответы внешних API.	effect-ts::schema::boundary
-Почему после успешного decode не нужно заново проверять поле <code>url</code> как строку?	Потому что Schema уже проверила внешний <code>unknown</code> и вернула богатый Type. Если <code>url</code> имеет branded-тип, компилятор дальше требует именно его.	effect-ts::schema::decode
-Какие две стороны есть у каждой Effect Schema?	<code>Encoded</code> — сырая wire/JSON-форма. <code>Type</code> — богатая форма, с которой работает код после decode.	effect-ts::schema::encoded-type
-Что делает <code>decode</code> в модели Encoded ↔ Type?	Берёт сырое значение со стороны <code>Encoded</code> и при успехе возвращает богатое значение со стороны <code>Type</code>.	effect-ts::schema::decode
-Что делает <code>encode</code> в модели Encoded ↔ Type?	Берёт богатое значение со стороны <code>Type</code> и превращает его в сырую форму <code>Encoded</code> для записи, HTTP, JSON или БД.	effect-ts::schema::encode
-Когда <code>Encoded</code> и <code>Type</code> совпадают?	Когда схема не делает преобразований: например, <code>Schema.String</code> или структура только из примитивов. Тогда encode/decode почти тождественны.	effect-ts::schema::encoded-type
-Когда <code>Encoded</code> и <code>Type</code> различаются?	Когда есть transform, brand, Option, Date, Duration, URL или другие богатые представления: например, <code>"30s"</code> снаружи и <code>Duration</code> внутри.	effect-ts::schema::encoded-type
-Зачем Schema объединяет parser и serializer в одной декларации?	Чтобы не писать отдельно десериализатор и сериализатор. Одна схема описывает оба перехода: <code>Encoded -> Type</code> и <code>Type -> Encoded</code>.	effect-ts::schema::encode
-Что возвращает <code>Schema.decodeUnknown(S)(value)</code>?	<code>Effect&lt;TypeOfS, ParseError, R&gt;</code>. В простых чистых схемах <code>R = never</code>.	effect-ts::schema::decodeUnknown
-Когда удобен <code>Schema.decodeUnknown</code>, а не sync-вариант?	Когда ты уже пишешь Effect-код и хочешь, чтобы ошибка парсинга шла через общий E-канал, а не бросалась исключением.	effect-ts::schema::decodeUnknown
-Когда уместен <code>Schema.decodeUnknownSync</code>?	В тестах, стартовых скриптах или CLI, где провал парсинга должен сразу бросить исключение и остановить программу.	effect-ts::schema::decodeUnknownSync
-Как достать богатый Type из схемы <code>Monitor</code>?	Через <code>Schema.Schema.Type&lt;typeof Monitor&gt;</code>. Это тип значения после decode.	effect-ts::schema::types
-Как достать сырую Encoded-форму из схемы <code>Monitor</code>?	Через <code>Schema.Schema.Encoded&lt;typeof Monitor&gt;</code>. Это тип значения до decode и после encode.	effect-ts::schema::types
-Что даёт <code>Schema.Struct({ id: Schema.String })</code>?	Runtime-схему объекта и TypeScript-тип вида <code>{ readonly id: string }</code>, выведенный из этой схемы.	effect-ts::schema::struct
-Почему <code>Schema.Struct</code> лучше ручной лестницы из <code>typeof</code> проверок?	Она декларативно описывает форму один раз, выводит типы, строит структурированные ошибки и переиспользуется для encode/decode.	effect-ts::schema::struct
-Что такое <code>ParseError</code> в Effect Schema?	Структурированное дерево ошибки парсинга, где можно увидеть путь до сломанного поля и ожидаемый тип/условие.	effect-ts::schema::errors
-Зачем нужны <code>TreeFormatter</code> или <code>ArrayFormatter</code>?	Они превращают структурированный <code>ParseError</code> в человеко-читаемый отчёт с путём до проблемного значения.	effect-ts::schema::errors
-Что означает ошибка на пути <code>monitors[1].interval</code>?	Сломалось поле <code>interval</code> у второго элемента массива <code>monitors</code>. Это точка, куда нужно смотреть в сыром JSON.	effect-ts::schema::errors
-Что делает <code>Schema.optionalWith(Schema.Number, { as: "Option" })</code>?	На encoded-стороне поле может отсутствовать, а на Type-стороне код получает <code>Option&lt;number&gt;</code>.	effect-ts::schema::option
-Как encode обработает <code>Option.none()</code> для optionalWith <code>as: "Option"</code>?	Скорее всего не запишет ключ в encoded-объект: отсутствие значения кодируется отсутствием поля.	effect-ts::schema::option::encode
-Как encode обработает <code>Option.some(200)</code> для optionalWith <code>as: "Option"</code>?	Запишет поле в encoded-объект, например <code>{ expectStatus: 200 }</code>.	effect-ts::schema::option::encode
-Почему Option внутри Type лучше, чем <code>null | undefined</code> по всему коду?	Option заставляет явно обработать два случая: <code>Some</code> и <code>None</code>. Null/undefined часто протекают и создают скрытые проверки.	effect-ts::schema::option
-Что такое <code>Schema.TaggedStruct("ProbeSuccess", fields)</code>?	Короткая запись для структуры с дискриминатором <code>_tag: "ProbeSuccess"</code> и указанными полями.	effect-ts::schema::tagged-struct
-Зачем использовать <code>TaggedStruct</code> для событий Pulse?	Чтобы получить discriminated union: по полю <code>_tag</code> TypeScript сужает тип события до конкретной ветки.	effect-ts::schema::union
-Как собрать union из нескольких tagged-событий?	Через <code>Schema.Union(ProbeSuccess, ProbeFailure, MonitorPaused, MonitorResumed)</code>.	effect-ts::schema::union
-Что проверяет round-trip тест <code>decode(encode(x)) === x</code>?	Что богатое значение после сериализации и обратного парсинга не теряет смысл и возвращается в исходную Type-форму.	effect-ts::schema::round-trip
-Что проверяет wire-trip тест <code>encode(decode(j)) === j</code>?	Что сырой wire-формат после decode и encode возвращается в ожидаемую внешнюю форму.	effect-ts::schema::round-trip
-Почему round-trip особенно важен для transform?	Потому что transform содержит ручные функции decode/encode. Ошибка в одной стороне легко ломает симметрию схемы.	effect-ts::schema::transform::round-trip
-Когда использовать <code>Schema.transform</code>?	Когда преобразование между Encoded и Type не должно падать и обе функции могут вернуть обычные значения.	effect-ts::schema::transform
-Когда использовать <code>Schema.transformOrFail</code>?	Когда decode или encode может провалиться и нужно вернуть <code>ParseResult.succeed</code> или <code>ParseResult.fail</code>.	effect-ts::schema::transformOrFail
-Что означает сигнатурная идея <code>Schema.transform(fromSchema, toSchema, ...)</code>?	Decode идёт от <code>fromSchema</code> к <code>toSchema</code>, а encode идёт обратно от <code>toSchema</code> к <code>fromSchema</code>.	effect-ts::schema::transform
-Почему функция decode внутри transform уже не принимает <code>unknown</code>?	Потому что <code>fromSchema</code> уже распарсила вход. В decode-функцию приходит значение типа from-стороны, например уже string.	effect-ts::schema::transform
-Как правильно сообщить о провале в <code>transformOrFail</code>?	Вернуть <code>ParseResult.fail(new ParseResult.Type(ast, input, message))</code>, чтобы Schema сохранила путь и контекст ошибки.	effect-ts::schema::transformOrFail::errors
-Что делает пример <code>DurationLike</code> из строки <code>"30s"</code>?	Decode парсит строку формата <code>ms|s|m|h</code> в миллисекунды/Duration, encode выбирает подходящую строковую единицу обратно.	effect-ts::schema::duration
-Почему <code>"30x"</code> должен падать в DurationLike?	Единица <code>x</code> не входит в допустимые <code>ms</code>, <code>s</code>, <code>m</code>, <code>h</code>, значит transformOrFail возвращает ParseError.	effect-ts::schema::duration::errors
-Какие встроенные transform-схемы стоит проверить перед написанием своей?	<code>NumberFromString</code>, <code>DateFromString</code>, <code>DateFromNumber</code>, <code>parseJson</code>, <code>URL</code>, <code>BigIntFromString</code>.	effect-ts::schema::built-ins
-Что делает <code>Schema.filter</code>?	Добавляет runtime-условие к уже существующему типу: например, непустая строка, int, диапазон, pattern.	effect-ts::schema::filter
-Меняет ли <code>Schema.filter</code> TypeScript-тип на nominal type?	Нет. После filter это всё ещё, например, <code>string</code> или <code>number</code>. Для nominal typing нужен <code>Schema.brand</code>.	effect-ts::schema::filter::brand
-В чём короткая разница между <code>filter</code> и <code>brand</code>?	<code>filter</code> проверяет значение на runtime. <code>brand</code> помечает Type-сторону фантомным nominal-типом.	effect-ts::schema::filter::brand
-Что означает формула «filter без brand — проверь и забудь»?	Runtime-проверка прошла, но TypeScript всё равно видит обычный <code>string</code>/<code>number</code>, который можно случайно перепутать с другим смыслом.	effect-ts::schema::filter::brand
-Что означает формула «filter плюс brand — проверь и пометь»?	Runtime-проверка проходит, а Type-сторона получает branded-тип вроде <code>string & Brand&lt;"Url"&gt;</code>.	effect-ts::schema::brand
-Зачем указывать <code>identifier</code> в filter или pattern?	Он попадает в дерево ошибок и помогает генераторам/форматтерам назвать нарушенное правило понятным именем.	effect-ts::schema::annotations
-Как описать <code>MonitorId</code> как branded string?	<code>Schema.String.pipe(Schema.pattern(/^[a-z][a-z0-9-]*$/), Schema.brand("MonitorId"))</code>.	effect-ts::schema::brand::monitor-id
-Почему обычный <code>string</code> нельзя передать туда, где ожидается <code>MonitorId</code>?	Потому что <code>MonitorId</code> имеет фантомный brand. TypeScript требует доказательство, что строка прошла smart constructor или decode.	effect-ts::schema::brand
-Что происходит с brand на runtime?	Ничего дополнительного: в JavaScript остаётся обычная строка или число. Brand существует на уровне TypeScript-типа.	effect-ts::schema::brand::runtime
-Что делает <code>MonitorId.make("github-www")</code>?	Синхронно валидирует строку по схеме и возвращает branded <code>MonitorId</code>, либо бросает ошибку при невалидном значении.	effect-ts::schema::brand::make
-Когда <code>Schema.brand</code> подходит лучше, чем <code>Schema.Class</code>?	Когда нужен сильный тип над примитивом string/number без runtime-объекта и без методов.	effect-ts::schema::brand::class
-Когда выбрать <code>Schema.Class</code> вместо brand?	Когда значение структурное, нужны методы, <code>instanceof</code>, конструктор и поведение класса.	effect-ts::schema::class
-Что даёт <code>Schema.extend</code>?	Добавляет поля к существующей Struct-схеме, позволяя собирать большие схемы из общей базы.	effect-ts::schema::composition::extend
-Что даёт <code>Schema.pick</code>?	Создаёт схему только с выбранными полями исходной структуры. Полезно для DTO и CRUD-семейств.	effect-ts::schema::composition::pick
-Что даёт <code>Schema.omit</code>?	Создаёт схему без указанных полей исходной структуры. Например, Create-схему можно собрать из базовой без <code>id</code>.	effect-ts::schema::composition::omit
-Что делает <code>Schema.compose(Step1, Step2)</code>?	Соединяет трансформации в pipeline: decode идёт Step1 потом Step2, encode автоматически идёт в обратном порядке.	effect-ts::schema::composition::compose
-Почему CRUD-схемы лучше собирать через pick/omit, а не писать руками?	Так меньше рассинхронизации: базовая форма меняется в одном месте, а производные схемы наследуют её поля и правила.	effect-ts::schema::composition
-Что делает <code>Schema.typeSchema(S)</code>?	Оставляет только богатую Type-сторону: получается схема, где encoded и type совпадают с уже декодированным значением.	effect-ts::schema::projection::typeSchema
-Когда полезен <code>Schema.typeSchema</code>?	В бизнес-тестах и функциях, где ты работаешь с уже валидированным значением и не хочешь гонять wire-трансформации.	effect-ts::schema::projection::typeSchema
-Что делает <code>Schema.encodedSchema(S)</code>?	Оставляет только сырую Encoded-сторону: схема описывает wire-форму без богатых преобразований.	effect-ts::schema::projection::encodedSchema
-Когда полезен <code>Schema.encodedSchema</code>?	Для wire-моков, тестов сериализации, OpenAPI/JSON-формы и проверок того, что приходит из браузера или файла.	effect-ts::schema::projection::encodedSchema
-Что делает <code>optionalWith(Schema.Number, { default: () => 30_000 })</code>?	Encoded-сторона разрешает отсутствие поля, а Type-сторона после decode всегда получает число с дефолтом.	effect-ts::schema::forgiving::defaults
-Почему дефолты через optionalWith называют «прощающей схемой»?	Пользователь JSON может не указать поле, но внутри программы после decode объект уже полный и не требует дополнительных проверок.	effect-ts::schema::forgiving
-Чем <code>Schema.NullOr(Schema.String)</code> отличается от <code>OptionFromNullOr(Schema.String)</code>?	<code>NullOr</code> оставляет <code>string | null</code> в Type. <code>OptionFromNullOr</code> превращает null-friendly input во внутренний <code>Option&lt;string&gt;</code>.	effect-ts::schema::null-option
-Что делает <code>withConstructorDefault</code>?	Задаёт дефолт для программного конструктора <code>Struct.make</code>, а не только для decode внешнего JSON.	effect-ts::schema::forgiving::constructor-default
-Чем дефолт в <code>optionalWith</code> отличается от <code>withConstructorDefault</code>?	<code>optionalWith</code> срабатывает при decode внешних данных. <code>withConstructorDefault</code> срабатывает при программном <code>make</code>.	effect-ts::schema::forgiving
-Что означает третий параметр <code>R</code> в <code>Schema&lt;A, I, R&gt;</code>?	Контекст зависимостей, который нужен схеме для decode/encode. В чистых схемах это <code>never</code>.	effect-ts::schema::context
-Когда у схемы появляется ненулевой <code>R</code>?	Когда transformOrFail возвращает Effect, которому нужен сервис: например, <code>Clock</code>, локальный кэш или Layer-зависимость.	effect-ts::schema::effectful-transform
-Что происходит с <code>Schema.decode(S)(value)</code>, если Schema требует <code>Clock</code>?	Decode тоже становится Effect с требованием <code>Clock</code> в R, и перед запуском нужно предоставить этот сервис.	effect-ts::schema::effectful-transform::context
-Почему не стоит делать запросы в БД или сеть внутри transformOrFail?	Парсинг должен быть быстрым и детерминированным. Сеть/БД превращают decode в бизнес-логику, ухудшают предсказуемость и производительность.	effect-ts::schema::effectful-transform::anti-pattern
-Какие зависимости допустимы внутри эффектного transform?	Небольшие детерминированные зависимости: <code>Clock</code>, локальный кэш, маленькая lookup-таблица из Layer.	effect-ts::schema::effectful-transform
-Что должна делать схема <code>PulseConfig</code> в уроке?	Декодировать внешний JSON-конфиг в типизированный объект с branded <code>MonitorId</code>/<code>Url</code>, <code>Interval</code> из строки и дефолтами.	effect-ts::schema::pulse::config
-Какие branded-типы появляются в конфиге Pulse?	<code>MonitorId</code> для идентификатора монитора и <code>Url</code> для URL. В примере также brand используется для <code>Interval</code> в миллисекундах.	effect-ts::schema::pulse::brand
-Что делает <code>Interval</code> в Pulse config?	Декодирует строку вроде <code>"30s"</code>, <code>"1m"</code>, <code>"500ms"</code> в branded число миллисекунд и умеет encode обратно в строку.	effect-ts::schema::pulse::interval
-Зачем <code>IntervalMs</code> дополнительно проверяет <code>int</code> и <code>between</code>?	Чтобы после парсинга строки отсечь дробные, слишком маленькие и слишком большие интервалы до первого запуска монитора.	effect-ts::schema::pulse::interval
-Что делает <code>Expect</code> в Pulse config?	Описывает ожидаемый HTTP status и через default делает <code>{ status: 200 }</code>, если пользователь не указал значение.	effect-ts::schema::pulse::defaults
-Что возвращает <code>decodeFromFile(path)</code> в Pulse?	<code>Effect&lt;PulseConfig, ConfigParseError, never&gt;</code>: при успехе типизированный конфиг, при ожидаемой ошибке обёрнутый <code>ConfigParseError</code>.	effect-ts::schema::pulse::decodeFromFile
-Почему у <code>decodeFromFile</code> хороший публичный тип?	Он явно говорит: нужен path, успех даёт <code>PulseConfig</code>, ожидаемая ошибка — <code>ConfigParseError</code>, внешних зависимостей для запуска нет.	effect-ts::schema::pulse::effect
-Какие четыре ветки входят в <code>MonitorEvent</code> Pulse?	<code>ProbeSuccess</code>, <code>ProbeFailure</code>, <code>MonitorPaused</code>, <code>MonitorResumed</code>.	effect-ts::schema::pulse::events
-Зачем событиям Pulse поле <code>at</code>?	Это время события в epoch milliseconds. Оно нужно для журнала, потоков и будущей агрегации по временным окнам.	effect-ts::schema::pulse::events
-Зачем в событии хранить и <code>monitorId</code>, и <code>url</code>?	Чтобы подписчик или терминальный вывод могли форматировать событие без O(N)-поиска URL в конфиге по monitorId.	effect-ts::schema::pulse::events
-Какой минимальный тест нужен для невалидного <code>pulse.config.json</code>?	Проверить, что decode возвращает <code>ParseError</code> с путём до сломанного поля, например <code>monitors[0].interval</code>.	effect-ts::schema::testing::errors
-Какие тесты нужны для <code>DurationLike</code>?	Минимум несколько валидных входов, несколько невалидных входов и round-trip для валидных значений.	effect-ts::schema::testing::duration
-Что нужно проверить для каждой ветки <code>MonitorEvent</code>?	Что encode/decode round-trip проходит для каждого тега: success, failure, paused, resumed.	effect-ts::schema::testing::union
-Главный вопрос при чтении чужой Schema?	Какая у неё Encoded-сторона, какая Type-сторона, и какие правила/трансформации стоят между ними.	effect-ts::schema::reading
+Что означает принцип parse-don't-validate?	На границе доверия один раз превращаем unknown в типизированное значение. Дальше код работает с доказанным типом и не повторяет проверки повсюду.	effect-ts::schema::parse-dont-validate
+Где обычно находится граница доверия для Schema?	Там, где данные приходят извне: JSON.parse, HTTP body, env variables, конфиги, файлы, ответы внешних API.	effect-ts::schema::boundary
+Какие две стороны есть у Effect Schema?	Encoded — сырая wire/JSON-форма. Type — богатая внутренняя форма после decode.	effect-ts::schema::encoded-type
+Что делает decode в модели Encoded -> Type?	Проверяет внешнее значение и при успехе возвращает внутренний Type, с которым безопасно работает приложение.	effect-ts::schema::decode
+Что делает encode в модели Type -> Encoded?	Берёт внутреннее значение Type и превращает его в wire-форму для JSON, HTTP, файла или базы данных.	effect-ts::schema::encode
+Когда Encoded и Type совпадают?	Когда схема не делает преобразований: например, Schema.String или Struct только из простых примитивов.	effect-ts::schema::encoded-type
+Когда Encoded и Type различаются?	Когда есть transform, brand, Date, Duration, URL, Option или другая богатая внутренняя модель.	effect-ts::schema::encoded-type
+Что возвращает Schema.decodeUnknown(S)(value)?	Effect с успешным Type схемы и ParseError в канале E. Для чистых схем R обычно равен never.	effect-ts::schema::decodeUnknown
+Когда удобен Schema.decodeUnknown, а не sync-вариант?	Когда ты уже находишься в Effect-коде и хочешь пустить ошибку парсинга через общий E-канал.	effect-ts::schema::decodeUnknown
+Когда уместен Schema.decodeUnknownSync?	В тестах, скриптах или местах старта, где ошибка парсинга должна сразу броситься как исключение и остановить выполнение.	effect-ts::schema::decodeUnknownSync
+Как получить Type из схемы Monitor?	Через Schema.Schema.Type<typeof Monitor>. Это тип значения после успешного decode.	effect-ts::schema::types
+Как получить Encoded из схемы Monitor?	Через Schema.Schema.Encoded<typeof Monitor>. Это тип внешней формы до decode и после encode.	effect-ts::schema::types
+Что даёт Schema.Struct?	Декларативно описывает runtime-форму объекта, выводит TypeScript-тип и строит структурированные ParseError при ошибках.	effect-ts::schema::struct
+Почему Schema.Struct лучше ручной лестницы typeof-проверок?	Схема описывается один раз, переиспользуется для decode/encode, выводит типы и даёт нормальные ошибки с путями до полей.	effect-ts::schema::struct
+Что такое ParseError в Effect Schema?	Структурированная ошибка парсинга, где можно увидеть путь до проблемного поля и нарушенное ожидание.	effect-ts::schema::errors
+Зачем нужны TreeFormatter или ArrayFormatter?	Они превращают ParseError в читаемый отчёт, пригодный для логов, CLI или сообщения пользователю.	effect-ts::schema::errors
+Что означает ошибка на пути monitors[1].interval?	Сломалось поле interval у второго элемента массива monitors; искать проблему нужно в этой точке входных данных.	effect-ts::schema::errors
+Что даёт optionalWith(Schema.Number, { as: "Option" })?	Encoded-сторона разрешает отсутствие поля, а Type-сторона получает Option<number> вместо undefined/null.	effect-ts::schema::option
+Почему Option лучше, чем null | undefined по всему коду?	Option заставляет явно обработать Some и None, а null/undefined легко протекают дальше и требуют разрозненных проверок.	effect-ts::schema::option
+Что такое Schema.TaggedStruct?	Короткая запись структуры с дискриминатором _tag и заданными полями. Удобна для tagged unions событий и ошибок.	effect-ts::schema::tagged-struct
+Как собрать union из нескольких tagged-событий?	Через Schema.Union(EventA, EventB, EventC). По _tag TypeScript потом сможет сужать конкретную ветку.	effect-ts::schema::union
+Что проверяет round-trip decode(encode(x)) === x?	Что внутреннее Type-значение после сериализации и обратного парсинга не теряет смысл.	effect-ts::schema::round-trip
+Что проверяет wire-trip encode(decode(j)) === j?	Что внешняя wire-форма после decode и encode возвращается в ожидаемый внешний формат.	effect-ts::schema::round-trip
+Когда использовать Schema.transform?	Когда переход между Encoded и Type не должен падать и обе функции могут вернуть обычное значение.	effect-ts::schema::transform
+Когда использовать Schema.transformOrFail?	Когда decode или encode может провалиться и нужно вернуть ParseResult.succeed или ParseResult.fail.	effect-ts::schema::transformOrFail
+Почему decode-функция внутри transform не принимает unknown?	fromSchema уже распарсила вход. В decode приходит значение типа from-стороны, например уже string.	effect-ts::schema::transform
+Что делает Schema.filter?	Добавляет runtime-условие к существующему типу: непустая строка, int, диапазон, pattern и т.п.	effect-ts::schema::filter
+Меняет ли Schema.filter TypeScript-тип на nominal type?	Нет. После filter TypeScript по-прежнему видит обычный string/number. Для nominal typing нужен brand.	effect-ts::schema::filter::brand
+Что делает Schema.brand?	Помечает Type-сторону фантомным nominal-типом, чтобы нельзя было случайно передать обычную строку туда, где нужен проверенный доменный id/url.	effect-ts::schema::brand
+Что происходит с brand на runtime?	В JavaScript остаётся обычное значение. Brand существует на уровне TypeScript-типа и не добавляет runtime-объект.	effect-ts::schema::brand
+Когда Schema.brand подходит лучше, чем Schema.Class?	Когда нужен сильный тип над примитивом string/number без методов, конструктора и instanceof.	effect-ts::schema::brand::class
+Когда выбрать Schema.Class вместо brand?	Когда значение структурное и ему нужны методы, constructor behavior или проверка instanceof.	effect-ts::schema::class
+Что даёт Schema.pick / Schema.omit?	Позволяет строить DTO и CRUD-схемы из базовой схемы без ручного дублирования полей.	effect-ts::schema::composition
+Что делает Schema.compose?	Соединяет transform-схемы в pipeline: decode идёт слева направо, encode — в обратную сторону.	effect-ts::schema::compose
+Зачем нужны Schema.typeSchema и Schema.encodedSchema?	typeSchema оставляет уже декодированную Type-сторону, encodedSchema — внешнюю wire-сторону. Это полезно для разных видов тестов и моков.	effect-ts::schema::projection
+Что даёт optionalWith с default?	Внешнее поле может отсутствовать, а внутри программы после decode значение уже обязательно и имеет дефолт.	effect-ts::schema::defaults
+Чем optionalWith default отличается от withConstructorDefault?	optionalWith default работает при decode внешних данных, а withConstructorDefault — при программном создании значения через make/constructor.	effect-ts::schema::defaults
+Что означает R в Schema<A, I, R>?	Зависимости, которые нужны схеме для decode/encode. В чистых схемах R = never.	effect-ts::schema::context
+Когда у схемы появляется ненулевой R?	Когда transformOrFail возвращает Effect, которому нужен сервис, например Clock, локальный кэш или другой Layer dependency.	effect-ts::schema::effectful-transform
+Почему не стоит ходить в сеть или БД внутри transformOrFail?	Парсинг должен быть быстрым, предсказуемым и близким к границе данных. Сеть/БД превращают схему в бизнес-логику и усложняют тестирование.	effect-ts::schema::anti-pattern
+Главный вопрос при чтении чужой Schema?	Какая у неё Encoded-сторона, какая Type-сторона, и какие проверки/трансформации стоят между ними.	effect-ts::schema::reading

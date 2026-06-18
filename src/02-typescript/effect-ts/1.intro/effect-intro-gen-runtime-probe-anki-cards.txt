@@ -2,79 +2,32 @@
 #notetype:Basic
 #deck:Effect-TS::01 Effect Intro
 #tags column:3
-Что такое Effect в главной метафоре урока?	Effect — это рецепт программы: описание действий как значение. Сам по себе он ничего не выполняет; выполнение начинается только через runtime.	effect-ts::intro::mental-model
-Что такое runtime в главной метафоре урока?	Runtime — это "духовка", которая исполняет рецепт Effect. Пока runtime не запущен, сетевые запросы, запись в файл и другие побочные эффекты не происходят.	effect-ts::intro::runtime
-Какое главное отличие Effect от Promise по моменту запуска?	Promise стартует сразу при создании. Effect ленивый: создание Effect только описывает программу, а запуск происходит отдельным явным шагом.	effect-ts::promise-vs-effect::laziness
-Почему создание Promise уже является побочным эффектом?	Потому что код внутри Promise или вызов API вроде fetch начинает работу сразу: запрос уже летит, даже если результат потом не понадобится.	effect-ts::promise-vs-effect::promise
-Какие три проблемы Promise подчёркивает урок?	1) Немедленный старт. 2) Ошибка в catch приходит как unknown/any. 3) Зависимости вроде fetch, console, времени скрыты в окружении платформы.	effect-ts::promise-vs-effect
-Как Effect закрывает проблему "ошибка в unknown"?	В типе Effect есть параметр E — канал ожидаемых типизированных ошибок, например NetworkError | ParseError, а не безымянный unknown.	effect-ts::errors::typed-errors
-Как Effect закрывает проблему "окружение в воздухе"?	В типе Effect есть параметр R — явный список сервисов, нужных для запуска. Если R не равен never, программу нужно обеспечить зависимостями через provide/Layer.	effect-ts::environment::r
-Что означает тип Effect<A, E, R>?	A — значение при успехе. E — ожидаемая типизированная ошибка. R — окружение/сервисы, необходимые для запуска.	effect-ts::type::a-e-r
-Как читать A в Effect<A, E, R>?	A — итоговый успешный результат всей программы, то есть значение, которое вернётся из последнего return при успешном выполнении.	effect-ts::type::a
-Как читать E в Effect<A, E, R>?	E — объединение всех ожидаемых ошибок, которые могут попасть в канал ошибки по дороге выполнения.	effect-ts::type::e
-Как читать R в Effect<A, E, R>?	R — требования к окружению: какие сервисы должны быть предоставлены, чтобы программу можно было запустить.	effect-ts::type::r
-Что означает R = never в Effect?	Программе не нужны внешние сервисы из окружения Effect. Её можно запускать без provide/Layer.	effect-ts::environment::never
-Что означает E = never в Effect?	В ожидаемом канале ошибок программа не падает. Это не значит, что невозможны дефекты, но в E нет типизированных recoverable errors.	effect-ts::errors::never
-Что означает A = never в Effect?	Программа не может успешно вернуть значение. Частый пример — Effect.fail(e), где результатом может быть только ошибка.	effect-ts::type::never
-Как прочитать сигнатуру probe: (url: string) => Effect<ProbeResult, NetworkError, never>?	probe принимает url и возвращает ленивую программу: при успехе даст ProbeResult, при ожидаемом провале даст NetworkError, дополнительных сервисов для запуска не требует.	effect-ts::pulse::probe
-Где в Effect.gen фиксируется итоговый A всей программы?	На последнем успешном return генератора. Промежуточные yield* могут иметь свои A, но общий A берётся из финального результата.	effect-ts::gen::a
-Как E накапливается внутри Effect.gen?	Каждый yield* добавляет свои возможные ошибки в общий union E. Если шаги могут упасть с NetworkError и ParseError, итоговый E будет NetworkError | ParseError.	effect-ts::gen::e
-Что происходит при первом упавшем yield* в Effect.gen?	Цепочка коротко замыкается: генератор дальше не продолжает вычисления, ошибка поднимается в канал E общей программы.	effect-ts::gen::short-circuit
-Что такое Effect.gen?	Do-нотация на JS-генераторах: позволяет писать последовательную Effect-композицию линейно, как async/await, сохраняя семантику flatMap.	effect-ts::gen::definition
-Какой низкоуровневой операции соответствует yield* в Effect.gen?	yield* соответствует bind/flatMap: он распаковывает успешное значение Effect и передаёт его в следующий шаг.	effect-ts::gen::flatmap
-Почему в Effect.gen нужен yield*, а не yield?	yield* делегирует итерацию в Effect и сохраняет вывод типов. Обычный yield ломает типизацию и часто приводит к unknown/ошибкам компиляции.	effect-ts::gen::yield-star
-Чем Effect.gen похож на async/await?	Код читается линейно: const x = yield* step. Каждый шаг можно воспринимать как "await", но с типизированными ошибками E и окружением R.	effect-ts::gen::async-await
-Чем Effect.gen отличается от async/await?	async/await работает с Promise, стартующими сразу и ошибками через throw. Effect.gen строит ленивое описание с типизированными E и явным R.	effect-ts::gen::async-await
-Почему Effect.gen называют сахаром поверх flatMap?	Потому что программа с несколькими yield* имеет ту же семантику, что вложенная цепочка Effect.flatMap, но читается линейно.	effect-ts::gen::flatmap
-Когда стоит предпочесть Effect.gen вместо вложенных flatMap?	Когда шагов больше двух-трёх и важна читаемость: gen убирает "лестницу" вложенности и делает порядок действий очевидным.	effect-ts::gen::style
-Что делает Effect.succeed(a)?	Создаёт Effect<A, never, never> с готовым успешным значением. Никаких ошибок и зависимостей не добавляет.	effect-ts::constructors::succeed
-Что делает Effect.fail(e)?	Создаёт Effect<never, E, never> с готовой ожидаемой ошибкой в канале E. Успешного значения у такого Effect нет.	effect-ts::constructors::fail
-Что делает Effect.sync(() => a)?	Описывает ленивый синхронный шаг, который должен безопасно вернуть A и не падать ожидаемой ошибкой.	effect-ts::constructors::sync
-Когда брать Effect.sync?	Для синхронного кода без ожидаемых исключений: например Date.now(), console.log внутри явной границы, простое вычисление.	effect-ts::constructors::sync
-Что делает Effect.try({ try, catch })?	Описывает синхронный код, который может бросить исключение, и переводит неизвестную причину падения в типизированную ошибку E через catch.	effect-ts::constructors::try
-Когда брать Effect.try?	Когда оборачиваешь синхронный API, который может бросить исключение: например JSON.parse(input).	effect-ts::constructors::try
-Что делает Effect.tryPromise({ try, catch })?	Описывает ленивый асинхронный Promise-шаг и переводит неизвестную ошибку Promise в типизированную ошибку E.	effect-ts::constructors::tryPromise
-Когда брать Effect.tryPromise?	Когда оборачиваешь API или SDK, возвращающий Promise: fetch, fs.promises, database client, HTTP client.	effect-ts::constructors::tryPromise
-Почему в курсе запрещён голый try/catch внутри Effect-кода?	Потому что catch (e: any/unknown) возвращает неструктурированную ошибку. Ожидаемые ошибки должны попадать в E через размеченный тип, например NetworkError.	effect-ts::errors::discipline
-Зачем в Effect.try/tryPromise нужен catch?	Чтобы превратить неизвестную причину падения из внешнего мира в конкретную ошибку домена, видимую в типе E.	effect-ts::errors::catch
-Что такое Data.TaggedError в Effect?	Способ создать класс ошибки с устойчивым полем _tag. По _tag такие ошибки удобно различать через catchTag/match.	effect-ts::errors::tagged-error
-Зачем ошибкам поле _tag?	_tag делает варианты ошибок различимыми: NetworkError, TimeoutError, ParseError можно обрабатывать отдельно без угадывания по тексту message.	effect-ts::errors::tagged-error
-Почему NetworkError лучше, чем unknown в catch?	NetworkError сохраняет доменный смысл и виден в сигнатуре Effect. unknown заставляет вызывающего вручную гадать, что произошло.	effect-ts::errors::network-error
-Что возвращает Effect.runPromise(program)?	Promise<A>, который завершается успешным A или rejected ошибкой/cause, если Effect завершился провалом.	effect-ts::runtime::runPromise
-Когда runPromise — нормальный выбор?	Когда нужен асинхронный результат Effect и ты хочешь дождаться завершения через await или .then/.catch.	effect-ts::runtime::runPromise
-Что возвращает Effect.runPromiseExit(program)?	Promise<Exit<A, E>>: успех и ошибка остаются данными в Exit, а не превращаются в throw/rejected Promise.	effect-ts::runtime::runPromiseExit
-Когда полезен runPromiseExit?	Когда нужно явно разобрать результат выполнения как данные: Success или Failure, не полагаясь на try/catch вокруг Promise.	effect-ts::runtime::runPromiseExit
-Что делает Effect.runFork(program)?	Запускает Effect без ожидания результата и возвращает RuntimeFiber<A, E>, которым можно управлять, например прервать через Fiber.interrupt.	effect-ts::runtime::runFork
-Когда брать runFork?	Когда программа должна работать в фоне или нужно управлять жизненным циклом fiber-а: старт, interrupt, await.	effect-ts::runtime::runFork
-Что делает Effect.runSync(program)?	Синхронно запускает Effect и возвращает A, но подходит только для полностью синхронных программ.	effect-ts::runtime::runSync
-Когда runSync уместен?	Когда весь Effect построен только из синхронных шагов: succeed, fail, sync, try, без tryPromise, sleep, delay, fiber-ов и другой async-работы.	effect-ts::runtime::runSync
-Почему runSync падает на программе с tryPromise?	tryPromise создаёт асинхронный шаг. runSync не умеет выполнять async-эффекты и падает с AsyncFiberException.	effect-ts::runtime::async-fiber-exception
-Какое практическое правило выбора runtime entry point?	runPromise — дефолт для async результата. runFork — фоновый запуск и управление fiber-ом. runSync — только полностью синхронные Effect-программы.	effect-ts::runtime::choice
-Что такое fiber в контексте runFork?	Fiber — управляемая лёгкая задача Effect runtime. Её можно дождаться, прервать и связывать с другими fiber-ами в структурной конкурентности.	effect-ts::runtime::fiber
-Зачем передавать signal в fetch внутри Effect.tryPromise?	Effect даёт AbortSignal, связанный с fiber-ом. При interrupt/timeout fetch получает сигнал и отменяет сетевой запрос.	effect-ts::pulse::abort-signal
-Что произойдёт, если не использовать signal при fetch в fiber-е?	При прерывании fiber-а внешний fetch может продолжить висеть, потому что Promise API сам по себе не знает о жизненном цикле Effect.	effect-ts::pulse::abort-signal
-Как в Pulse выглядит первый минимальный вклад урока?	errors.ts с NetworkError, probe.ts с функцией probe(url), index.ts с запуском через Effect.runPromise.	effect-ts::pulse::lesson-01
-Какая сигнатура у первого probe из Pulse по смыслу?	url -> Effect<ProbeResult, NetworkError, never>: ленивый probe, который измеряет статус и время ответа либо возвращает NetworkError.	effect-ts::pulse::probe
-Почему в первом уроке Pulse R остаётся never?	Пока probe использует глобальный fetch напрямую и не требует сервисов из Effect-окружения. В следующих уроках fetch спрячут за HttpService/Layer.	effect-ts::pulse::environment
-Что будет означать появление HttpService в R у probe?	probe больше нельзя будет запустить сам по себе: перед запуском нужно предоставить реализацию HttpService через Layer/provide.	effect-ts::environment::service
-Почему Effect полезен для тестирования Pulse?	Сетевые запросы, storage, logger и clock можно выразить как сервисы в R и подменять тестовыми Layer, вместо vi.mock глобального окружения.	effect-ts::testing::layers
-Что означает "план запросов отдельно, выполнение отдельно" в Pulse?	Функции собирают Effect-описания проверки URL, расписания и логирования. Реальная сеть и время включаются только при запуске runtime с нужными слоями.	effect-ts::pulse::architecture
-Почему две команды pulse watch и pulse serve смогут делить одну программу?	Обе могут использовать общий граф зависимостей MainLive Layer и одну бизнес-логику probe/events/storage, отличаясь только способом показа результата.	effect-ts::pulse::architecture
-Какой главный навык чтения Effect-кода даёт урок?	На каждом Effect сразу спрашивать: что в A, что в E, что в R. Это быстро показывает результат, возможные провалы и зависимости.	effect-ts::type::reading
-Если Effect имеет тип Effect<Response, NetworkError, HttpService>, почему runPromise не должен компилироваться напрямую?	Потому что R = HttpService не закрыт. Перед запуском нужно предоставить сервис, иначе программа требует зависимость, которой нет.	effect-ts::environment::provide
-Почему A промежуточного yield* не равен A всей программы?	Промежуточный yield* возвращает локальное значение для следующего шага. A всей программы определяется финальным return генератора.	effect-ts::gen::a
-Какое E будет у gen, где первый yield* может дать NetworkError, второй ParseError, а return успешен?	Effect<FinalValue, NetworkError | ParseError, R>. Ошибки шагов объединяются в один канал E.	effect-ts::gen::e
-Какое E будет у gen, где все шаги Effect.succeed/Effect.sync и ничего не падает ожидаемо?	E будет never: в ожидаемом канале ошибок нет вариантов.	effect-ts::gen::never
-Почему Effect.succeed(42) не запускает вычислений?	Потому что это уже готовое значение, упакованное в ленивое описание Effect. Runtime просто вернёт его при запуске.	effect-ts::constructors::succeed
-Почему tryPromise принимает функцию try, а не сразу Promise?	Чтобы сохранить ленивость: Promise создаётся только при запуске Effect, а не в момент описания программы.	effect-ts::constructors::tryPromise
-Что проверить в коде probe после урока?	Нет голого try/catch, fetch обёрнут в Effect.tryPromise, ошибка конвертируется в NetworkError, запуск делается через runPromise, а R остаётся never.	effect-ts::pulse::checklist
-Почему runPromise.catch в index.ts не отменяет ценность типизированных ошибок?	Лучше обработать ошибки внутри Effect через catchTag, но даже при внешнем catch ошибка была создана как NetworkError и пришла из типизированного канала E.	effect-ts::runtime::errors
-Что значит "Effect — это данные"?	Effect можно хранить в переменной, передавать в функции и комбинировать, не исполняя. Это описание программы, а не уже начатая работа.	effect-ts::intro::data
-Почему Promise сложнее переиспользовать как описание программы?	Promise уже начал работу при создании, поэтому повторное использование значения — это разделение уже идущего вычисления, а не новое ленивое описание.	effect-ts::promise-vs-effect::reuse
-Как Effect помогает с отменой по Ctrl+C в будущем CLI Pulse?	Запущенную программу можно держать как fiber и по SIGTERM/SIGINT вызвать Fiber.interrupt; связанные async-шаги с AbortSignal смогут корректно остановиться.	effect-ts::runtime::interrupt
-Как объяснить Effect человеку, знающему io-monad из воркшопа?	Effect — готовая промышленная версия идеи IO: ленивое описание + bind/flatMap + интерпретатор, но с типизированными ошибками E, окружением R и конкурентностью.	effect-ts::intro::io-monad
-Что является "интерпретатором" для Effect-программы?	Runtime: он обходит описание шагов, выполняет yield*/flatMap, подставляет успешные значения или останавливает цепочку на ошибке.	effect-ts::runtime::interpreter
-Как коротко различить recoverable error и defect в Effect-мышлении?	Recoverable error — ожидаемый доменный провал в E. Defect — непредвиденная ошибка/баг, которую обычно не моделируют как обычный путь выполнения.	effect-ts::errors::recoverable
-Почему "тип ошибки стоит ровно NetworkError, а не unknown" важно в ДЗ?	Это проверяет, что внешний сбой fetch был переведён в доменную ошибку и виден вызывающему коду на уровне типов.	effect-ts::homework::probe
-Что должно показать ДЗ с flatMap и gen?	Обе версии имеют одну семантику, но gen делает последовательность шагов читаемой как линейный сценарий, без вложенной "лестницы" flatMap.	effect-ts::homework::gen
-Что должно показать ДЗ с runPromise/runFork/runSync?	Один и тот же Effect можно запускать разными entry point, но runSync подходит только для sync-программ и падает на async-шаге вроде tryPromise.	effect-ts::homework::runtime
+Что такое Effect как mental model?	Effect — это ленивое описание программы как значение. Оно ничего не выполняет само по себе; выполнение начинается только через runtime.	effect-ts::intro::mental-model
+Чем Effect принципиально отличается от Promise по моменту запуска?	Promise обычно стартует сразу при создании, а Effect только описывает работу. Один и тот же Effect можно передавать, комбинировать и запускать явно.	effect-ts::promise-vs-effect::laziness
+Почему Promise хуже подходит как описание программы?	Promise уже представляет начатое вычисление. Поэтому его сложнее безопасно переиспользовать, отменять, тестировать и собирать в большой план выполнения.	effect-ts::promise-vs-effect
+Что означает тип Effect<A, E, R>?	A — успешный результат, E — ожидаемая типизированная ошибка, R — зависимости/сервисы, которые нужно предоставить перед запуском.	effect-ts::type::a-e-r
+Что означает A в Effect<A, E, R>?	A — значение, которое программа вернёт при успешном завершении. В Effect.gen общий A определяется финальным return.	effect-ts::type::a
+Что означает E в Effect<A, E, R>?	E — union ожидаемых recoverable errors, на которые вызывающий может реагировать через catchTag, catchAll, matchEffect и другие комбинаторы.	effect-ts::type::e
+Что означает R в Effect<A, E, R>?	R — требования к окружению: какие сервисы нужны программе. Если R не закрыт до never, программу нельзя запустить обычным runPromise без provide/Layer.	effect-ts::type::r
+Что значит E = never?	В ожидаемом канале ошибок нет вариантов. Это не исключает defects, но говорит, что recoverable errors типом не моделируются.	effect-ts::errors::never
+Что значит R = never?	Программа не требует дополнительных сервисов из Effect-окружения и готова к запуску runtime entry point.	effect-ts::environment::never
+Что значит A = never?	Программа не может успешно вернуть значение. Типичный пример — Effect.fail(error), который завершится только ожидаемой ошибкой.	effect-ts::type::never
+Какой главный вопрос нужно задавать при чтении Effect-типа?	Что программа возвращает в A, какие ожидаемые ошибки есть в E и какие зависимости остаются в R.	effect-ts::type::reading
+Что делает Effect.gen?	Позволяет писать последовательную композицию Effect линейно, как async/await, сохраняя ленивость, типизированный E и явный R.	effect-ts::gen::definition
+Как читать yield* внутри Effect.gen?	yield* извлекает успешное значение Effect и продолжает программу. По смыслу это bind/flatMap, записанный в линейном стиле.	effect-ts::gen::yield-star
+Что происходит, если yield* получает Effect.fail?	Генератор коротко замыкается: следующие шаги не выполняются, а ошибка попадает в общий E программы.	effect-ts::gen::short-circuit
+Как накапливается E внутри Effect.gen?	Ошибки всех yield*-шагов объединяются в union. Если один шаг даёт NetworkError, а другой ParseError, итоговый E включает оба варианта.	effect-ts::gen::e
+Чем Effect.gen отличается от async/await?	async/await работает с Promise и throw/rejected errors. Effect.gen строит ленивое описание с типизированными ошибками E и зависимостями R.	effect-ts::gen::async-await
+Когда выбирать Effect.succeed?	Когда успешное значение уже есть и не нужно ни выполнять побочный эффект, ни моделировать ожидаемую ошибку.	effect-ts::constructors::succeed
+Когда выбирать Effect.fail?	Когда нужно завершить программу ожидаемой типизированной ошибкой в канале E.	effect-ts::constructors::fail
+Когда выбирать Effect.sync?	Для ленивого синхронного шага, который не должен бросать ожидаемые исключения: например, чтение Date.now() или console.log на границе эффекта.	effect-ts::constructors::sync
+Когда выбирать Effect.try?	Когда оборачиваешь синхронный API, который может бросить исключение, например JSON.parse, и хочешь перевести причину в типизированную ошибку E.	effect-ts::constructors::try
+Когда выбирать Effect.tryPromise?	Когда оборачиваешь ленивый асинхронный Promise API: fetch, fs.promises, HTTP client или database client.	effect-ts::constructors::tryPromise
+Зачем tryPromise принимает функцию, а не готовый Promise?	Чтобы сохранить ленивость: Promise создаётся только при запуске Effect, а не в момент описания программы.	effect-ts::constructors::tryPromise
+Зачем в try/tryPromise нужен catch?	Он переводит unknown-причину из внешнего мира в доменную типизированную ошибку, видимую в E.	effect-ts::errors::catch
+Что делает Effect.runPromise?	Запускает Effect и возвращает Promise<A>; при провале Effect Promise будет rejected.	effect-ts::runtime::runPromise
+Что делает Effect.runPromiseExit?	Запускает Effect и возвращает Promise<Exit<A, E>>, где успех и ошибка остаются данными, а не превращаются в throw/rejected Promise.	effect-ts::runtime::runPromiseExit
+Что делает Effect.runFork?	Запускает Effect в фоне и возвращает RuntimeFiber, которым можно управлять: дождаться, прервать или связать с жизненным циклом программы.	effect-ts::runtime::runFork
+Когда уместен Effect.runSync?	Только для полностью синхронных Effect-программ без tryPromise, sleep, delay, timeout и другой async-работы.	effect-ts::runtime::runSync
+Почему runSync падает на async-программе?	runSync не умеет выполнять асинхронные эффекты; если внутри есть async-шаг, runtime завершится ошибкой вроде AsyncFiberException.	effect-ts::runtime::runSync
+Зачем передавать AbortSignal во внешний async API вроде fetch?	Чтобы interrupt/timeout fiber-а мог отменить реальный внешний запрос, а не только остановить ожидание результата внутри Effect.	effect-ts::runtime::interrupt
