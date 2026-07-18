@@ -1,38 +1,12 @@
 ---
-description: "Create a study chapter on a topic. Runs ONE step at a time — you control the pace."
-allowed-tools: Read, Write, Glob, Grep, Bash, WebSearch, WebFetch, Task
+description: "Create or rewrite a study chapter with selectable quiz, cards, and project follow-ups"
+argument-hint: "<topic, source, path, language, or scope>"
 ---
 
-## Important: step-by-step mode
+Use the `study-chapter` skill for: $ARGUMENTS
 
-Do NOT run all steps automatically. Execute ONLY Step 1 now.
-After completing each step, stop and ask the user (in Russian) whether to proceed to the next step.
-Use stop-slop skill
+Before starting the workflow, always ask one multi-select question in the conversation language: **Which follow-ups should this chapter cycle include: quiz, Anki cards, example project, or none?** Do not infer or reuse the answer from a previous cycle.
 
-## Step 1: Research (agent: researcher)
+After the user answers, create the chapter and sibling `exercises.md`, verify runnable examples, and generate only the selected follow-ups. If an example project was selected, present its concrete proposal and ask for a separate explicit confirmation before writing project files. Start a selected quiz only after selected artifact work is complete.
 
-Use the `researcher` agent to gather sources and create a research brief.
-Then stop and show the brief to the user. Ask: "Продолжить к написанию главы?"
-
-## Step 2: Write (agent: author)
-
-Use the `author` agent to write the chapter based on the research brief.
-Then stop and show the result. Ask: "Добавить упражнения?"
-
-## Step 3: Exercises (agent: exercise-author)
-
-Use the `exercise-author` agent to create exercises with tests.
-Then stop. Ask: "Сгенерировать Anki-карточки?"
-
-## Step 4: Anki cards
-
-Generate flashcards for the chapter (no separate agent needed — do it inline).
-Then stop. Ask: "Запустить ревью (код + методика)?"
-
-## Step 5: Review (agents: reviewer + methodist)
-
-Use `reviewer` to check code, then `methodist` to check pedagogy.
-Report findings and fix issues.
-
-The user can stop at any step, skip steps, or jump to a specific step.
-Always respect the user's choice.
+Do not invoke subagents automatically. Do not stop after research, drafting, exercises, or review unless the user explicitly requested only that stage.

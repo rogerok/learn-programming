@@ -1,68 +1,31 @@
 ---
 name: stop-slop
-description: Remove AI writing patterns from prose. Use when drafting, editing, or reviewing text to eliminate predictable AI tells.
+description: Revises technical and educational prose to remove generic AI-writing patterns while preserving precision, nuance, and necessary teaching scaffolding.
 metadata:
-  trigger: Writing prose, editing drafts, reviewing content for AI patterns
-  author: Hardik Pandya (https://hvpandya.com)
+  trigger: Drafting, editing, or reviewing explanatory prose
 ---
 
 # Stop Slop
 
-Eliminate predictable AI writing patterns from prose.
+Edit prose by evidence, not by mechanical style prohibitions.
 
-## Core Rules
+## Workflow
 
-1. **Cut filler phrases.** Remove throat-clearing openers, emphasis crutches, and all adverbs. See [references/phrases.md](../../../../other/stop-slop/references/phrases.md).
+1. Preserve technical meaning, terminology, target language, and intended learner level.
+2. Remove filler, repeated claims, empty transitions, canned introductions, fake emphasis, and unsupported superlatives.
+3. Replace vague declarations with specific mechanisms, conditions, actors, and consequences.
+4. Prefer active voice when the actor matters; keep passive voice when the process or result is the useful subject.
+5. Remove only adverbs that weaken or redundantly intensify a claim. Keep adverbs that carry technical meaning.
+6. Break formulaic structures when they distort the idea, including forced binary contrasts and ornamental three-part lists.
+7. Preserve scaffolding that bridges a real prerequisite or misconception. Compress paragraphs that merely restate the same idea.
+8. Check analogies against the mechanism they explain. Remove analogies that produce a false mental model.
+9. Keep examples close to the claims they support and reduce framework noise.
+10. Read the complete revision for coherence, terminology, references, and natural rhythm.
 
-2. **Break formulaic structures.** Avoid binary contrasts, negative listings, dramatic fragmentation, rhetorical setups, false agency. See [references/structures.md](../../../../other/stop-slop/references/structures.md).
+## Boundaries
 
-3. **Use active voice.** Every sentence needs a human subject doing something. No passive constructions. No inanimate objects performing human actions ("the complaint becomes a fix").
-
-4. **Be specific.** No vague declaratives ("The reasons are structural"). Name the specific thing. No lazy extremes ("every," "always," "never") doing vague work.
-
-5. **Put the reader in the room.** No narrator-from-a-distance voice. "You" beats "People." Specifics beat abstractions.
-
-6. **Vary rhythm.** Mix sentence lengths. Two items beat three. End paragraphs differently. No em dashes.
-
-7. **Trust readers.** State facts directly. Skip softening, justification, hand-holding.
-
-8. **Cut quotables.** If it sounds like a pull-quote, rewrite it.
-
-## Quick Checks
-
-Before delivering prose:
-
-- Any adverbs? Kill them.
-- Any passive voice? Find the actor, make them the subject.
-- Inanimate thing doing a human verb ("the decision emerges")? Name the person.
-- Sentence starts with a Wh- word? Restructure it.
-- Any "here's what/this/that" throat-clearing? Cut to the point.
-- Any "not X, it's Y" contrasts? State Y directly.
-- Three consecutive sentences match length? Break one.
-- Paragraph ends with punchy one-liner? Vary it.
-- Em-dash anywhere? Remove it.
-- Vague declarative ("The implications are significant")? Name the specific implication.
-- Narrator-from-a-distance ("Nobody designed this")? Put the reader in the scene.
-- Meta-joiners ("The rest of this essay...")? Delete. Let the essay move.
-
-## Scoring
-
-Rate 1-10 on each dimension:
-
-| Dimension | Question |
-|-----------|----------|
-| Directness | Statements or announcements? |
-| Rhythm | Varied or metronomic? |
-| Trust | Respects reader intelligence? |
-| Authenticity | Sounds human? |
-| Density | Anything cuttable? |
-
-Below 35/50: revise.
-
-## Examples
-
-See [references/examples.md](../../../../other/stop-slop/references/examples.md) for before/after transformations.
-
-## License
-
-MIT
+- Do not categorically ban passive voice, adverbs, punctuation, questions, or sentence shapes.
+- Do not turn prose into fragments or a bare outline merely to make it shorter.
+- Do not alter code behavior during a prose edit.
+- Do not invent technical corrections or citations.
+- Follow repository language rules and preserve valid Obsidian syntax.

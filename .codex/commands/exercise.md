@@ -1,16 +1,8 @@
 ---
-description: "Create a practical exercise or mini-project with tests for a topic"
-allowed-tools: Read, Write, Glob, Grep, Bash, Task
+description: "Create or revise practical exercises and runnable checks"
+argument-hint: "<chapter path, topic, or exercise scope>"
 ---
 
-Create practical exercises for: $ARGUMENTS
+Use the `exercise-design` skill for: $ARGUMENTS
 
-## Instructions
-
-1. Find the relevant chapter or notes in `src/`
-2. Use the `exercise-author` agent to design exercises
-3. Place exercises either:
-   - In the Exercises section of the existing chapter, OR
-   - As a separate file in `src/09-practice/` if no chapter exists
-4. Use the `reviewer` agent to verify test cases are correct
-5. Report to the user (in Russian): exercise count, difficulty levels, file location
+Ground every exercise in the target chapter, write or update the sibling `exercises.md`, and execute the provided verification path before reporting completion. Do not include complete solutions unless the user explicitly requests them. Do not invoke subagents automatically.

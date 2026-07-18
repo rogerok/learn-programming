@@ -1,42 +1,8 @@
 ---
-description: "Create a structured study roadmap for a topic"
-allowed-tools: Read, Glob, Grep, WebSearch, WebFetch, Task
+description: "Create a source-grounded programming study roadmap"
+argument-hint: "<topic, goal, current level, or constraints>"
 ---
 
-Create a study plan for: $ARGUMENTS
+Use the `study-plan` skill for: $ARGUMENTS
 
-## Instructions
-
-All communication in Russian.
-
-1. Use the `researcher` agent to survey the topic and available sources
-2. Check existing vault notes to understand current knowledge level
-3. Produce a structured roadmap:
-
-```markdown
-# Study Plan: [topic]
-
-## Prerequisites
-- what you should know before starting (with [[wiki-links]] to existing vault notes)
-
-## Roadmap
-
-### Phase 1: Foundations
-1. Subtopic — brief description, estimated time, source
-2. ...
-
-### Phase 2: Core Concepts
-1. ...
-
-### Phase 3: Practice & Deepening
-1. ...
-
-## Recommended Sources
-- categorized list with difficulty levels
-
-## Milestones
-- checkpoints to verify understanding (e.g., "after Phase 1 you should be able to...")
-```
-
-4. Save the plan as a note in the appropriate `src/` folder
-5. Report the plan summary to the user
+Inspect relevant vault notes, identify prerequisites, organize active practice into dependency-ordered phases, and define observable milestones. Save the plan in the appropriate topic folder. Do not add time estimates unless the user explicitly requests them. Do not invoke subagents automatically.

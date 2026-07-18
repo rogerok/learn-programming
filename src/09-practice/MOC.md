@@ -12,7 +12,7 @@ aliases: [Practice, Практика]
 ## Воркшопы
 
 - [[zod-validator/readme|Zod-like валидатор с нуля]] — классы валидаторов, вывод типов, `optional()`, `object()`, `array()`
-- [[using-zod-with-classes|Zod с классами TypeScript]]
+
 
 ## Связанные темы
 

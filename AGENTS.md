@@ -119,7 +119,7 @@ tags: [topic, subtopic]
 
 ## Chapter Template
 
-When creating a full study chapter (via the `author` agent or `/chapter` command), use this extended structure:
+When creating a full study chapter (via the `study-chapter` skill or `/chapter` command), use this extended structure:
 
 ```markdown
 ---
@@ -151,14 +151,17 @@ Split into logical subsections.
 
 ````
 
-Exercises and Anki cards for a chapter must be created as separate files next to the chapter note, not embedded inside the chapter itself.
+Exercises and any selected Anki cards for a chapter must be created as separate files next to the chapter note, not embedded inside the chapter itself.
 
 ### Companion files for chapters
 
-Along with the chapter, always create these separate files **next to the chapter** (same folder):
+Always create the exercises file next to the chapter:
 
 - Exercises file: `exercises.md`
   - Contains the practical tasks and test cases for that chapter
+
+Create the Anki export only when the user selects cards for the current chapter cycle:
+
 - Anki export file: `anki-cards.txt`
   - Format: tab-separated, importable via Anki `File → Import`
 
@@ -172,6 +175,12 @@ Question text	Answer text	tag1::tag2
 
 Do NOT place Anki files in `~/Documents` or any location outside the repo.
 
+### Chapter cycle follow-ups
+
+Before every `/chapter` or `study-chapter` workflow, ask one multi-select question in the conversation language: whether to run a quiz, create Anki cards, create an example project, or select none. Never infer the answer or reuse it across cycles.
+
+Selecting an example project authorizes only a project proposal. Before creating or modifying project files, present the concrete scope, destination, stack, behavior, and expected files, then obtain a separate explicit confirmation.
+
 ## Learning Stack
 
 - Primary languages: TypeScript, JavaScript, Go (beginner)
@@ -180,36 +189,38 @@ Do NOT place Anki files in `~/Documents` or any location outside the repo.
 - Principle: build from scratch for understanding, don't copy ready-made solutions
 - Preference: guidance and hints over ready-made code
 
-## Available Agents
+## Available Skills
 
-This vault has custom agents in `.codex/agents/`. Important rules:
+Repository-scoped skills live in `.agents/skills/`:
 
-- **Never invoke agents automatically.** Only invoke an agent when the user explicitly asks for it or when a slash command requires it.
-- **Never chain multiple agents in one turn** unless the user explicitly says to.
-- Each agent runs in its own context window and costs tokens — be economical.
+- `study-chapter` — create or substantially rewrite a complete chapter with exercises and selected follow-ups
+- `study-plan` — build a source-grounded roadmap with observable milestones
+- `exercise-design` — create exercises and runnable checks from chapter objectives
+- `solution-coach` — review a learner's solution with evidence and progressive hints
+- `retrieval-quiz` — run an adaptive, one-question-at-a-time comprehension check
+- `anki-cards` — create or update a validated tab-separated Anki export
+- `example-project` — propose and, after explicit confirmation, create a runnable project for a studied topic
+- `study-note-review` — audit technical correctness and pedagogical progression
+- `technical-prose-editor` — revise technical prose without sacrificing precision
+- `obsidian-markdown` — apply valid Obsidian-specific Markdown syntax
 
-Agents:
+Skills may be invoked explicitly or selected when the request matches their description. Keep each workflow within the selected skill's boundaries.
 
-- `researcher` — gathers and expands source materials for a topic or chapter
-- `author` — writes a full chapter following the chapter template
-- `exercise-author` — creates practical exercises and mini-projects with tests
-- `reviewer` — verifies code examples, checks correctness and best practices
-- `methodist` — reviews pedagogical logic, progression, and gap coverage
-- `exercise-checker` — reviews submitted solutions against chapter material
+## Agent Delegation
 
-The user can invoke agents explicitly:
-
-- "запусти researcher по теме X"
-- "пусть methodist проверит эту главу"
-- "используй author для написания главы"
+- **Never invoke agents automatically.** Use an agent only when the user explicitly asks for delegation.
+- **Never chain multiple agents in one turn** unless the user explicitly asks for it.
+- Commands and skills must not require agents to complete their normal workflow.
+- Each agent runs in its own context window and costs tokens; use delegation only for genuinely independent work.
 
 ## Available Commands
 
-Slash commands in `.claude/commands/`:
+Command entrypoints in `.codex/commands/`:
 
-- `/chapter <topic>` — step-by-step pipeline (one agent per step, asks before proceeding)
-- `/cards <topic>` — generate Anki flashcards for a topic
-- `/exercise <topic>` — create a practical exercise with tests
-- `/check` — review my solution and give feedback
-- `/quiz <topic>` — interactive comprehension check: I explain, you probe gaps
-- `/plan <topic>` — structured study roadmap with topics, order, and sources
+- `/chapter <topic>` — run the complete `study-chapter` workflow
+- `/cards <topic>` — create or update the sibling Anki TSV export
+- `/exercise <topic>` — create or revise practical exercises and runnable checks
+- `/check` — review a submitted solution and provide progressive hints
+- `/quiz <topic>` — run an adaptive retrieval-based comprehension check
+- `/plan <topic>` — create a source-grounded study roadmap
+- `/project <topic>` — propose an example project and create it only after explicit confirmation
