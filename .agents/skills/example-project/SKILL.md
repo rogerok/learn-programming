@@ -21,6 +21,8 @@ Before creating or modifying any project file:
    - language, runtime, and libraries;
    - observable behavior and completion criteria;
    - files expected to be created or changed.
+   - project-local manifest, package manager, lockfile, scripts, and toolchain configuration;
+   - commands for local install, build, lint, test, and run as applicable;
 3. Ask the user: **"Create this example project?"**
 4. Wait for an explicit affirmative answer.
 
@@ -30,14 +32,17 @@ Reading and proposing are allowed before confirmation. Writing files, installing
 
 After confirmation:
 
-1. Reuse the repository's existing runtime, dependencies, naming, and test conventions. Add dependencies only when the learning objective requires them.
-2. Place a cross-topic mini-project under `src/09-practice/<descriptive-name>/`. Place a tightly chapter-specific example next to that topic only when this matches the existing structure better.
-3. Keep the project small enough that every file serves a named learning objective.
-4. Implement real behavior. Do not ship stubs, placeholder handlers, fake data paths, or unfinished TODOs.
-5. Include concise run instructions and extension tasks. Explain architecture decisions that expose the studied concept; do not narrate obvious code.
-6. Add tests only for new observable behavior that is not already covered by an existing project test path.
-7. Run the project through its actual entrypoint and exercise the core behavior. Also run the narrowest relevant typecheck or tests.
-8. Report created files, observed commands and output, and how each major part maps to the studied topic.
+1. Create a self-contained project under `projects/examples/<descriptive-name>/`.
+2. Give the project its own dependency and tool boundary. Use `package.json` plus a project-local lockfile for Node.js, `go.mod` for Go, `Cargo.toml` for Rust, `pyproject.toml` plus the selected lockfile for Python, or the ecosystem's equivalent.
+3. Keep dependencies, scripts, compiler settings, lint configuration, test configuration, and runtime commands inside the project. Do not add the project to root npm workspaces and do not add its libraries to the root `package.json`.
+4. Reuse conceptual and naming conventions from the vault, but choose project-local tool versions that fit the topic. Add only dependencies that serve the learning objective or required runtime behavior.
+5. Keep the project small enough that every file serves a named learning objective.
+6. Implement real behavior. Do not ship stubs, placeholder handlers, fake data paths, or unfinished TODOs.
+7. Include concise run instructions and extension tasks. Explain architecture decisions that expose the studied concept; do not narrate obvious code.
+8. Add project-local tests for observable behavior. Root build, lint, and test commands must not discover or execute the project.
+9. Install and run commands from the project root. Exercise the actual entrypoint, typecheck or compile, lint when configured, and run the project-local tests.
+10. Verify portability in a clean temporary copy that has no access to the repository root's installed dependencies. Install from the project-local manifest and lockfile, then repeat the core checks.
+11. Remove temporary verification files and report created files, observed commands and output, and how each major part maps to the studied topic.
 
 ## Learning Constraints
 
@@ -46,6 +51,14 @@ After confirmation:
 - Reuse terminology from the chapter.
 - Include one or more extension tasks that require the learner to modify behavior independently.
 - Do not invoke subagents automatically.
+
+## Package Isolation
+
+- Treat repository membership and package membership as separate boundaries: the project shares Git history with the vault but owns its dependencies and commands.
+- Commit the ecosystem lockfile when that ecosystem normally commits one.
+- Never rely on undeclared dependencies resolved from the repository root.
+- Keep generated outputs, caches, coverage, virtual environments, and local secrets out of version control through a project-local `.gitignore`.
+- A different language is not a special case: use that language's native module and test tooling entirely inside the project directory.
 
 ## Boundaries
 

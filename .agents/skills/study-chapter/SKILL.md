@@ -1,6 +1,6 @@
 ---
 name: study-chapter
-description: Creates or substantially rewrites a complete programming study chapter in this Obsidian vault, with sibling exercises and optional follow-up quiz, Anki cards, and example project. Use for requests to write a chapter, lesson, or comprehensive topic note. Do not use for a roadmap or solution review.
+description: Creates or substantially rewrites a complete programming study chapter in this Obsidian vault, with sibling exercises and optional follow-up quiz, Anki cards, complete example project, or guided project. Use for requests to write a chapter, lesson, or comprehensive topic note. Do not use for a roadmap or solution review.
 ---
 
 # Study Chapter
@@ -23,11 +23,11 @@ Follow the repository language and placement rules. If a new note has no request
 
 Before starting every chapter workflow, ask one multi-select question in the conversation language:
 
-**Which follow-ups should this chapter cycle include: quiz, Anki cards, example project, or none?**
+**Which follow-ups should this chapter cycle include: quiz, Anki cards, complete example project, guided project, or none?**
 
 Always ask this question, even if the command invocation appears to imply an answer. Record the selection for the current chapter cycle only; never reuse it for a later cycle.
 
-Selecting an example project authorizes only the later project proposal. The `example-project` skill must still present its concrete scope and obtain a separate explicit confirmation before creating or modifying project files.
+Selecting either project type authorizes only its later proposal. The `example-project` or `guided-project` skill must still present its concrete scope and obtain a separate explicit confirmation before creating or modifying project files.
 
 ## Workflow
 
@@ -41,7 +41,7 @@ Selecting an example project authorizes only the later project proposal. The `ex
 8. Verify every runnable code example with the narrowest appropriate compiler, runtime, or test command. Correct the artifact before reporting completion.
 9. Perform one technical review and one pedagogical review. Fix factual errors, unsupported claims, prerequisite gaps, abrupt difficulty jumps, misleading analogies, duplicate material, and exercises that do not match the chapter.
 10. Check frontmatter, Obsidian links, callouts, companion filenames, source links, and any generated Anki file's column counts.
-11. Run selected follow-ups in this order: generate Anki cards during artifact creation; after the chapter works, prepare the example-project proposal and pass through its mandatory confirmation gate; after selected artifact work is complete, start the retrieval quiz with one question.
+11. Run selected follow-ups in this order: generate Anki cards during artifact creation; after the chapter works, process a complete example-project proposal and its confirmation gate; then process a guided-project proposal and its independent confirmation gate; after selected artifact work is complete, start the retrieval quiz with one question.
 
 ## Boundaries
 
@@ -51,8 +51,8 @@ Selecting an example project authorizes only the later project proposal. The `ex
 - Do not invent source claims or mark unverified code as runnable.
 - Do not add adjacent topics merely to make the chapter appear comprehensive.
 
-- Do not generate cards, start a quiz, or propose a project when that follow-up was not selected for the current cycle.
-- Do not treat selection of the project follow-up as confirmation to write project files.
+- Do not generate cards, start a quiz, or propose either project type when that follow-up was not selected for the current cycle.
+- Do not treat selection of either project follow-up as confirmation to write project files.
 
 ## Completion Report
 
