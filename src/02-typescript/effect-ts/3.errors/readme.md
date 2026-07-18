@@ -1,3 +1,9 @@
+---
+tags: [typescript, functional-programming, effect-ts, error-handling]
+---
+
+# Effect: ошибки
+
 ## Errors
 
 Ошибки следует обрабатывать у вызывающего. Не следует давать им всплывать на пять уровней выше.

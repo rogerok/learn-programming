@@ -66,7 +66,7 @@ views.set(11)
 
 Создаём React компонент и подписываемся на изменения.
 
-```typescript jsx
+```tsx
 import {useState} from "react";
 
 const useRerender = () => {
@@ -240,7 +240,7 @@ const observer = (component) => (...props) => {
 
 Пример
 
-```typescript jsx
+```tsx
 const Title = observer(() => {
     return <h1>{title.get()}</h1>
 })
@@ -250,7 +250,7 @@ const Title = observer(() => {
 
 1) Вызывается `observer`
 
-```typescript jsx
+```tsx
 const Title = observer(() => {...
 })
 ```
@@ -266,7 +266,7 @@ const Title = observer(() => {...
 2) React вызывает компонент `Title()`
    На первом рендере React вызывает ф-цию-компонент, обернутую в `observer`
 
-```typescript jsx
+```tsx
 const rerender = useRerender()               // создаём функцию для форс-перерисовки
 readObservables.clear()                      // 1️⃣ очищаем зависимости
 const result = component(...props)           // 2️⃣ вызываем компонент
@@ -275,13 +275,13 @@ const result = component(...props)           // 2️⃣ вызываем ком�
 
 3) Во время вызова `component(...props)`
 
-```typescript jsx
+```tsx
 <h1>{title.get()}</h1>
 ```
 
 - `title.get()` запускает геттер observable
 
-```typescript jsx
+```tsx
 get()
 {
     readObservables.add(this)
@@ -293,7 +293,7 @@ get()
 
 4) После вызова компонента - `useEffect`
 
-```typescript jsx
+```tsx
 useEffect(() => {
     readObservables.forEach((observable) => observable.subscribe(rerender))
 
@@ -307,7 +307,7 @@ useEffect(() => {
 - Мы подписываемся на `title`, передавая ему `rerender`
 
 5) Что будет при `title.set()` ?
-   ```title.set('Hi')```
+   `title.set('Hi')`
 
 - Внутри `set()` вызываются все подписанные функции. В нашем случае - rerender.
 - `rerender()` вызывает `setState([])` - это заставляет React перерисовывать компонент.

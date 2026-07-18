@@ -42,7 +42,7 @@ type AB = A & B; // { name: string; age: number }
 
 Тип `A` является подтипом `B`, если `A ⊂ B`:
 
-```
+```text
 never ⊂ 'hello' ⊂ string ⊂ unknown
 ```
 

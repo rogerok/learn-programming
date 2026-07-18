@@ -171,7 +171,7 @@ const renderToMain = Impure.setHtml('#js-main');
 
 Теперь построим виджет шаг за шагом. Будем использовать публичный API JSONPlaceholder, который возвращает фотографии:
 
-```
+```http
 GET https://jsonplaceholder.typicode.com/photos?albumId=1
 ```
 
@@ -300,7 +300,7 @@ graph LR
 
 #### Формальная запись
 
-```
+```javascript
 compose(map(f), map(g)) === map(compose(f, g))
 ```
 

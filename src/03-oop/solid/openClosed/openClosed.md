@@ -211,7 +211,7 @@ const ItemList2 = ({items, filter}: { items: string[]; filter: ItemFilter }) => 
 
 ## Связанные темы
 
-- [[../03-oop/polymorphism]] — полиморфизм как основа OCP
-- [[../03-oop/interfaces]] — абстракции для точки расширения
-- [[dependencyInversion]] — DIP дополняет OCP
+- [[../../concepts/polymorphism/polymorphism]] — полиморфизм как основа OCP
+- [[../../concepts/interfaces/interfaces]] — абстракции для точки расширения
+- [[../dependencyInversion/dependencyInversion]] — DIP дополняет OCP
 - [[../solid-book/ocp]] — углублённый разбор OCP из книги

@@ -89,7 +89,7 @@ node --no-maglev <file>.js
 
 **Когда Maglev компилирует функцию:**
 
-```
+```text
 [marking calculateTotal for optimization to MAGLEV,
   reason: small function, feedback is sufficient]
 [completed optimizing calculateTotal (Maglev)]
@@ -133,7 +133,7 @@ TurboFan остаётся top-tier оптимизирующим компилят
 - Последний бит = `0` -- значение является **SMI** (Small Integer). Целое число хранится прямо в указателе, без аллокации в куче.
 - Последний бит = `1` -- значение является **указателем на HeapObject**. Адрес объекта = значение с очищенным последним битом.
 
-```
+```text
 SMI 42:      0x0000002A00000000   (42 << 32, tag bit = 0)
 HeapObject:  0x00007F8B12345679   (pointer | 1, tag bit = 1)
 ```
@@ -185,7 +185,7 @@ function createCounter() {
 
 V8 делит кучу на несколько зон с разными стратегиями управления памятью:
 
-```
+```text
 V8 Heap
 ├── New Space (nursery)        — 1-8 МБ, для короткоживущих объектов
 │   ├── Semi-Space (From)      — активная половина
@@ -238,7 +238,7 @@ node --trace-gc app.js
 
 Пример вывода:
 
-```
+```text
 [4756:0x5629c80]     42 ms: Scavenge 2.1 (3.0) -> 1.8 (4.0) MB, 0.8 / 0.0 ms
 [4756:0x5629c80]     85 ms: Scavenge 2.8 (4.0) -> 2.2 (4.0) MB, 0.6 / 0.0 ms
 ```
@@ -260,7 +260,7 @@ node --trace-gc app.js
 
 **Фаза 3: Compacting (уплотнение).** Перемещение живых объектов для устранения фрагментации. Выполняется не всегда -- только когда фрагментация Old Space превышает порог.
 
-```
+```text
 [4756:0x5629c80]   1520 ms: Mark-Compact 48.3 (52.0) -> 32.1 (40.0) MB, 12.4 / 0.0 ms
 ```
 
@@ -504,7 +504,7 @@ const obj = { x: 1, y: 2 };
 
 Вывод (упрощённо):
 
-```
+```text
 DebugPrint: 0x2a4e08099a51: [JS_OBJECT_TYPE]
  - map: 0x2a4e08283c29 <Map[16](HOLEY_ELEMENTS)>
  - prototype: 0x2a4e0824a5f9 <Object map = 0x2a4e08283bf9>
@@ -561,7 +561,7 @@ console.log(`Heap snapshot written to: ${snapshotStream}`);
 node --trace-gc server.js
 ```
 
-```
+```text
 [20572:0x4b00]    120 ms: Scavenge 4.2 (6.0) -> 3.1 (7.0) MB, 1.2 / 0.0 ms (average mu = 1.000, current mu = 1.000)
 [20572:0x4b00]  15234 ms: Mark-Compact 62.3 (70.0) -> 41.2 (65.0) MB, 18.5 / 0.0 ms (average mu = 0.950, current mu = 0.930)
 ```

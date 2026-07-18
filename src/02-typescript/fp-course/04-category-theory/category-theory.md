@@ -570,6 +570,7 @@ Monoid — это не конкретный тип. Это **пара** "тип 
 - [[functor]]
 - [[17.category-theory]]
 - [[18.magma,semigroup,monoid]]
+- [[exercises|Упражнения к главе]]
 
 ## Sources
 

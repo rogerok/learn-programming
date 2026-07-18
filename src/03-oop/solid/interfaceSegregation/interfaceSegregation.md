@@ -129,6 +129,6 @@ class Freelancer implements CodeProducer {
 
 ## Связанные темы
 
-- [[singleResponsibility]] — SRP: каждый класс — одна задача
-- [[../03-oop/interfaces]] — интерфейсы в TypeScript
+- [[../singleResponsibility/singleResponsibility]] — SRP: каждый класс — одна задача
+- [[../../concepts/interfaces/interfaces]] — интерфейсы в TypeScript
 - [[../solid-book/isp]] — углублённый разбор ISP из книги

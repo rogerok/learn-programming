@@ -6,7 +6,7 @@ tags: [react, internals, fiber, reconciler]
 
 > [!info] Context
 > Пошаговая реализация мини-React (Didact): createElement, render, Fiber, reconciliation, hooks.
-> Пререквизиты: [[advanced/6.Deep dive into diffing and reconciliation|Diffing и reconciliation]], useState, JSX как синтаксический сахар, DOM API
+> Пререквизиты: [[../advanced/6.Deep dive into diffing and reconciliation|Diffing и reconciliation]], useState, JSX как синтаксический сахар, DOM API
 
 **Steps**
 

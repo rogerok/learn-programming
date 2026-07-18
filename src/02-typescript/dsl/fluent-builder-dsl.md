@@ -851,13 +851,14 @@ $(".item")
 
 ---
 
-## Related Topics
+## Связанные темы
 
+- [[02-typescript/MOC|Маршрут TypeScript]]
+- [[02-typescript/basics/code-basic/generics|Дженерики]] — type-state и сохранение типа результата.
+- [[02-typescript/basics/code-basic/variability|Вариантность]] — совместимость callback и методов builder.
 - [[02-typescript/dsl/exercises|Упражнения: Fluent Builder DSL]]
-- [[03-oop-solid/builder-pattern|Builder Pattern (GoF)]]
 - [[02-typescript/fp-course/01-pure-functions-and-pipe/pure-functions-and-pipe|Pipe и композиция функций]]
-- [[02-typescript/effective-ts/method-chaining|Method Chaining в TypeScript]]
-- [[09-practice/zod-validator|Zod-like валидатор]]
+- [[09-practice/zod-validator/readme|Zod-like валидатор]]
 
 ## Sources
 

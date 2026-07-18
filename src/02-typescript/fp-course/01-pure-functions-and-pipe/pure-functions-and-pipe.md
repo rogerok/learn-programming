@@ -421,7 +421,7 @@ normalizeUsername("Ab");            // null
 
 ## Related Topics
 
-- [[01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch03-pure-functions/ch03-pure-functions|Чистые функции — Mostly Adequate Guide]]
+- [[02-typescript/fp-ts/mostly-adequate/ch03-pure-functions|Чистые функции — Mostly Adequate Guide]]
 - [[02-typescript/fp-ts/fp-ts-turorial/1.pipe-and-flow|pipe и flow — fp-ts Tutorial]]
 - [[02-typescript/fp-course/02-types-adt-option/types-adt-option|Следующая глава: Типы, ADT и Option]]
 - [[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying|Каррирование]]

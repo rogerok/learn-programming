@@ -163,7 +163,7 @@ const getLength = (nums, index) => {
 };
 ```
 
-```
+```text
   getLength([1,2,3,4], 3)
     -> 1 + getLength([1,2,3,4], 2)
       -> 1 + getLength([1,2,3,4], 1)
@@ -191,7 +191,7 @@ const getTail = (nums, index) => {
 getTail([1, 2, 3, 4], 0);
 ```
 
-```
+```text
 getTail([1,2,3,4],0)
  -> getTail([1,2,3,4], 1)
   -> getTail([1,2,3,4], 2]

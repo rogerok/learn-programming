@@ -1,0 +1,12 @@
+{
+  "orderId": " ord-2026-0042 ",
+  "recipient": {
+    "name": " Анна  Смирнова ",
+    "email": " ANNA@EXAMPLE.COM "
+  },
+  "declaredValue": "1250.50",
+  "delivery": {
+    "kind": "locker",
+    "lockerId": " lck-a1b2 "
+  }
+}

@@ -2,6 +2,8 @@
 tags: [golang, switch, control-flow]
 ---
 
+# Switch в Go
+
 ```go
 func getCreator(os string) string {
     var creator string

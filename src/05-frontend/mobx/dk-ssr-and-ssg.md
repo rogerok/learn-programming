@@ -11,7 +11,7 @@ tags: [mobx, ssr, ssg, hydration, server-rendering, node]
 
 SSR с MobX — это не магия Next.js. Это воспроизводимый семишаговый флоу, который работает с любым бандлером и любым Node.js-фреймворком. Проверено на проектах уровня банков и бирж.
 
-```
+```text
 HTTP Request
      ↓
 1. Создать globalContext (сторы, api, actions) — чистый, для этого запроса

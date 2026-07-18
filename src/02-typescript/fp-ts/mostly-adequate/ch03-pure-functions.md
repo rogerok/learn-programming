@@ -8,7 +8,7 @@ aliases: [Mostly Adequate ch03, Pure Functions in fp-ts]
 > [!info] Context
 > Эта глава переосмысляет `Mostly Adequate Guide`, chapter 03, через `fp-ts`. Центральная идея не меняется: чистая функция всегда ведёт себя предсказуемо и не производит наблюдаемых побочных эффектов. Но теперь мы смотрим на это не как на абстрактную "хорошую практику", а как на фундамент для `IO`, `Task`, `Reader` и `TaskEither`.
 >
-> **Пререквизиты:** [[pure-functions]], [[function-composition/function-composition|композиция функций]], базовый TypeScript, желательны [[unsound]] и [[fp-ts-phase-1-2]].
+> **Пререквизиты:** [[pure-functions]], [[01-javascript/patterns/fp/function-composition/function-composition|композиция функций]], базовый TypeScript, желательны [[unsound]] и [[fp-ts-phase-1-2]].
 
 ## Overview
 
@@ -761,7 +761,7 @@ test('pipeline keeps dependency, effect, and transformation separate', async () 
 ## Related Topics
 
 - [[pure-functions]]
-- [[function-composition/function-composition|композиция функций]]
+- [[01-javascript/patterns/fp/function-composition/function-composition|композиция функций]]
 - [[unsound]]
 - [[fp-ts-phase-1-2]]
 - [[fp-ts-roadmap]]

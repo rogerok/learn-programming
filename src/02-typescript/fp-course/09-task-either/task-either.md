@@ -1070,7 +1070,7 @@ main();
 
 #### Паттерн: FP core -> imperative edge
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │         FP Core (чистый код)            │
 │  validate → save → notify → ...         │

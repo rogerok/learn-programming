@@ -7,7 +7,7 @@ aliases: [CounterTwo MVC, Counter улучшенный]
 
 Улучшенная версия счётчика: Model **не знает** о View, Controller возвращает значения, View обновляет себя сам.
 
-## Отличие от [[counter/counter|Counter (базовый)]]
+## Отличие от [[../counter/counter|Counter (базовый)]]
 
 | | Counter (базовый) | CounterTwo (улучшенный) |
 |---|---|---|
@@ -143,10 +143,10 @@ export class CounterTwoView implements View {
 - Model изолирована — не импортирует View
 - Controller возвращает значения, не дёргает View напрямую
 - Интерфейсы `Model`, `Controller`, `View` — явный контракт
-- Следует [[../../solid/dependencyInversion/dependencyInversion|DIP]]: зависеть от абстракций
+- Следует [[../../../03-oop/solid/dependencyInversion/dependencyInversion|DIP]]: зависеть от абстракций
 
 ## Связанные темы
 
-- [[counter/counter]] — базовый MVC (сравни)
+- [[../counter/counter]] — базовый MVC (сравни)
 - [[../users/users]] — MVC с CRUD операциями
 - [[../mvc]] — теория MVC

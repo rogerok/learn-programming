@@ -3,13 +3,13 @@ tags: [typescript, zod, validation, workshop, type-system, generics]
 aliases: [Zod валидатор, Zod-like validator]
 ---
 
-# Воркшоп: создание аналога Zod
+# Reference implementation: упрощённый аналог Zod
 
-Zod — библиотека для валидации данных в TypeScript с выводом типов. Здесь реализован её упрощённый аналог с нуля.
+Zod — библиотека для валидации данных в TypeScript с выводом типов. Ниже приведён полный учебный листинг упрощённого аналога. Используй его как пример для чтения и диагностики после собственной попытки спроектировать контракт, а не как пошаговый workshop.
 
 ## Архитектура
 
-```
+```text
 index.ts    — точка входа (re-export)
 schema.ts   — классы валидаторов (ZodString, ZodNumber, ZodObject…)
 util.ts     — вспомогательные типы (AddQuestionMarks, Flatten)
@@ -224,6 +224,6 @@ describe('z', () => {
 
 ## Связанные темы
 
-- [[../../typescript/MOC|TypeScript MOC]]
-- [[../../typescript/type-level-programming/type-level-programming|Type-level programming]]
-- [[../../typescript/infer|infer в TypeScript]]
+- [[../../02-typescript/MOC|TypeScript MOC]]
+- [[../../02-typescript/advanced/type-level-programming/type-level-programming|Type-level programming]]
+- [[../../02-typescript/advanced/infer|infer в TypeScript]]

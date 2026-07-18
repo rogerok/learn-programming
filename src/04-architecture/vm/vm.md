@@ -148,6 +148,6 @@ class TaskListViewModel {
 
 ## Связанные темы
 
-- [[../MVVM/MVVM]] — MVVM паттерн
-- [[../MVC/mvc]] — MVC как предшественник
-- [[../MVC/taskExample/frontend/taskExample-frontend]] — VM на практике (TaskStore)
+- [[../mvvm/MVVM]] — MVVM паттерн
+- [[../mvc/mvc]] — MVC как предшественник
+- [[../mvc/taskExample/frontend/taskExample-frontend]] — VM на практике (TaskStore)

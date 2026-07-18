@@ -2,7 +2,7 @@
 tags: [cs, algorithms, stack, data-structures, javascript]
 ---
 
-## Solving problems using stacks
+# Solving problems using stacks
 
 ```ts
 class Stack<T> {

@@ -1,53 +1,54 @@
 ---
 name: guided-project
-description: Proposes and creates a standalone starter mini-project for learning an already studied programming topic through milestones, targeted checks, manual checkpoints, progressive spoiler hints, and reference implementations stored only in GUIDE.md. Use when the user wants to implement the functionality themselves. Always obtain explicit confirmation before writing project files.
+description: Proposes and creates a standalone starter project in which the learner implements an established capability through checked milestones and fading, optional hints. Use when the learner wants to build the behavior. Do not use for a finished sample, chapter, exercise sheet, or submitted-solution review. Always obtain explicit confirmation before writing project files.
 ---
 
 # Guided Project
 
-Create a working starter mini-project that the learner completes through several ordered milestones. This workflow is independent: it must not require a chapter, quiz, Anki cards, or a complete example project.
+Create a functioning starter that the learner extends through dependency-ordered milestones. The learning unit is the observable capability demonstrated by the completed behavior, reasoning, and transfer—not the project directory or GUIDE file.
 
-## Supporting Skills
+This workflow is independent: it must not require a chapter, quiz, Anki deck, or complete example project when the topic and prerequisites are otherwise established.
 
-Apply the relevant contracts from these repository skills while keeping `guided-project` responsible for the final result:
+## Supporting Contracts
 
-- `exercise-design`: observable objectives, progressive tasks, and meaningful checks;
-- `study-note-review`: factual correctness, prerequisites, difficulty progression, cognitive load, and coverage gaps;
-- `technical-prose-editor`: precise, compact explanations without removing necessary scaffolding;
-- `obsidian-markdown`: valid collapsed callouts, frontmatter, links, and code fences.
+Apply the relevant rules from:
 
-Do not invoke legacy agents automatically. The guided-project workflow must complete with the main agent unless the user explicitly requests delegation.
+- `exercise-design` for observable outcomes, meaningful checks, practice progression, and progressive hints;
+- `study-note-review` for factual and pedagogical verification;
+- `technical-prose-editor` for precise compact instructions;
+- `obsidian-markdown` for valid project guidance when Obsidian syntax is used.
+
+Keep `guided-project` responsible for the final result. Do not invoke legacy agents or subagents automatically.
 
 ## Inputs and Grounding
 
-1. Identify the topic, learner level, preferred language, runtime, and any project constraints.
-2. Inspect relevant vault notes, exercises, MOCs, and terminology.
-3. If no chapter exists, use the clearly stated topic and authoritative sources. Do not generate a chapter as a prerequisite.
-4. Detect hidden prerequisites. Keep the project within the learner's demonstrated scope or name the prerequisite in the proposal.
+1. Identify the target capability, learner's demonstrated prerequisites, language, runtime, and project constraints.
+2. Inspect relevant canonical concepts, chapters, exercises, MOCs, terminology, and existing example or guided projects. A note's presence is not evidence that the learner has mastered it.
+3. If no chapter exists, establish scope from the request and authoritative sources. Do not create a chapter as a prerequisite.
+4. Detect hidden prerequisites. Keep the project within demonstrated scope or name the prerequisite and its evidence requirement in the proposal.
+5. Check complete examples for the same learning unit. Use a meaningfully different problem domain from any accessible complete example. If a same-domain complete example is essential, it must remain unavailable until after the learner's corresponding attempt.
 
 ## Mandatory Confirmation Gate
 
 This gate applies even when the user directly invokes `/guided-project`.
 
-Before creating or modifying files, present:
+Before creating or modifying files, installing dependencies, or generating scaffolding, present:
 
-- project title and learning purpose;
-- source notes or authoritative topic scope;
-- three to six ordered milestones;
-- learning objective and observable behavior for each milestone;
+- project title, problem domain, and why it is not a disguised copy of an accessible complete example;
+- source notes or authoritative scope;
+- the final observable capability and mastery evidence;
+- dependency-ordered milestones, each with its learner action, observable behavior, check, and intended amount of guidance;
 - proposed destination and storage rationale;
 - language, runtime, libraries, and verification commands;
-- expected files;
-- project-local manifest, package manager, lockfile, scripts, and toolchain configuration;
-- commands for local install, build, lint, targeted checks, and run as applicable;
-- baseline behavior already implemented in the starter;
+- expected files and the purpose each serves;
+- project-local manifest, package manager, lockfile policy, scripts, and only the tool configuration needed for isolation;
+- commands for local install, build or typecheck, targeted checks, and run, plus lint only when configured;
+- coherent baseline behavior already implemented in the starter;
 - behavior intentionally left for the learner.
 
-Then ask: **"Create this guided project?"**
+Then ask an explicit yes/no question in the conversation language asking whether to create this guided project. Wait for an explicit affirmative answer. Invocation, chapter-cycle selection, or confirmation of another path does not authorize writes. Overwriting an existing project requires a separate confirmation naming that path.
 
-Wait for an explicit affirmative answer. Command invocation, selection in a chapter-cycle question, or confirmation of another project does not authorize file writes.
-
-## Storage Policy
+## Storage and Package Isolation
 
 Default to the same `learn-programming` Git repository under:
 
@@ -55,95 +56,71 @@ Default to the same `learn-programming` Git repository under:
 projects/guided/<descriptive-guided-project-name>/
 ```
 
-The project shares repository history and Obsidian visibility with the vault but remains an independent package or language module. Do not add it to root npm workspaces.
+The project shares repository history and Obsidian visibility but owns its package boundary. Do not add it to root npm workspaces.
 
-Propose a separate repository only when independent Git history, deployment, collaboration, or portfolio lifecycle is itself valuable. Explain the reason in the proposal and obtain explicit confirmation for the external destination.
+Propose a separate repository only when independent history, deployment, collaboration, or portfolio lifecycle is itself useful. Explain that reason and confirm the external destination explicitly.
 
-## Package Isolation
+Every guided project must be runnable without root-installed dependencies or root tool configuration:
 
-Every guided project owns its complete tool boundary:
-
-- Node.js or TypeScript: project-local `package.json`, lockfile, `tsconfig`, scripts, lint config, and test config;
-- Go: project-local `go.mod`, `go.sum` when produced, native build commands, and tests;
+- Node.js or TypeScript: project-local `package.json`, lockfile, `tsconfig`, scripts, and required test/check configuration;
+- Go: project-local `go.mod`, `go.sum` when produced, native commands, and tests;
 - Rust: project-local `Cargo.toml`, committed `Cargo.lock` for applications, and Cargo tests;
 - Python: project-local `pyproject.toml`, selected lockfile, virtual-environment instructions, and tests;
-- other languages: the ecosystem's equivalent manifest, lockfile, compiler, formatter, and test configuration.
+- other ecosystems: equivalent native manifest, dependency lock policy, compiler/runtime, and check configuration.
 
-Do not add project libraries or scripts to the repository root `package.json`. Do not rely on root `node_modules`, root TypeScript settings, or root test discovery. Keep generated outputs, caches, coverage, virtual environments, and secrets out of version control with a project-local `.gitignore`.
+Never add project libraries or scripts to the repository root. Never rely on root `node_modules`, root TypeScript settings, or root test discovery. Exclude generated output, caches, coverage, environments, and secrets with project-local ignore rules.
 
-## Project Shape
+## Milestone Design
 
-Create a mini-project with three to six cumulative milestones. The starter must compile and expose meaningful baseline behavior; do not use empty files, fake handlers, `throw new Error("TODO")`, or no-op placeholders.
+Use the fewest cumulative milestones that make dependencies and evidence clear. Across the project, preserve this deliberate-practice progression where applicable: predict, explain, modify, implement, diagnose, transfer.
 
-Prefer this layout when the existing stack permits it:
+For each milestone:
 
-```text
-<project>/
-├── GUIDE.md
-├── package.json | go.mod | Cargo.toml | pyproject.toml
-├── <project-local lockfile and tool configs>
-├── src/
-│   ├── index.ts
-│   └── <domain-files>.ts
-├── checks/
-│   ├── 01-<milestone>.check.ts
-│   └── 02-<milestone>.check.ts
-└── <project-local test configuration>
-```
+1. state an observable outcome and why it follows the previous milestone;
+2. give a behavior-level contract and exact targeted check command;
+3. include a reasoning checkpoint when prediction, explanation, or diagnosis is part of the evidence;
+4. ensure checks fail for a plausible missing or incorrect behavior, not for setup or syntax;
+5. make the learner change real behavior rather than fill a placeholder;
+6. reduce decomposition, named steps, starter code, and hints as capability grows;
+7. end with an independent transfer in a different context or representation when transfer is part of the learning unit.
 
-Adapt filenames and tools for Go, React, backend, CLI, systems, or other language topics. Intentionally failing learner checks must be discoverable only through the project's explicit check command, never through repository-root tooling.
+The starter must compile or run and expose meaningful baseline behavior. Leave later capabilities absent by design; do not use empty files, fake handlers, no-op branches, `throw new Error("TODO")`, or other placeholder failures.
 
 ## GUIDE.md Contract
 
-`GUIDE.md` must contain:
+`GUIDE.md` must contain only material needed to attempt and verify the work:
 
-1. context, prerequisites, learning objectives, and run commands;
-2. a short explanation of the starter architecture;
-3. one section per cumulative milestone;
-4. the exact targeted check command for each milestone;
-5. manual checkpoints for reasoning and design decisions;
-6. three progressive collapsed hints;
-7. one collapsed reference implementation with explanation;
-8. final integration checks and independent extension tasks.
+- context, prerequisites, target capability, and run/check commands;
+- a compact explanation of the functioning starter architecture;
+- dependency-ordered milestones with behavior contracts and evidence criteria;
+- exact targeted check commands and manual reasoning checkpoints;
+- optional collapsed hints that fade across milestones;
+- final integration evidence and an independent transfer task.
 
-For every milestone, use this reveal order:
+Use hints in reveal order: concept, relevant structure or boundary, then pseudocode or algorithm shape. Never include complete code. Early milestones may have up to three hints; later implementation and diagnosis milestones should have fewer and less-specific hints; the final transfer has no hint by default. Do not include a reference implementation, answer key, copied expected output that gives away the implementation, or a committed `solution/` directory.
 
-````markdown
-> [!tip]- Hint 1: Concept
-> Point to the relevant mechanism without discussing implementation.
-
-> [!tip]- Hint 2: Structure
-> Identify useful state, types, functions, or module boundaries.
-
-> [!tip]- Hint 3: Algorithm
-> Give pseudocode or the algorithm shape without complete code.
-
-> [!warning]- Reference implementation
-> ```typescript
-> // Complete verified implementation for this milestone
-> ```
->
-> Explain why it works, the invariant it preserves, common mistakes, and relevant trade-offs.
-````
-
-The reference implementation must exist only in `GUIDE.md`, not in a committed `solution/` directory.
+Learner-facing headings and hint prose must follow repository language rules; new Russian guidance should use labels such as `Результат`, `Проверка`, and `Подсказка` rather than English template filler.
 
 ## Verification Workflow
 
 1. Install or prepare the toolchain from the project-local manifest and lockfile.
-2. Implement and run the starter's baseline entrypoint from the project root.
-3. Confirm the starter compiles and its baseline behavior works.
-4. Confirm each targeted learner check fails for the intended missing behavior rather than setup or syntax errors.
-5. Materialize the reference implementation in a clean temporary copy with no access to root-installed dependencies.
-6. Install from the project-local manifest and lockfile, then run every targeted check against the complete reference implementation.
-7. Fix the guide, checks, manifest, or reference implementation until all checks pass.
-8. Remove temporary reference files and leave only the learner-facing starter project plus `GUIDE.md`.
-9. Confirm repository-root build, lint, and test commands do not discover the standalone project.
+2. Run the baseline entrypoint from the project root and observe its stated behavior.
+3. Confirm the starter compiles or typechecks and that targeted learner checks fail only for intentionally absent behavior.
+4. In a clean temporary copy with no root dependency access, create a private reference implementation for verification only.
+5. Run every targeted and integration check against that implementation. Also run representative plausible incorrect implementations where needed to prove a check is discriminating.
+6. Confirm the final transfer check measures the same capability in a new context rather than a copied structure.
+7. Remove all temporary implementations and leave only the learner-facing starter and guidance, with no solution or recoverable generated answer.
+8. Confirm repository-root build, lint, and test discovery excludes the standalone project.
+
+## Evidence and Completion
+
+Report baseline commands and observed behavior, checks proven to fail and pass for the intended reasons, and the guidance available at each milestone. A learner has not demonstrated mastery merely by opening the project, passing after revealing algorithm-level help, or copying code. Independent completion plus reasoning and transfer evidence support mastery; otherwise recommend a later reduced-guidance attempt.
 
 ## Boundaries
 
-- Do not generate a chapter, quiz, Anki export, or complete example project.
-- Do not place the reference implementation in source files or a solution directory.
-- Do not reveal advanced APIs that the source material has not introduced without explaining the prerequisite.
-- Do not make framework setup the main difficulty unless the framework is the topic.
-- Do not claim the scaffold is verified unless both starter behavior and the temporary reference implementation were exercised.
+- Do not generate a chapter, quiz, Anki export, exercise sheet, complete example, or review of submitted code.
+- Do not include any default solution in source, GUIDE, tests, snapshots, history, or a solution directory.
+- Do not reveal advanced APIs outside established scope without naming the prerequisite.
+- Do not make framework setup the main challenge unless the framework is the capability.
+- Do not use milestone, file, or heading count as a quality target.
+- Do not claim verification unless baseline behavior and a private temporary reference implementation were exercised in isolation.

@@ -8,7 +8,7 @@ aliases: [Mostly Adequate ch08, Functors and Containers in fp-ts]
 > [!info] Context
 > Эта глава переосмысляет `Mostly Adequate Guide`, chapter 08, через `fp-ts`. В оригинале история начинается с самодельного `Container`, затем переходит к `Maybe`, `Either` и `IO`. Здесь мы сохраняем тот же ход мысли, но приземляем его на реальные типы `fp-ts`: `ReadonlyArray`, `Identity`, `Option`, `Either` и `IO`.
 >
-> **Пререквизиты:** [[ch03-pure-functions|Pure Functions через призму fp-ts]], [[ch04-currying/ch04-currying|Currying через призму fp-ts]], [[function-composition/function-composition|Каррирование и композиция функций]], базовый TypeScript. Желательна глава [[fp-ts-phase-1-2]].
+> **Пререквизиты:** [[ch03-pure-functions|Pure Functions через призму fp-ts]], [[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying|Currying через призму fp-ts]], [[01-javascript/patterns/fp/function-composition/function-composition|Каррирование и композиция функций]], базовый TypeScript. Желательна глава [[fp-ts-phase-1-2]].
 
 ## Overview
 
@@ -664,9 +664,9 @@ test('doubleEverywhere uses the same map idea in different contexts', () => {
 ## Related Topics
 
 - [[ch03-pure-functions]]
-- [[ch04-currying/ch04-currying]]
-- [[function-composition/function-composition]]
-- [[partial-application/readme|Частичное применение и каррирование в JavaScript]]
+- [[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying]]
+- [[01-javascript/patterns/fp/function-composition/function-composition]]
+- [[01-javascript/patterns/partial-application/readme|Частичное применение и каррирование в JavaScript]]
 - [[fp-ts-phase-1-2]]
 - [[fp-ts-roadmap]]
 
@@ -682,3 +682,4 @@ test('doubleEverywhere uses the same map idea in different contexts', () => {
 - [fp-ts ReadonlyArray.ts module](https://gcanti.github.io/fp-ts/modules/ReadonlyArray.ts.html)
 - [fp-ts function.ts module](https://gcanti.github.io/fp-ts/modules/function.ts.html)
 - [fp-ts Learning Resources](https://gcanti.github.io/fp-ts/learning-resources/)
+- Рабочий материал подготовки источников: [[ch08-research-brief|research brief]].

@@ -107,13 +107,13 @@ const mongoService = new UserService(new MongoUserRepo());
 
 - **Тестируемость**: легко подставить mock-объект вместо реальной БД
 - **Гибкость**: можно менять реализацию (SQL → Mongo) без правки сервиса
-- **SOLID**: соответствует принципу [[../03-oop/solid/dependencyInversionPrinciple|Dependency Inversion]] — зависить от абстракций, а не от конкретных классов
+- **SOLID**: соответствует принципу [[../../solid/dependencyInversion/dependencyInversion|Dependency Inversion]] — зависить от абстракций, а не от конкретных классов
 
 ## Связанные темы
 
-- [[interfaces]] — интерфейсы как контракт для DI
-- [[agregation]] — агрегация как форма DI
-- [[abstractClasses]] — абстрактные классы тоже используются как абстракции для DI
+- [[../interfaces/interfaces]] — интерфейсы как контракт для DI
+- [[../agregation/agregation]] — агрегация как форма DI
+- [[../abstractClasses/abstractClasses]] — абстрактные классы тоже используются как абстракции для DI
 
 Источники:
 * https://bespoyasov.ru/blog/di-ts-in-practice/

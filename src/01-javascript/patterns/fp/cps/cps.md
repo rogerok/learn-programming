@@ -131,7 +131,7 @@ factorialCPS(5, (result: number) => console.log(result)); // 120
 
 Разберём пошагово, как цепочка continuation строится и затем "схлопывается":
 
-```
+```text
 factorialCPS(3, k0)
   где k0 = (r) => console.log(r)
 

@@ -1,3 +1,9 @@
+---
+tags: [typescript, functional-programming, effect-ts, schema]
+---
+
+# Effect Schema
+
 ## Schema
 
 | Schema                                              | Возвращает                     | Что делает                                         |

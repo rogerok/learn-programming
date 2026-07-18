@@ -9,7 +9,7 @@ aliases: [Task MVC классический, MVC Observer]
 
 ## Схема
 
-```
+```text
 entryPoint.ts
     ↓
 TaskController → TaskModel → уведомляет Observer → TaskView.render()
@@ -159,6 +159,6 @@ controller.showMenu();
 
 ## Связанные темы
 
-- [[../mvc]] — теория MVC
-- [[frontend/taskExample-frontend]] — тот же Task, но с MobX + React
-- [[../../MVVM/MVVM]] — следующий шаг: MVVM
+- [[../../mvc]] — теория MVC
+- [[../frontend/taskExample-frontend]] — тот же Task, но с MobX + React
+- [[../../../mvvm/MVVM]] — следующий шаг: MVVM

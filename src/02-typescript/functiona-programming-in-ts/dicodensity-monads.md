@@ -626,7 +626,7 @@ const endoMonoid = <A>(): Monoid<Endo<A>> => ({
 - [[cps]]
 - [[17.category-theory]]
 - [[22.functor]]
-- [[fp-course/05-monad/monad]]
+- [[02-typescript/fp-course/05-monad/monad]]
 - [[25.kind,higher-kinded_type]]
 - [[30.bifunctor]]
 - [[32.covariant-contravariant-functors]]

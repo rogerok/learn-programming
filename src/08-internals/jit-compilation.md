@@ -22,7 +22,7 @@ aliases: [JIT-компиляция, JIT Compilation, V8]
 
 ## Пайплайн V8 — шаг за шагом
 
-```
+```text
 Исходный JS-код
       │
       ▼
@@ -56,7 +56,7 @@ aliases: [JIT-компиляция, JIT Compilation, V8]
 
 Пример байткода для функции `sumArray`:
 
-```
+```text
 LdaZero          ; Загрузить 0 в аккумулятор
 Star sum         ; Сохранить в регистр 'sum'
 LdaZero
@@ -164,7 +164,7 @@ sumArray({ length: 100 }); // Деоптимизация: ожидался Array
 
 Из реального лога `--trace-opt --trace-deopt`:
 
-```
+```text
 [marking sumArray for optimization to TURBOFAN, reason: hot and stable]
 [completed optimizing sumArray]
 [bailout (kind: deopt-eager, reason: not a Smi): deoptimizing sumArray]
@@ -220,7 +220,7 @@ getName(animal); // → polymorphic, небольшое замедление
 
 ## Итоговая схема
 
-```
+```text
 JS-код → [Parser] → AST
                       ↓
                [Ignition] → Bytecode → (интерпретация + профилирование)

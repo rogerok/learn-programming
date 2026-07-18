@@ -12,7 +12,7 @@ tags: [typescript, functional-programming, fp-ts, roadmap]
 Перед стартом убедись, что знаешь:
 
 - [[pure-functions]] — чистые функции, отсутствие побочных эффектов
-- [[partial-application]] — каррирование, частичное применение
+- [[01-javascript/patterns/partial-application/readme|Каррирование и частичное применение]]
 - [[function-composition]] — `pipe` и `compose`
 - TypeScript generics, conditional types, discriminated unions
 
@@ -132,6 +132,26 @@ tags: [typescript, functional-programming, fp-ts, roadmap]
 
 ---
 
+## Трек fp-ts Tutorial
+
+Это API-трек после соответствующих понятий из [[../fp/MOC|канонической карты FP]].
+
+1. [[02-typescript/fp-ts/fp-ts-turorial/1.pipe-and-flow|pipe и flow]]
+2. [[02-typescript/fp-ts/fp-ts-turorial/2.Option|Option]]
+3. [[02-typescript/fp-ts/fp-ts-turorial/2.1.Option map,flatten,chain|Option: map, flatten и chain]]
+4. [[02-typescript/fp-ts/fp-ts-turorial/2.2.Optiom.fromPredicate|Option.fromPredicate]]
+5. [[02-typescript/fp-ts/fp-ts-turorial/3.Option error handling|Обработка отсутствия через Option]]
+6. [[02-typescript/fp-ts/fp-ts-turorial/3.Either|Either]]
+7. [[02-typescript/fp-ts/fp-ts-turorial/3.1.Either tryCatch|Either.tryCatch]]
+8. [[02-typescript/fp-ts/fp-ts-turorial/3.2.Either map, mapLeft, bimap|Either: map, mapLeft и bimap]]
+9. [[02-typescript/fp-ts/fp-ts-turorial/3.3.Either flatMap (chain)|Either.flatMap]]
+10. [[02-typescript/fp-ts/fp-ts-turorial/3.4.Either orElse error recovery|Either.orElse]]
+11. [[02-typescript/fp-ts/fp-ts-turorial/4.IO|IO]]
+
+Дополнительный вариант конспекта: [[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying-rewrite|Currying и data-last API]].
+
+---
+
 ## Recommended Sources
 
 | Источник | Уровень | Тема |
@@ -148,7 +168,7 @@ tags: [typescript, functional-programming, fp-ts, roadmap]
 
 - [[unsound]] — Either уже используется здесь
 - [[pure-functions]]
-- [[partial-application]]
+- [[01-javascript/patterns/partial-application/readme|Каррирование и частичное применение]]
 - [[function-composition]]
 
 ## Sources

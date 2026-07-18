@@ -33,8 +33,8 @@ tags: [typescript, functional-programming, fp-ts, functors, option, either, io, 
 Перед чтением у learner'а должны быть:
 
 - понимание чистых функций из `[[ch03-pure-functions]]`
-- базовая композиция функций из `[[function-composition/function-composition]]`
-- каррирование и data-last стиль из `[[ch04-currying/ch04-currying]]`
+- базовая композиция функций из `[[01-javascript/patterns/fp/function-composition/function-composition]]`
+- каррирование и data-last стиль из `[[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying]]`
 - базовые знания TypeScript: generics, function types, union types
 - знакомство с `pipe` и namespace-imports `import * as O from ...`
 
@@ -89,9 +89,9 @@ tags: [typescript, functional-programming, fp-ts, functors, option, either, io, 
 Эта глава должна ссылаться на:
 
 - `[[ch03-pure-functions]]` как на базу по чистым функциям и эффектам
-- `[[ch04-currying/ch04-currying]]` как на базу по data-last и композиционной форме функций
-- `[[function-composition/function-composition]]`
-- `[[partial-application/readme|Частичное применение и каррирование в JavaScript]]`
+- `[[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying]]` как на базу по data-last и композиционной форме функций
+- `[[01-javascript/patterns/fp/function-composition/function-composition]]`
+- `[[01-javascript/patterns/partial-application/readme|Частичное применение и каррирование в JavaScript]]`
 - `[[fp-ts-phase-1-2]]` как на следующую тему, где `Option`, `Either`, `IO` и `Task` разбираются системно
 - `[[fp-ts-roadmap]]` как на карту всей линии обучения
 

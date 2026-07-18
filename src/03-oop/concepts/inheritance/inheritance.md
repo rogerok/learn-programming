@@ -125,8 +125,8 @@ personList.forEach(p => p.greeting());
 
 ## Связанные темы
 
-- [[polymorphism]] — переопределение методов = полиморфизм
-- [[encapsulation]] — `protected` и `private` в контексте наследования
-- [[abstractClasses]] — абстрактные классы как шаблоны для наследования
-- [[interfaces]] — альтернатива наследованию для описания контракта
-- [[composition]] — «предпочитай композицию наследованию»
+- [[../polymorphism/polymorphism]] — переопределение методов = полиморфизм
+- [[../encapsulation/encapsulation]] — `protected` и `private` в контексте наследования
+- [[../abstractClasses/abstractClasses]] — абстрактные классы как шаблоны для наследования
+- [[../interfaces/interfaces]] — альтернатива наследованию для описания контракта
+- [[../composition/composition]] — «предпочитай композицию наследованию»

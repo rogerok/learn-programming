@@ -130,7 +130,7 @@ class Guest extends BaseUser implements UserWithAccess {
 
 ## Связанные темы
 
-- [[../03-oop/inheritance]] — наследование как основа LSP
-- [[../03-oop/polymorphism]] — полиморфизм работает только при соблюдении LSP
-- [[interfaceSegregation]] — ISP помогает соблюдать LSP
+- [[../../concepts/inheritance/inheritance]] — наследование как основа LSP
+- [[../../concepts/polymorphism/polymorphism]] — полиморфизм работает только при соблюдении LSP
+- [[../interfaceSegregation/interfaceSegregation]] — ISP помогает соблюдать LSP
 - [[../solid-book/lsp]] — углублённый разбор LSP из книги

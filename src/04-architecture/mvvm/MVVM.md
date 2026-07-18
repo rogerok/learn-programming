@@ -17,7 +17,7 @@ aliases: [MVVM, Model-View-ViewModel]
 
 ## Ключевая идея
 
-```
+```text
 Model ←→ ViewModel ←→ View
               ↑
      двусторонняя привязка (data binding)
@@ -100,6 +100,6 @@ const UserView = observer(({vm}: {vm: UserViewModel}) => (
 
 ## Связанные темы
 
-- [[../MVC/mvc]] — MVC как предшественник
-- [[../MVC/taskExample/frontend/taskExample-frontend]] — MVVM с MobX на практике
-- [[../VM/vm]] — паттерн ViewModel в чистом виде
+- [[../mvc/mvc]] — MVC как предшественник
+- [[../mvc/taskExample/frontend/taskExample-frontend]] — MVVM с MobX на практике
+- [[../vm/vm]] — паттерн ViewModel в чистом виде

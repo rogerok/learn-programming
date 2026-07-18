@@ -108,6 +108,6 @@ console.log(s1 === s2); // true — один объект
 
 ## Связанные темы
 
-- [[encapsulation]] — private конструктор как инкапсуляция
-- [[../03-oop/solid/singleResponsibilityPrinciple|Single Responsibility]] — синглтон должен отвечать за одно
-- [[allPrinciplesDemo]] — пример синглтона в комплексном коде
+- [[../encapsulation/encapsulation]] — private конструктор как инкапсуляция
+- [[../../solid/singleResponsibility/singleResponsibility|Single Responsibility]] — синглтон должен отвечать за одно
+- [[../allPrinciplesDemo]] — пример синглтона в комплексном коде

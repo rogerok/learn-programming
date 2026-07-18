@@ -8,7 +8,7 @@ aliases: [Mostly Adequate ch10, Applicative Functors in fp-ts, Ap and Independen
 > [!info] Context
 > Эта глава переосмысляет `Mostly Adequate Guide`, chapter 10, через `fp-ts`. Центральная идея не меняется: `map` уже не хватает, когда функция тоже живёт в контексте. Но теперь мы смотрим на это через реальные `fp-ts`-инструменты: `ap`, `apFirst`, `apSecond`, `sequenceT`, `sequenceS`, `apS`, `Task`, `TaskEither`, `Option` и `Either`.
 >
-> **Пререквизиты:** [[ch09-monads/ch09-monads|Монадические луковицы через призму fp-ts]], [[ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]], [[fp-ts-phase-1-2]]. Желательно уверенно читать `pipe(...)` и namespace imports.
+> **Пререквизиты:** [[02-typescript/fp-ts/mostly-adequate/ch09-monads/ch09-monads|Монадические луковицы через призму fp-ts]], [[02-typescript/fp-ts/mostly-adequate/ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]], [[fp-ts-phase-1-2]]. Желательно уверенно читать `pipe(...)` и namespace imports.
 
 ## Overview
 
@@ -828,10 +828,10 @@ test('renderAgeLabel uses Monad when the next step depends on the current value'
 
 ## Related Topics
 
-- [[ch09-monads/ch09-monads|Монадические луковицы через призму fp-ts]]
-- [[ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]]
+- [[02-typescript/fp-ts/mostly-adequate/ch09-monads/ch09-monads|Монадические луковицы через призму fp-ts]]
+- [[02-typescript/fp-ts/mostly-adequate/ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]]
 - [[ch03-pure-functions|Pure Functions через призму fp-ts]]
-- [[ch04-currying/ch04-currying|Currying через призму fp-ts]]
+- [[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying|Currying через призму fp-ts]]
 - [[fp-ts-phase-1-2]]
 - [[fp-ts-roadmap]]
 
@@ -846,3 +846,4 @@ test('renderAgeLabel uses Monad when the next step depends on the current value'
 - [fp-ts Task module](https://gcanti.github.io/fp-ts/modules/Task.ts.html)
 - [fp-ts TaskEither module](https://gcanti.github.io/fp-ts/modules/TaskEither.ts.html)
 - [fp-ts Function module](https://gcanti.github.io/fp-ts/modules/Function.ts.html)
+- Рабочий материал подготовки источников: [[ch10-research-brief|research brief]].

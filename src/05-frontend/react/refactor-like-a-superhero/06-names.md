@@ -2,7 +2,7 @@
 tags: [react, refactoring, naming]
 ---
 
-## Names
+# Names
 
 Attention to the names of variables, functions, classes, and modules can be Pandora’s box in the world of refactoring. “Unclear” names can signal high coupling between modules, inadequate separation of concerns, or “leaking” abstractions.
 
@@ -125,7 +125,7 @@ But how exactly this happens is implementation details of `handleOrderSubmit`. T
 Regarding functions, the A/HC/LC pattern helps maneuver between “too short” and “too long” names.
 This pattern suggests combining the action, its subject, and its object:
 
-```
+```text
 prefix? + action (A) + high context (HC) + low context? (LC)
 ```
 

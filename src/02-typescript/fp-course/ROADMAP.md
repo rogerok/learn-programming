@@ -1,3 +1,7 @@
+---
+tags: [typescript, functional-programming, fp-course, roadmap]
+---
+
 # FP Course — Roadmap & Chapter Instructions
 
 Единый курс по функциональному программированию с нуля.
@@ -26,7 +30,7 @@
 **Файл:** `src/02-typescript/fp-course/01-pure-functions-and-pipe/`
 
 **Команда запуска:**
-```
+```text
 /chapter Чистые функции, композиция и pipe в TypeScript с fp-ts
 ```
 
@@ -53,7 +57,7 @@ Reference: `src/02-typescript/fp-ts/fp-ts-turorial/1.pipe-and-flow.md`
 **Файл:** `src/02-typescript/fp-course/02-types-adt-option/`
 
 **Команда запуска:**
-```
+```text
 /chapter Типы как множества, ADT (сумма и произведение), Option в TypeScript с fp-ts
 ```
 
@@ -80,7 +84,7 @@ Reference: `src/02-typescript/functiona-programming-in-ts/15.ADT,Pattern-Matchin
 **Файл:** `src/02-typescript/fp-course/03-functor/`
 
 **Команда запуска:**
-```
+```text
 /chapter Функтор — что такое map в общем смысле, TypeScript и fp-ts
 ```
 
@@ -108,7 +112,7 @@ Reference: `src/02-typescript/functiona-programming-in-ts/22.functor.md`, `src/0
 **Файл:** `src/02-typescript/fp-course/04-category-theory/`
 
 **Команда запуска:**
-```
+```text
 /chapter Теория категорий для программиста без математики — объекты, морфизмы, функторы как отображения категорий
 ```
 
@@ -138,7 +142,7 @@ Reference: `src/02-typescript/functiona-programming-in-ts/17.category-theory.md`
 **Файл:** `src/02-typescript/fp-course/05-monad/`
 
 **Команда запуска:**
-```
+```text
 /chapter Монада — что такое flatMap, chain и почему монада это не страшно, TypeScript и fp-ts
 ```
 
@@ -167,7 +171,7 @@ Reference: `src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch09-monad
 **Файл:** `src/02-typescript/fp-course/06-applicative/`
 
 **Команда запуска:**
-```
+```text
 /chapter Аппликативный функтор — ap, liftA2 и независимые эффекты в TypeScript с fp-ts
 ```
 
@@ -196,7 +200,7 @@ Reference: `src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch10-appli
 **Файл:** `src/02-typescript/fp-course/07-fp-ts-practice/`
 
 **Команда запуска:**
-```
+```text
 /chapter fp-ts на практике — реальные паттерны с pipe, Option, Either, TaskEither в TypeScript
 ```
 
@@ -223,7 +227,7 @@ Reference: `src/02-typescript/fp-ts/fp-ts-turorial/`, `src/02-typescript/functio
 **Файл:** `src/02-typescript/fp-course/08-traversable-rte/`
 
 **Команда запуска:**
-```
+```text
 /chapter Traversable и ReaderTaskEither — продвинутые паттерны в fp-ts
 ```
 
@@ -258,7 +262,7 @@ Reference: `src/01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch12-trave
 
 Запускай по одной главе за сессию:
 
-```
+```text
 /chapter <инструкции из соответствующего раздела выше>
 ```
 

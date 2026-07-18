@@ -2,7 +2,7 @@
 tags: [react, refactoring, side-effects]
 ---
 
-## Side Effects
+# Side Effects
 
 ### Functional Core in Imperative Shell
 

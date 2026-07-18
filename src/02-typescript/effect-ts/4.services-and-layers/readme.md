@@ -1,3 +1,9 @@
+---
+tags: [typescript, functional-programming, effect-ts, services, layers]
+---
+
+# Effect: services и Layer
+
 ## Сервис через Context.Tag
 
 `Context.Tag` - тег (имя сервиса) + форма (методы с)

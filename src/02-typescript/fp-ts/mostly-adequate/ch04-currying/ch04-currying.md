@@ -8,7 +8,7 @@ aliases: [Mostly Adequate ch04, Currying in fp-ts]
 > [!info] Context
 > Эта глава переосмысляет `Mostly Adequate Guide`, chapter 04, через `fp-ts`. В оригинале currying подаётся как удобная техника для частичного применения. В `fp-ts` это ещё важнее: currying и `data-last` делают API предсказуемыми, дружелюбными к `pipe` и `flow`, и подготавливают код к композиции поверх `Reader`, `Task`, `TaskEither` и других типов.
 >
-> **Пререквизиты:** [[pure-functions]], [[partial-application/readme|Частичное применение и каррирование в JavaScript]], [[function-composition/function-composition|Каррирование и композиция функций]], базовый TypeScript; желательно [[fp-ts-phase-1-2]] и [[ch03-pure-functions|Pure Functions через призму fp-ts]].
+> **Пререквизиты:** [[pure-functions]], [[01-javascript/patterns/partial-application/readme|Частичное применение и каррирование в JavaScript]], [[01-javascript/patterns/fp/function-composition/function-composition|Каррирование и композиция функций]], базовый TypeScript; желательно [[fp-ts-phase-1-2]] и [[ch03-pure-functions|Pure Functions через призму fp-ts]].
 
 ## Overview
 
@@ -723,8 +723,8 @@ test('fetchUserName composes curried pure helpers inside TaskEither', async () =
 ## Related Topics
 
 - [[pure-functions]]
-- [[partial-application/readme|Частичное применение и каррирование в JavaScript]]
-- [[function-composition/function-composition|Каррирование и композиция функций]]
+- [[01-javascript/patterns/partial-application/readme|Частичное применение и каррирование в JavaScript]]
+- [[01-javascript/patterns/fp/function-composition/function-composition|Каррирование и композиция функций]]
 - [[fp-ts-phase-1-2]]
 - [[fp-ts-roadmap]]
 - [[ch03-pure-functions|Pure Functions через призму fp-ts]]

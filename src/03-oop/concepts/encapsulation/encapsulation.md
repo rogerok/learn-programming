@@ -126,6 +126,6 @@ db.clearTables();
 
 ## Связанные темы
 
-- [[inheritance]] — наследование сохраняет инкапсуляцию через `protected`
-- [[abstractClasses]] — абстрактные классы как форма контракта
-- [[interfaces]] — интерфейсы как публичный контракт класса
+- [[../inheritance/inheritance]] — наследование сохраняет инкапсуляцию через `protected`
+- [[../abstractClasses/abstractClasses]] — абстрактные классы как форма контракта
+- [[../interfaces/interfaces]] — интерфейсы как публичный контракт класса

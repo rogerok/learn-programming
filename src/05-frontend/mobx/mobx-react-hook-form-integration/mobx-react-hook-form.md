@@ -247,6 +247,5 @@ const MyForm = observer(() => (
 
 ## Связанные темы
 
-- [[../05-frontend/mobx/MOC|MobX MOC]]
-- [[../05-frontend/react/MOC|React MOC]]
-- [[using-zod-with-classes|Zod с классами]]
+- [[../MOC|MobX MOC]]
+- [[../../react/MOC|React MOC]]

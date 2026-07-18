@@ -4,99 +4,122 @@ tags: [typescript, dsl, fluent-builder, exercises]
 
 # Упражнения: Fluent Builder DSL
 
-> [!info] Context
-> Практические задания к главе [[fluent-builder-dsl|Fluent Builder DSL]]. Упражнения выстроены от простого к сложному: от базового `return this` до type-safe builder'а с phantom types.
->
-> Для каждого задания приведён желаемый call site — реализация пишется так, чтобы этот код компилировался и работал.
+Практика к [[fluent-builder-dsl|главе о Fluent Builder DSL]] идёт по последовательности **predict → explain → modify → implement → diagnose → transfer**. Перед началом пройдите canonical fundamentals: [[../basics/code-basic/generics|generics]], [[../basics/code-basic/variability|variance]] и [[../basics/code-basic/readonly-array|readonly]].
 
----
+Для compile-time контрактов используйте `tsc --strict --noEmit`; намеренно запрещённые вызовы помечайте `@ts-expect-error`. Runtime-проверки должны завершаться без исключений. В решениях не используйте `any` для обхода контракта.
 
-## Упражнение 1: CSS Class Builder
+## 1. Predict: identity и mutation в цепочке
 
-**Сложность:** начальная
+**Результат:** до запуска предсказать identity объектов и строки, построенные двумя ветками mutable builder.
 
-**Задача:** Реализовать `ClassList` — builder для формирования строки CSS-классов. Поддерживает добавление классов, условное добавление и удаление.
+**Предпосылки:** разделы «ядро механизма: `return this`» и «Mutable vs Immutable» в [[fluent-builder-dsl|главе]].
 
-### Желаемый синтаксис
+```ts
+class Parts {
+  private readonly values: string[] = [];
 
-```typescript
+  add(value: string): this {
+    this.values.push(value);
+    return this;
+  }
+
+  build(): string {
+    return this.values.join("/");
+  }
+}
+
+const base = new Parts().add("api");
+const users = base.add("users");
+const posts = base.add("posts");
+```
+
+До запуска запишите значения для `base === users`, `users === posts`, `base.build()`, `users.build()` и `posts.build()`.
+
+**Наблюдаемая приёмка:** прогноз зафиксирован до запуска; пять фактических результатов записаны рядом; каждое несовпадение объяснено через aliasing и mutation одного экземпляра.
+
+**Проверка:** выполните пять `console.assert` с вашими ожидаемыми значениями. Если прогноз неверен, сначала зафиксируйте расхождение, затем исправьте assertion.
+
+> [!hint]- Подсказка 1
+> Метод возвращает `this`, а не новый `Parts`.
+
+> [!hint]- Подсказка 2
+> Все три переменные могут указывать на один массив `values`.
+
+**Рефлексия:** когда identity одного объекта полезна для fluent API, а когда она делает ветвление опасным?
+
+## 2. Explain: `this` против имени базового класса
+
+**Результат:** объяснить наблюдаемую разницу между return type `BaseBuilder` и polymorphic `this` при наследовании.
+
+**Предпосылки:** задание 1, раздел «Почему `this`, а не имя класса» в [[fluent-builder-dsl|главе]].
+
+Создайте две минимальные пары базового и производного builder. В первой паре chain-метод базового класса явно возвращает имя базового класса, во второй — `this`. В производном классе добавьте уникальный chain-метод.
+
+**Наблюдаемая приёмка:**
+
+- в первой паре вызов уникального метода после базового chain-метода отклоняется и отмечен `@ts-expect-error`;
+- во второй тот же порядок вызовов компилируется;
+- объяснение связывает разницу со статическим типом результата, а не с runtime-наличием метода;
+- `tsc --strict --noEmit` завершается с кодом `0`.
+
+**Ручной checkpoint:** проверьте обратный порядок вызовов и объясните, почему он может скрыть проблему плохого return type.
+
+> [!hint]- Подсказка 1
+> В runtime оба метода могут вернуть тот же объект; отличается обещание сигнатуры.
+
+> [!hint]- Подсказка 2
+> Polymorphic `this` означает тип конкретного наследника в текущем вызове.
+
+**Рефлексия:** какой публичный контракт базового класса сохраняет расширяемость цепочки?
+
+## 3. Modify: CSS Class Builder
+
+**Результат:** дополнить простой mutable builder условной операцией, удалением и дедупликацией без разрыва цепочки.
+
+**Предпосылки:** задания 1–2.
+
+Начните с класса, у которого уже есть `.add(className)` и `.build()`. Добавьте `.addIf(condition, className)` и `.remove(className)`; все промежуточные операции должны поддерживать chaining.
+
+Желаемый call site:
+
+```ts
 const classes = new ClassList()
   .add("btn")
   .add("btn-primary")
-  .addIf(isLarge, "btn-lg")         // добавляет класс только если условие true
+  .addIf(isLarge, "btn-lg")
   .addIf(isDisabled, "btn-disabled")
-  .remove("btn-primary")             // убирает ранее добавленный класс
-  .build();                           // → "btn btn-lg" (если isLarge=true, isDisabled=false)
-```
-
-### Требования
-
-- `.add(className)` — добавляет класс, возвращает `this`
-- `.addIf(condition, className)` — добавляет класс только если `condition === true`
-- `.remove(className)` — удаляет класс из списка
-- `.build()` — возвращает строку с классами через пробел
-- Дублирование классов не допускается: `.add("btn").add("btn")` → `"btn"`
-
-### Тест-кейсы
-
-```typescript
-// Базовое использование
-new ClassList().add("a").add("b").build() === "a b";
-
-// Условное добавление
-new ClassList().add("btn").addIf(false, "hidden").build() === "btn";
-
-// Удаление
-new ClassList().add("a").add("b").remove("a").build() === "b";
-
-// Дедупликация
-new ClassList().add("x").add("x").build() === "x";
-
-// Пустой builder
-new ClassList().build() === "";
-```
-
----
-
-## Упражнение 2: Email Builder
-
-**Сложность:** базовая
-
-**Задача:** Реализовать Fluent Builder для создания email-сообщений. Builder должен проверять обязательные поля при вызове `.build()`.
-
-### Желаемый синтаксис
-
-```typescript
-const email = new EmailBuilder()
-  .from("noreply@example.com")
-  .to("alice@example.com")
-  .to("bob@example.com")           // несколько получателей
-  .cc("manager@example.com")
-  .subject("Отчёт за неделю")
-  .body("Текст письма...")
-  .attachment("report.pdf")
-  .priority("high")
+  .remove("btn-primary")
   .build();
-
-// email.recipients → ["alice@example.com", "bob@example.com"]
-// email.cc → ["manager@example.com"]
-// email.priority → "high"
 ```
 
-### Требования
+**Наблюдаемая приёмка:**
 
-- `.from(address)` — обязательное поле
-- `.to(address)` — обязательное, можно вызывать несколько раз (накапливает получателей)
-- `.cc(address)` — необязательное, можно вызывать несколько раз
-- `.subject(text)` — обязательное
-- `.body(text)` — обязательное
-- `.attachment(filename)` — необязательное, можно несколько
-- `.priority("low" | "normal" | "high")` — необязательное, по умолчанию `"normal"`
-- `.build()` — возвращает объект `Email`. Бросает ошибку, если обязательные поля не заданы
+- `.add("a").add("b").build()` возвращает `"a b"`;
+- `.add("btn").addIf(false, "hidden").build()` возвращает `"btn"`;
+- `.add("a").add("b").remove("a").build()` возвращает `"b"`;
+- `.add("x").add("x").build()` возвращает `"x"`;
+- пустой builder возвращает пустую строку;
+- `tsc --strict --noEmit` и runtime assertions проходят.
 
-### Интерфейс результата
+**Проверка:** соберите перечисленные случаи в таблицу и прогоните циклом через `console.assert`.
 
-```typescript
+> [!hint]- Подсказка 1
+> Выберите внутреннюю коллекцию, которая естественно обеспечивает уникальность.
+
+> [!hint]- Подсказка 2
+> `addIf` может делегировать работу уже существующему `add`, когда условие истинно.
+
+**Рефлексия:** какие инварианты хранит внутренняя коллекция и какие методы отвечают за их сохранение?
+
+## 4. Implement: Email Builder с runtime-инвариантами
+
+**Результат:** реализовать fluent API, накапливающий повторяемые поля и проверяющий обязательные данные на terminal operation.
+
+**Предпосылки:** задание 3, разделы «terminal operations» и «runtime validation» в [[fluent-builder-dsl|главе]].
+
+Контракт результата:
+
+```ts
 interface Email {
   from: string;
   recipients: string[];
@@ -108,157 +131,154 @@ interface Email {
 }
 ```
 
----
+Реализуйте chain-методы `.from`, `.to`, `.cc`, `.subject`, `.body`, `.attachment`, `.priority` и terminal operation `.build()`.
 
-## Упражнение 3: Form Validator DSL
+**Наблюдаемая приёмка:**
 
-**Сложность:** средняя
+- `from`, минимум один `to`, `subject` и `body` обязательны; отсутствие каждого по отдельности приводит к runtime-ошибке из `.build()`;
+- повторные `to`, `cc` и `attachment` сохраняют все значения в порядке добавления;
+- priority по умолчанию равен `"normal"`, допустимы только три литерала;
+- результат соответствует `Email`, `tsc --strict --noEmit` проходит;
+- входные массивы результата нельзя использовать для непреднамеренной мутации будущих результатов builder.
 
-**Задача:** Построить мини-DSL для валидации форм в стиле Zod. Каждое поле конфигурируется цепочкой правил. Функция `validateForm()` проверяет объект данных по схеме.
+**Проверка:** выполните один happy path и четыре negative paths, проверив `throw` вручную или существующим test runner.
 
-### Желаемый синтаксис
+> [!hint]- Подсказка 1
+> Отделите фазу накопления необязательного состояния от проверки в `.build()`.
 
-```typescript
+> [!hint]- Подсказка 2
+> Не возвращайте наружу внутренние mutable arrays по ссылке.
+
+**Рефлексия:** какие гарантии здесь существуют только в runtime и что потребуется, чтобы перенести обязательные шаги в тип состояния?
+
+## 5. Implement: Form Validator DSL
+
+**Результат:** собрать небольшой Schema DSL, где chain-методы накапливают правила, а terminal operation возвращает наблюдаемый список ошибок.
+
+**Предпосылки:** задания 3–4, раздел «Schema DSL» в [[fluent-builder-dsl|главе]].
+
+Нужный vocabulary:
+
+- `v.string()`: `.required()`, `.minLength(n)`, `.maxLength(n)`, `.matches(regex, message?)`, `.email()`;
+- `v.number()`: `.required()`, `.min(n)`, `.max(n)`, `.int()`;
+- `validateForm(schema, data)`: `{ ok: boolean; errors: Record<string, string[]> }`.
+
+Пример схемы:
+
+```ts
 const loginSchema = {
   username: v.string().required().minLength(3).maxLength(20),
   password: v.string().required().minLength(8).matches(/[A-Z]/, "must contain uppercase"),
-  age:      v.number().min(18).max(120),
-  email:    v.string().required().email(),
+  age: v.number().min(18).max(120),
+  email: v.string().required().email(),
 };
-
-const result = validateForm(loginSchema, {
-  username: "ab",
-  password: "weak",
-  age: 15,
-  email: "not-an-email",
-});
-
-// result → {
-//   ok: false,
-//   errors: {
-//     username: ["must be at least 3 chars"],
-//     password: ["must be at least 8 chars", "must contain uppercase"],
-//     age: ["must be at least 18"],
-//     email: ["invalid email format"],
-//   }
-// }
 ```
 
-### Требования
+**Наблюдаемая приёмка:**
 
-- `v.string()` возвращает `StringValidator` с методами: `.required()`, `.minLength(n)`, `.maxLength(n)`, `.matches(regex, message?)`, `.email()`
-- `v.number()` возвращает `NumberValidator` с методами: `.required()`, `.min(n)`, `.max(n)`, `.int()`
-- Каждый метод возвращает `this`
-- `validateForm(schema, data)` возвращает `{ ok: boolean; errors: Record<string, string[]> }`
-- Поле без `.required()`, если отсутствует в данных, не генерирует ошибку
-- `.email()` — это `.matches()` с предустановленным regex
+- отсутствующее optional-поле не создаёт ошибку, отсутствующее required-поле создаёт;
+- одно поле может вернуть несколько нарушений в порядке объявления правил;
+- string-правило не принимает number и наоборот без runtime-исключения;
+- `.email()` переиспользует общий механизм правила, не копируя весь pipeline;
+- `tsc --strict --noEmit` проходит, runtime-таблица включает happy path и минимум по одному failure на каждый вид правила.
 
-### Подсказка
+**Проверка:** сравнивайте массивы сообщений и `ok`, а не внутреннее устройство validators.
 
-- Внутри каждого Validator храните массив правил: `{ check: (v) => boolean, message: string }[]`
-- Метод `.validate(value)` прогоняет все правила и собирает ошибки
+> [!hint]- Подсказка 1
+> Храните правила как данные: предикат и сообщение, а не как отдельные режимы terminal operation.
 
----
+> [!hint]- Подсказка 2
+> Общий generic-базовый тип может описать `.validate(value)`, но vocabulary string и number остаётся разным.
 
-## Упражнение 4: Immutable Query Builder
+**Рефлексия:** где находится граница между типом схемы и runtime-проверкой внешних данных?
 
-**Сложность:** средняя
+## 6. Diagnose: ветвление Query Builder
 
-**Задача:** Переписать `QueryBuilder` из главы как immutable builder. Каждый метод должен возвращать новый экземпляр, а не мутировать текущий.
+**Результат:** воспроизвести протекание состояния между ветками mutable builder и исправить его через immutable state transitions.
 
-### Желаемый синтаксис
+**Предпосылки:** задания 1 и 3, [[../basics/code-basic/readonly-array|readonly]].
 
-```typescript
+Используйте Query Builder из главы и создайте ветки:
+
+```ts
 const base = QueryBuilder.create()
   .from("orders")
   .select("id", "total", "status");
 
-// Ветвление — base не мутируется
 const pending = base.where("status", "=", "pending").build();
 const completed = base.where("status", "=", "completed").orderBy("total", "desc").build();
 const all = base.limit(100).build();
-
-// pending  → SELECT id, total, status FROM orders WHERE status = 'pending'
-// completed → SELECT id, total, status FROM orders WHERE status = 'completed' ORDER BY total DESC
-// all      → SELECT id, total, status FROM orders LIMIT 100
 ```
 
-### Требования
+Сначала зафиксируйте фактическое протекание условий, затем измените builder так, чтобы каждый промежуточный метод возвращал новый экземпляр.
 
-- Конструктор приватный, создание через `QueryBuilder.create()`
-- Каждый метод (`from`, `select`, `where`, `orderBy`, `limit`, `offset`) возвращает **новый** экземпляр
-- `base` после вызова `.where()` остаётся без условий
-- Все поля внутри builder'а — `readonly`
+**Наблюдаемая приёмка:**
 
-### Тест-кейсы
+- в исходном варианте тест показывает хотя бы одно условие из чужой ветки;
+- после исправления `pending` содержит только pending-условие, `completed` — только completed-условие, `all` — ни одного `WHERE`;
+- повторный `.build()` для `base` стабилен;
+- внутренние поля объявлены `readonly`, но проверка не полагается только на это слово: aliasing коллекций между экземплярами отсутствует;
+- compile-time и runtime checks проходят.
 
-```typescript
-const base = QueryBuilder.create().from("users");
-const q1 = base.where("a", "=", 1).build();
-const q2 = base.where("b", "=", 2).build();
+**Проверка:** создайте две ветки из одного `base` в обоих порядках; результат каждой не должен зависеть от порядка вычисления.
 
-// q1 содержит WHERE a = 1, но НЕ содержит WHERE b = 2
-// q2 содержит WHERE b = 2, но НЕ содержит WHERE a = 1
-// base.build() не содержит WHERE вообще
-```
+> [!hint]- Подсказка 1
+> `readonly` запрещает переприсвоить поле, но не делает вложенный array автоматически immutable.
 
----
+> [!hint]- Подсказка 2
+> При создании нового экземпляра копируйте только изменяемую часть состояния и не отдавайте mutable ссылку соседней ветке.
 
-## Упражнение 5: Type-Safe Builder с Phantom Types
+**Рефлексия:** почему порядок вычисления был скрытой зависимостью и какой инвариант сделал ветви независимыми?
 
-**Сложность:** продвинутая
+## 7. Transfer: Type-Safe Builder с type-state
 
-**Задача:** Создать `ConnectionBuilder`, который на уровне типов запрещает вызов `.connect()` до тех пор, пока не заданы обязательные параметры (`host` и `port`).
+**Результат:** перенести generics и intersections в API, где `.connect()` недоступен до обязательных шагов.
 
-### Желаемый синтаксис
+**Предпосылки:** задания 2, 4 и 6; [[../basics/code-basic/generics|generics]], [[../basics/code-basic/intersections-types|intersection types]].
 
-```typescript
-// Компилируется — оба обязательных поля заданы
-const conn = new ConnectionBuilder()
+Создайте `ConnectionBuilder<State>` с шагами `.host(h)`, `.port(p)`, optional `.database(name)`, `.ssl(enabled)` и terminal operation `.connect()`. Состояние должно существовать только для компилятора; runtime config хранится отдельно.
+
+Проверочные call sites:
+
+```ts
+new ConnectionBuilder()
   .host("localhost")
   .port(5432)
-  .database("mydb")        // опционально
-  .ssl(true)                // опционально
-  .connect();               // ← доступен, потому что host и port заданы
+  .database("mydb")
+  .ssl(true)
+  .connect();
 
-// НЕ компилируется — port не задан
-const bad = new ConnectionBuilder()
-  .host("localhost")
-  .connect();               // ← ошибка типов: 'connect' does not exist on type...
+// @ts-expect-error — port не задан
+new ConnectionBuilder().host("localhost").connect();
 
-// НЕ компилируется — ничего не задано
-new ConnectionBuilder().connect();  // ← ошибка типов
+// @ts-expect-error — обязательные шаги не выполнены
+new ConnectionBuilder().connect();
 ```
 
-### Требования
+**Наблюдаемая приёмка:**
 
-- Использовать phantom types (intersection types) для отслеживания состояния
-- `.host(h)` — переводит тип в состояние `HasHost`
-- `.port(p)` — переводит тип в состояние `HasPort`
-- `.database(name)` и `.ssl(enabled)` — не влияют на тип состояния
-- `.connect()` — доступен только когда тип содержит `HasHost & HasPort`
-- `.connect()` возвращает объект `ConnectionConfig`
+- `.host` и `.port` работают в любом порядке и расширяют type-state;
+- optional-методы сохраняют текущий type-state;
+- два запрещённых вызова действительно дают ошибки без `@ts-expect-error`;
+- разрешённый вызов возвращает `{ host: string; port: number; database?: string; ssl: boolean }`;
+- phantom markers не появляются в runtime-объекте;
+- `tsc --strict --noEmit` и happy-path runtime check проходят без `any` и публичных assertions.
 
-### Подсказка
+**Проверка:** временно удалите каждый `@ts-expect-error`; ошибка должна возникнуть на `.connect()`. Затем поменяйте порядок обязательных шагов в happy path.
 
-```typescript
-type HasHost = { readonly _host: true };
-type HasPort = { readonly _port: true };
-type Ready = HasHost & HasPort;
+> [!hint]- Подсказка 1
+> Отдельные marker-типы могут представлять `HasHost` и `HasPort`, а следующий шаг возвращает пересечение текущего состояния с marker.
 
-class ConnectionBuilder<State = {}> {
-  // Методы возвращают ConnectionBuilder<State & HasXxx>
-  // .connect() принимает this: ConnectionBuilder<Ready>
-}
-```
+> [!hint]- Подсказка 2
+> Ограничение `this` у terminal operation может выразить требование к готовому состоянию без изменения runtime-сигнатуры вызова.
 
-### Интерфейс результата
+> [!hint]- Подсказка 3
+> Phantom state не обязан быть реальным полем объекта; важна его роль в generic-инстанцировании builder.
 
-```typescript
-interface ConnectionConfig {
-  host: string;
-  port: number;
-  database?: string;
-  ssl: boolean;
-}
-```
+**Рефлексия:** какие ошибки перенесены из runtime в compile time и какую сложность этот контракт добавляет пользователю API?
+
+## Навигация
+
+- [[fluent-builder-dsl|Вернуться к главе]]
+- [[../basics/exercises|Практика fundamentals]]
+- [[../MOC|Маршрут TypeScript]]

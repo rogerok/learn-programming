@@ -2,7 +2,7 @@
 tags: [react, refactoring, functional-programming]
 ---
 
-## Functional Pipeline
+# Functional Pipeline
 
 In user applications, one of such levels describes the business logic—the domain processes that make the application
 unique and gain profit. Those, in other words, are the problems that business wants the developers to solve.
@@ -22,7 +22,7 @@ For an online store, the business logic would be creating orders and checking ou
 Business workflows are data transformations. For example, applying a discount to an order can be expressed as a
 transition from one data state to another:
 
-```
+```text
 “Selecting Product Recommendations”:
 
 [Product Cart] + [Shopping History] ->
@@ -34,7 +34,7 @@ In poorly organized code, business workflows don’t resemble such chains. They 
 don’t speak the language of the domain. As a result, instead of a clear workflow description, we end up with something
 like:
 
-```
+```text
 “Selecting Product Recommendations”:
 
 [Product Cart] + ... + [Magic 🔮] -> [Recommendation List]
@@ -84,7 +84,7 @@ The function isn’t big, but it does quite a lot:
 
 Let’s highlight the workflow steps and data states that appear in them:
 
-```
+```text
 “Show order in UI”:
 
 - “Validate Input Data”:
@@ -465,7 +465,7 @@ It's usually best to apply selection right after the data is validated. At that 
 safe, but don't rely on its structure anywhere in the code yet.
 This gives us the ability to convert the data for a particular task.
 
-```
+```text
 The data in this example goes through the chain of states: “Raw Server Data” → “Valid Data” → “Prepared for a Task” → “Displayed in the UI.”
 
 Functional pipeline helps to describe any task as a similar chain. It makes the decomposition easier because chains help build a clear mental model of the workflow we express in code.

@@ -48,3 +48,9 @@ Before completion:
 - Obsidian syntax does not override the repository's content templates.
 - Do not create decorative callouts or diagrams that add no explanatory value.
 - Do not convert existing wikilinks to Markdown links.
+
+## References
+
+- Read `references/PROPERTIES.md` for supported frontmatter property types and tag rules.
+- Read `references/EMBEDS.md` when embedding notes, headings, blocks, images, audio, video, PDFs, or searches.
+- Read `references/CALLOUTS.md` for foldable, nested, aliased, or custom callouts.

@@ -2,7 +2,6 @@
 #notetype:Basic
 #deck:CPS - Continuation-Passing Style
 #tags column:3
-
 Что такое continuation в программировании?	Continuation --- это "всё, что произойдёт после текущего выражения". В direct style continuation неявен (адрес возврата + отложенные операции на стеке). В CPS continuation становится явным --- это функция-аргумент, которой передаётся результат вычисления.	cps::core
 В чём ключевое отличие CPS от direct style?	В direct style функция возвращает значение через return (continuation неявен, хранится на стеке). В CPS функция принимает дополнительный аргумент k (continuation) и вызывает k(result) вместо return. Функция возвращает void и никогда не отдаёт значение вызывающему коду.	cps::core
 Какой тип имеет CPS-версия функции factorial?	(n: number, k: (result: number) => void) => void. Функция принимает число и continuation, возвращает void. Continuation принимает результат типа number и тоже возвращает void.	cps::types

@@ -9,7 +9,7 @@ aliases: [Users MVC, CRUD MVC]
 
 ## Схема
 
-```
+```text
 UsersView ←→ UsersController ←→ UsersModel
    DOM            логика           данные + сортировка
 ```

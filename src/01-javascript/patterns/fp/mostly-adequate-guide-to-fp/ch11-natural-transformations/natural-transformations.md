@@ -422,7 +422,7 @@ arrayToMaybe(xs.map(f)) === arrayToMaybe(xs).map(f)
 
 ## Anki Export File
 
-Смотри файл [[anki-cards.txt]] рядом с этой главой.
+Смотри файл [[patterns/fp/mostly-adequate-guide-to-fp/ch11-natural-transformations/anki-cards.txt|anki-cards.txt]] рядом с этой главой.
 
 ## Related Topics
 

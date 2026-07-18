@@ -127,7 +127,7 @@ massGreeting(personList);
 
 ## Связанные темы
 
-- [[inheritance]] — основа полиморфизма
-- [[interfaces]] — полиморфизм через интерфейсы
-- [[abstractClasses]] — абстрактные классы как база для полиморфизма
-- [[../03-oop/solid/openClosedPrinciple|Open-Closed Principle]] — полиморфизм как основа OCP
+- [[../inheritance/inheritance]] — основа полиморфизма
+- [[../interfaces/interfaces]] — полиморфизм через интерфейсы
+- [[../abstractClasses/abstractClasses]] — абстрактные классы как база для полиморфизма
+- [[../../solid/openClosed/openClosed|Open-Closed Principle]] — полиморфизм как основа OCP

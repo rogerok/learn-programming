@@ -52,7 +52,7 @@ graph TD
 
 Массив не раскрывается, функция не знает про массив, `map` соединяет их. Это и есть паттерн функтора:
 
-```
+```text
 контейнер.map(fn) → новый контейнер того же типа
 ```
 
@@ -742,7 +742,7 @@ graph LR
 - **Города** -- это типы данных: `number`, `string`, `boolean`
 - **Дороги** между городами -- это функции: `toString` ведёт из `number` в `string`, `toUpperCase` ведёт из `string` в `string`
 
-```
+```text
 number ---toString---> string ---toUpperCase---> string
   42        →           "42"        →             "42"
 ```
@@ -756,7 +756,7 @@ number ---toString---> string ---toUpperCase---> string
 - Каждый город (тип) получает приставку `Maybe`: `number` → `Maybe<number>`, `string` → `Maybe<string>`
 - Каждая дорога (функция) оборачивается в `map`: `toString` → `map(toString)`
 
-```
+```text
 Обычный мир:                    Мир Maybe:
 number ---toString---> string   Maybe<number> ---map(toString)---> Maybe<string>
   42        →           "42"    Maybe(42)           →               Maybe("42")

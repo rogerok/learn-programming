@@ -12,12 +12,12 @@ tags: [mobx, view-model, vm, computed, reactivity, performance, lifecycle]
 Два подхода к хранению данных, связанных с конкретным компонентом:
 
 **Rich Model** — стор сам содержит логику и вычисляемые свойства:
-```
+```text
 PageStore.user → class User { get fullName() {...} }
 ```
 
 **ViewModel (рекомендуется)** — стор хранит только сырые данные (анемичная модель), а VM вычисляет и форматирует:
-```
+```text
 PageStore.user → { name, surname }  (просто данные)
 VM.fullName    → `${name} ${surname}` (вычисление в VM)
 ```

@@ -205,6 +205,6 @@ class HttpClient2 extends Writer2 implements Reader2 {
 
 ## Связанные темы
 
-- [[interfaces]] — интерфейсы, разница с абстрактными классами
-- [[inheritance]] — наследование
-- [[polymorphism]] — полиморфизм через абстракции
+- [[../interfaces/interfaces]] — интерфейсы, разница с абстрактными классами
+- [[../inheritance/inheritance]] — наследование
+- [[../polymorphism/polymorphism]] — полиморфизм через абстракции

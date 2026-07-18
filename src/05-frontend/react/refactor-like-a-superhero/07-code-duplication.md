@@ -2,7 +2,7 @@
 tags: [react, refactoring, dry]
 ---
 
-## Code duplication
+# Code duplication
 
 ### Not All Duplication is Evil
 
@@ -90,7 +90,7 @@ const discount = todayDiscoubnt();
 const dicounted = {...order, discounted}
 ```
 
-In the example above ⬆, fragment "b" has the ```todayDiscount``` function among its dependencies.
+In the example above ⬆, fragment "b" has the `todayDiscount` function among its dependencies.
 Because of its dependencies. Because of it, the action sets differ enough to be considered "similar" but not "the same"
 
 We can use `@duplicate` labels and wait a bit to get more information about how they should work.

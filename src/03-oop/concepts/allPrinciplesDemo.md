@@ -12,7 +12,7 @@ aliases: [Все принципы ООП, OOP Demo]
 
 ## Архитектура примера
 
-```
+```text
 Repository<T> (интерфейс)
     └── UserRepository (реализация)
 
@@ -179,24 +179,24 @@ if (alice && bob) {
 
 | Принцип | Где |
 |---|---|
-| [[interfaces\|Интерфейс]] | `Repository<T>` |
-| [[abstractClasses\|Абстрактный класс]] | `BaseEntity` |
-| [[encapsulation\|Инкапсуляция]] | `User._name` (private + getter/setter) |
-| [[inheritance\|Наследование]] | `User extends BaseEntity` |
-| [[polymorphism\|Полиморфизм]] | `validate()` — каждый наследник реализует по-своему |
-| [[singleton\|Синглтон]] | `DatabaseConnection` |
-| [[dependencyInjection\|DI]] | `UserService(repository: Repository<User>)` |
-| [[composition\|Композиция]] | `UserManager` содержит `UserService` и `DatabaseConnection` |
-| [[agregation\|Агрегация]] | `UserGroup` хранит `User[]`, живущих независимо |
+| [[interfaces/interfaces\|Интерфейс]] | `Repository<T>` |
+| [[abstractClasses/abstractClasses\|Абстрактный класс]] | `BaseEntity` |
+| [[encapsulation/encapsulation\|Инкапсуляция]] | `User._name` (private + getter/setter) |
+| [[inheritance/inheritance\|Наследование]] | `User extends BaseEntity` |
+| [[polymorphism/polymorphism\|Полиморфизм]] | `validate()` — каждый наследник реализует по-своему |
+| [[singleton/singleton\|Синглтон]] | `DatabaseConnection` |
+| [[dependencyInjection/dependencyInjection\|DI]] | `UserService(repository: Repository<User>)` |
+| [[composition/composition\|Композиция]] | `UserManager` содержит `UserService` и `DatabaseConnection` |
+| [[agregation/agregation\|Агрегация]] | `UserGroup` хранит `User[]`, живущих независимо |
 
 ## Связанные темы
 
-- [[interfaces]] — контракты
-- [[abstractClasses]] — абстракции
-- [[encapsulation]] — сокрытие данных
-- [[inheritance]] — наследование
-- [[polymorphism]] — разное поведение через один интерфейс
-- [[singleton]] — одиночный экземпляр
-- [[dependencyInjection]] — внедрение зависимостей
-- [[composition]] — объект содержит другие объекты
-- [[agregation]] — слабая связь между объектами
+- [[interfaces/interfaces]] — контракты
+- [[abstractClasses/abstractClasses]] — абстракции
+- [[encapsulation/encapsulation]] — сокрытие данных
+- [[inheritance/inheritance]] — наследование
+- [[polymorphism/polymorphism]] — разное поведение через один интерфейс
+- [[singleton/singleton]] — одиночный экземпляр
+- [[dependencyInjection/dependencyInjection]] — внедрение зависимостей
+- [[composition/composition]] — объект содержит другие объекты
+- [[agregation/agregation]] — слабая связь между объектами

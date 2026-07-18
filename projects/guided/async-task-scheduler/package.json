@@ -1,0 +1,27 @@
+{
+  "name": "guided-async-task-scheduler",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "smoke": "tsx src/index.ts",
+    "test": "vitest run checks/starter.test.ts",
+    "check": "vitest run",
+    "check:1": "vitest run checks/milestone-1.test.ts",
+    "check:2": "vitest run checks/milestone-1.test.ts checks/milestone-2.test.ts",
+    "check:3": "vitest run checks/milestone-1.test.ts checks/milestone-2.test.ts checks/milestone-3.test.ts",
+    "check:4": "vitest run checks/milestone-1.test.ts checks/milestone-2.test.ts checks/milestone-3.test.ts checks/milestone-4.test.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.32.0",
+    "@types/node": "24.3.0",
+    "eslint": "9.32.0",
+    "globals": "16.3.0",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.39.0",
+    "vitest": "3.2.4"
+  }
+}

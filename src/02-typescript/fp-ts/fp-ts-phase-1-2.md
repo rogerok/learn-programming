@@ -1057,7 +1057,7 @@ function initApp(): void {
 
 - `[[unsound]]` -- паттерн Either для обработки ошибок, реализованный вручную
 - `[[pure-functions]]` -- чистые функции, отсутствие побочных эффектов
-- `[[partial-application]]` -- каррирование и частичное применение
+- `[[01-javascript/patterns/partial-application/readme|Каррирование и частичное применение]]` -- каррирование и частичное применение
 - `[[function-composition]]` -- композиция функций, pipe и compose
 - `[[fp-ts-roadmap]]` -- полный roadmap изучения fp-ts (Phase 1-4)
 

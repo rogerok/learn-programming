@@ -2,6 +2,8 @@
 tags: [javascript, syntax, statements, expressions, fundamentals]
 aliases: [Statements vs Expressions, Выражения и инструкции]
 ---
+# Выражения и инструкции
+
 Sources:
 [Theory: Expressions vs. Statements](https://hexlet.io/courses/intro_to_programming/lessons/expressions/theory_unit)
 [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements#difference_between_statements_and_declarations)

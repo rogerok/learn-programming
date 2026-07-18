@@ -11,7 +11,7 @@ aliases: [Counter MVC]
 
 ## Схема взаимодействия
 
-```
+```text
 View → Controller → Model → View (прямой вызов)
 ```
 
@@ -140,11 +140,11 @@ export class CounterView {
 ## Ключевые моменты
 
 - View инициализирует все три слоя (антипаттерн — тесная связь)
-- Model знает о View напрямую — нет разделения (vs [[counterTwo/counterTwo|CounterTwo]] где Model не знает View)
-- Для сравнения см. [[counterTwo/counterTwo]] — улучшенный вариант с интерфейсами
+- Model знает о View напрямую — нет разделения (сравните с [[../counterTwo/counterTwo|CounterTwo]], где Model не знает View)
+- Для сравнения см. [[../counterTwo/counterTwo]] — улучшенный вариант с интерфейсами
 
 ## Связанные темы
 
 - [[../mvc]] — теория MVC
-- [[counterTwo/counterTwo]] — MVC с интерфейсами и Observer
+- [[../counterTwo/counterTwo]] — MVC с интерфейсами
 - [[../users/users]] — MVC с реальным CRUD

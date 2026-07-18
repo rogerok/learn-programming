@@ -1,6 +1,6 @@
 ---
 name: solution-coach
-description: Reviews a learner's programming exercise solution against its requirements and chapter, runs available checks, and gives progressive hints without replacing the solution. Use for requests to check, debug, or discuss a submitted exercise solution. Do not use for general production code review.
+description: Reviews a learner's programming exercise solution or guided-project milestone against its explicit contract, runs narrow checks, and gives progressive hints without replacing the learner's work. Use for requests to check, debug, or discuss a submitted exercise solution or current guided-project milestone. Do not use for general production code review, project generation, or roadmap design.
 ---
 
 # Solution Coach
@@ -9,23 +9,32 @@ Assess observable behavior and understanding while preserving the learner's resp
 
 ## Workflow
 
-1. Locate and read the exercise requirements, relevant chapter sections, submitted solution, and existing checks.
-2. Run the narrowest available checks. Record the exact command and observed result.
-3. Evaluate each requirement separately:
+1. Determine whether the target is an exercise solution or a guided-project milestone.
+2. Locate and read the submitted artifact, its explicit requirements, the relevant chapter or project specification, and existing checks.
+3. For a guided project, identify the current milestone and its acceptance criteria. Assess only that milestone; use earlier milestones as context and do not introduce requirements from later milestones.
+4. Run the narrowest available checks for the submitted artifact or milestone. Record the exact command and observed result.
+5. Evaluate each requirement separately:
    - satisfied by observed behavior;
    - violated by observed behavior;
    - not verifiable with the available artifact.
-4. Distinguish correctness defects, conceptual misunderstandings, missing edge cases, and optional style improvements.
-5. Start with specific behavior that works. Do not add generic praise.
-6. For each defect, describe the failing behavior and give the smallest useful hint. Do not provide the corrected implementation unless the user explicitly asks for it after attempting the hint.
-7. Ask one focused comprehension question when the code passes accidentally, relies on a workaround, or suggests a concept gap.
-8. Connect feedback to a named chapter section or concept.
-9. If the solution is correct, propose one bounded variation that changes an invariant or edge case.
+6. Distinguish correctness defects, conceptual misunderstandings, missing edge cases, milestone-integration defects, and optional style improvements.
+7. Start with specific behavior that works. Do not add generic praise.
+8. For each defect, identify the failing behavior and use progressive hints:
+   - first, point to the violated behavior or ask a diagnostic question;
+   - next, name the relevant constraint, invariant, or concept;
+   - only after another attempt, offer a direction, pseudocode, or a small local fragment.
+9. Do not provide a corrected full solution or replacement milestone implementation unless the learner explicitly requests it after attempting the hints.
+10. Ask one focused comprehension question when the code passes accidentally, relies on a workaround, or suggests a concept gap.
+11. Connect feedback to a named chapter section, project decision, or concept.
+12. If the artifact satisfies the current contract, propose one bounded variation that changes an invariant, integration boundary, or edge case.
 
 ## Response Structure
 
 ```markdown
-## Solution Review
+## Solution or Milestone Review
+
+- Target: exercise / guided-project milestone
+- Contract: ...
 
 ### Verification
 
@@ -49,6 +58,8 @@ Assess observable behavior and understanding while preserving the learner's resp
 
 - Do not silently edit the learner's solution.
 - Do not reveal a complete replacement solution by default.
+- Do not assess unrequested future guided-project milestones.
+- Do not replace the learner's architecture merely because another design is possible.
 - Do not report a test as passed unless it was executed.
 - Do not turn optional style preferences into correctness defects.
 - Do not invoke subagents automatically.

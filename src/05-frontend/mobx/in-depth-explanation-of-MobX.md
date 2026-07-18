@@ -113,7 +113,7 @@ So far:
 
 - So MobX tracks:
 
-```
+```text
 PersonView → fullName → firstName, lastName
 ```
 

@@ -1,0 +1,24 @@
+{
+  "name": "validation-pipeline-example",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.25.0",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc -p tsconfig.test.json",
+    "lint": "eslint src test vitest.config.ts --max-warnings=0",
+    "test": "vitest run",
+    "check": "pnpm run typecheck && pnpm run test",
+    "cli": "node dist/cli.js",
+    "example": "pnpm run build && node dist/cli.js examples/valid-parcel.json"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.10.1",
+    "eslint": "10.7.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.64.0",
+    "vitest": "4.0.16"
+  }
+}

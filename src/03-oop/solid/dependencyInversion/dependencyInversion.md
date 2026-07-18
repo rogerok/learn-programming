@@ -215,12 +215,12 @@ const App2 = () => {
 
 - Высокоуровневый модуль не должен `new` создавать низкоуровневые зависимости
 - Оба модуля зависят от интерфейса, а не друг от друга
-- DIP реализуется через [[../03-oop/dependencyInjection|Dependency Injection]]
+- DIP реализуется через [[../../concepts/dependencyInjection/dependencyInjection|Dependency Injection]]
 - Делает код тестируемым — можно подменить реализацию на mock
 
 ## Связанные темы
 
-- [[../03-oop/dependencyInjection]] — паттерн DI как реализация DIP
-- [[../03-oop/interfaces]] — интерфейсы как абстракции для DIP
-- [[openClosed]] — OCP и DIP часто используются вместе
+- [[../../concepts/dependencyInjection/dependencyInjection]] — паттерн DI как реализация DIP
+- [[../../concepts/interfaces/interfaces]] — интерфейсы как абстракции для DIP
+- [[../openClosed/openClosed]] — OCP и DIP часто используются вместе
 - [[../solid-book/srp]] — SRP помогает определить что выносить в абстракцию

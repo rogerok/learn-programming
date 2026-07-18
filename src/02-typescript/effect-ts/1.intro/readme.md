@@ -1,3 +1,9 @@
+---
+tags: [typescript, functional-programming, effect-ts, runtime]
+---
+
+# Effect: конструкторы и Runtime
+
 ## Конструкторы
 
 | Конструктор                       | Сигнатура                 | Когда брать                                        |

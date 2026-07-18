@@ -121,7 +121,7 @@ class FormatSelector {
 
 ## Связанные темы
 
-- [[interfaceSegregation]] — ISP: разделение интерфейсов
-- [[openClosed]] — OCP: расширение без модификации
+- [[../interfaceSegregation/interfaceSegregation]] — ISP: разделение интерфейсов
+- [[../openClosed/openClosed]] — OCP: расширение без модификации
 - [[../solid-book/srp]] — углублённый разбор SRP из книги
-- [[../03-oop/composition]] — разбивка на небольшие компоненты
+- [[../../concepts/composition/composition]] — разбивка на небольшие компоненты

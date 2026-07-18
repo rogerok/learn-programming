@@ -1,7 +1,14 @@
+---
+tags: [sources, reference, index]
+---
+
 # Useful Links
 
 Коллекция ссылок по frontend-разработке.
 Новые разделы: **[Performance](#performance)**, **[Security](#security)**, **[MobX](#mobx)**.
+
+> [!info] Контекст
+> Справочный каталог внешних материалов. Для dependency-ordered обучения используй topic MOC, а для очереди чтения — [[READING_LIST|Reading List]].
 
 ---
 

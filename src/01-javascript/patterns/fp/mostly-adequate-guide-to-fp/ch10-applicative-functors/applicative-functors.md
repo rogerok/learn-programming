@@ -129,18 +129,18 @@ Container.of(add).ap(Container.of(2)).ap(Container.of(3));
 ```
 
 **Шаг 1:** `Container.of(add)` -- помещаем функцию в контейнер:
-```
+```text
 Container(a => b => a + b)
 ```
 
 **Шаг 2:** `.ap(Container.of(2))` -- вызываем `Container.of(2).map(add)`:
-```
+```text
 Container.of(2).map(a => b => a + b)
 → Container(b => 2 + b)    // add получил первый аргумент
 ```
 
 **Шаг 3:** `.ap(Container.of(3))` -- вызываем `Container.of(3).map(b => 2 + b)`:
-```
+```text
 Container.of(3).map(b => 2 + b)
 → Container(5)              // готовый результат
 ```

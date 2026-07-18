@@ -13,7 +13,7 @@ tags: [mobx, architecture, stores, context, code-splitting, singleton]
 
 Из этого принципа вытекает трёхслойная модель:
 
-```
+```text
 Global Store     ← данные всего приложения (юзер, UI, справочники)
      ↑
 Page Store       ← данные конкретной страницы (таблица, форма, фильтры)
@@ -140,7 +140,7 @@ function MyPage() {
 
 ### Структура проекта со слоями
 
-```
+```text
 stores/
   global/
     user.store.ts

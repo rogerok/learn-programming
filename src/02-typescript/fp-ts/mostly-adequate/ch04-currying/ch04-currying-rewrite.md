@@ -8,7 +8,7 @@ aliases: [Mostly Adequate ch04 rewrite, Currying for fp-ts]
 > [!info] Context
 > Currying меняет форму функции: вместо вызова со всеми аргументами сразу ты получаешь цепочку функций по одному аргументу. В `fp-ts` это особенно полезно, потому что такая форма хорошо сочетается с `pipe`, `flow` и `data-last` API.
 >
-> **Пререквизиты:** [[ch03-pure-functions|Pure Functions через призму fp-ts]], [[partial-application/readme|Частичное применение и каррирование в JavaScript]], [[function-composition/function-composition|Каррирование и композиция функций]].
+> **Пререквизиты:** [[ch03-pure-functions|Pure Functions через призму fp-ts]], [[01-javascript/patterns/partial-application/readme|Частичное применение и каррирование в JavaScript]], [[01-javascript/patterns/fp/function-composition/function-composition|Каррирование и композиция функций]].
 
 ## Overview
 
@@ -412,8 +412,8 @@ test('max keeps the highest number', () => {
 ## Related Topics
 
 - [[ch03-pure-functions|Pure Functions через призму fp-ts]]
-- [[partial-application/readme|Частичное применение и каррирование в JavaScript]]
-- [[function-composition/function-composition|Каррирование и композиция функций]]
+- [[01-javascript/patterns/partial-application/readme|Частичное применение и каррирование в JavaScript]]
+- [[01-javascript/patterns/fp/function-composition/function-composition|Каррирование и композиция функций]]
 - [[fp-ts-phase-1-2]]
 - [[fp-ts-roadmap]]
 

@@ -166,7 +166,7 @@ export default class TasksService extends BaseHttpService {
 }
 ```
 
-````typescript
+```typescript
 export default class AuthService extends BaseHttpService {
     async login(loginDto: LoginDto): Promise<SessionUserDto> {
         return (await this.post<SessionUserDto>(
@@ -179,7 +179,7 @@ export default class AuthService extends BaseHttpService {
         return await this.post("/api/auth/register", registerDto);
     }
 }
-````
+```
 
 ```typescript
 export default class UserStore {

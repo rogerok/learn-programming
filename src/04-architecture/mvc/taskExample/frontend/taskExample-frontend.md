@@ -9,7 +9,7 @@ Frontend-версия Task Manager. Использует MobX для реакт�
 
 ## Схема
 
-```
+```text
 TaskListView (React observer)
     ↕ реактивно
 TaskStore (MobX observable) — Model + ViewModel
@@ -139,6 +139,6 @@ const TaskListView = observer(() => {
 
 ## Связанные темы
 
-- [[classicWay/taskExample-classic]] — тот же пример без MobX
-- [[../../MVVM/MVVM]] — MVVM паттерн
-- [[../mvc]] — теория MVC
+- [[../classicWay/taskExample-classic]] — тот же пример без MobX
+- [[../../../mvvm/MVVM]] — MVVM паттерн
+- [[../../mvc]] — теория MVC

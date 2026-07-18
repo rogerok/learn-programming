@@ -104,7 +104,7 @@ class ArrayChain {
 
 ## Поток исполнения
 
-```
+```text
 ArrayChain._promise
      ↓
   .then(...)

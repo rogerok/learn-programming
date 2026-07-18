@@ -261,6 +261,7 @@ sequenceS(E.Applicative)({ a: E.right(1), b: E.right(2) });
 - [[category-theory]]
 - [[fp-ts-practice]]
 - [[25.kind,higher-kinded_type]]
+- [[exercises|Упражнения к бонусной главе]]
 
 ## Sources
 

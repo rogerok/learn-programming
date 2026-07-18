@@ -8,7 +8,7 @@ aliases: [Mostly Adequate ch09, Monads in fp-ts, Monadic Onions]
 > [!info] Context
 > Эта глава переосмысляет `Mostly Adequate Guide`, chapter 09, через `fp-ts`. Центральная идея не меняется: `of` помещает значение в минимальный контекст, вложенные контексты создают лишние слои, `flatten` снимает один слой, а `flatMap` строит последовательные вычисления без ручной распаковки.
 >
-> **Пререквизиты:** [[ch03-pure-functions|Pure Functions через призму fp-ts]], [[ch04-currying/ch04-currying|Currying через призму fp-ts]], [[ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]], [[fp-ts-phase-1-2]]. Желательно уже уверенно читать `pipe(...)` и namespace imports.
+> **Пререквизиты:** [[ch03-pure-functions|Pure Functions через призму fp-ts]], [[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying|Currying через призму fp-ts]], [[02-typescript/fp-ts/mostly-adequate/ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]], [[fp-ts-phase-1-2]]. Желательно уже уверенно читать `pipe(...)` и namespace imports.
 
 ## Overview
 
@@ -849,10 +849,10 @@ test('buildLabelFromAge uses flatMap when the next step depends on the current v
 
 ## Related Topics
 
-- [[ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]]
+- [[02-typescript/fp-ts/mostly-adequate/ch08-functors-and-containers/ch08-functors-and-containers|Функторы и контейнеры через призму fp-ts]]
 - [[ch03-pure-functions|Pure Functions через призму fp-ts]]
-- [[ch04-currying/ch04-currying|Currying через призму fp-ts]]
-- [[function-composition/function-composition]]
+- [[02-typescript/fp-ts/mostly-adequate/ch04-currying/ch04-currying|Currying через призму fp-ts]]
+- [[01-javascript/patterns/fp/function-composition/function-composition]]
 - [[fp-ts-phase-1-2]]
 - [[fp-ts-roadmap]]
 
@@ -866,3 +866,4 @@ test('buildLabelFromAge uses flatMap when the next step depends on the current v
 - [fp-ts IO module](https://gcanti.github.io/fp-ts/modules/IO.ts.html)
 - [fp-ts TaskEither module](https://gcanti.github.io/fp-ts/modules/TaskEither.ts.html)
 - [fp-ts Function module](https://gcanti.github.io/fp-ts/modules/Function.ts.html)
+- Рабочий материал подготовки источников: [[ch09-research-brief|research brief]].

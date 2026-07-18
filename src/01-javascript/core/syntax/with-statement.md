@@ -2,6 +2,8 @@
 tags: [javascript, syntax, with-statement, scope]
 aliases: [with statement]
 ---
+# with statement и scope chain
+
 Sources:
 
 [MDN `with` statement](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with)

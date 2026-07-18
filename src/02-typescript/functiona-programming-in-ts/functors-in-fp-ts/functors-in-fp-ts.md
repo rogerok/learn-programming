@@ -621,7 +621,7 @@ interface Contravariant1<F extends URIS> {
 - [[18.magma,semigroup,monoid]] — другие type classes в алгебраической иерархии
 - [[ch08-functors-and-containers]] — функторы в Mostly Adequate Guide
 - [[ch10-applicative-functors]] — следующий уровень: Applicative
-- [[ch11-natural-transformations/natural-transformations]] — преобразования между функторами (функции `F<A> → G<A>`, сохраняющие `map`)
+- [[01-javascript/patterns/fp/mostly-adequate-guide-to-fp/ch11-natural-transformations/natural-transformations|Natural transformations]] — преобразования между функторами (функции `F<A> → G<A>`, сохраняющие `map`)
 
 ## Sources
 

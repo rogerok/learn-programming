@@ -3,88 +3,131 @@ tags: [cs, csapp, moc, index]
 aliases: [CS:APP, Computer Systems]
 ---
 
-# CS:APP — Map of Content
+# CS:APP — маршрут по компьютерным системам
 
-> [!info] Context
-> Заметки по книге *Computer Systems: A Programmer's Perspective* (Bryant, O'Hallaron).
-> Язык практики: Zig (вместо C из книги). Каждый раздел содержит обзор, упражнения и Anki-карточки.
+> [!info] Контекст
+> Канонический материал этого раздела — заметки по *Computer Systems: A Programmer's Perspective* (Bryant, O'Hallaron). Язык практики — Zig вместо C. Большие заметки не нужно читать повторно целиком: ссылки ниже ведут к отдельным retrieval units внутри них.
 
-## Прогресс
+## Цель
 
-| Глава | Тема | Статус |
-|-------|------|--------|
-| 1 | A Tour of Computer Systems | Done |
-| 2.1 | Information Storage | Done |
-| 2.2 | Integer Representations | Done |
-| 2.3 | Integer Arithmetic | Done |
-| 2.4 | Floating Point (IEEE 754) | -- |
-| 3.1 | Machine-Level Representation of Programs: Historical Perspective | Done |
-| 3.2 | Program Encodings | Done |
-| 4 | Processor Architecture | -- |
-| 5 | Optimizing Program Performance | -- |
-| 6 | The Memory Hierarchy | -- |
-| 7 | Linking | -- |
-| 8 | Exceptional Control Flow | -- |
-| 9 | Virtual Memory | -- |
-| 10 | System-Level I/O | -- |
-| 11 | Network Programming | -- |
-| 12 | Concurrent Programming | -- |
+Пройти путь от интерпретации битов до чтения машинного кода и уметь наблюдаемо:
 
-## Глава 1: A Tour of Computer Systems
+- проследить данные от исходного файла через toolchain до executable;
+- объяснить представление целых и floating-point чисел на фиксированном числе битов;
+- обнаружить overflow, выбрать корректную операцию и подтвердить выбор тестом;
+- получить assembly/object code, сопоставить инструкции с байтами и определить размер данных.
 
-- [[1.chapter/1.chapter|Обзор: компиляция, hardware, кэши, ОС, Amdahl's Law, параллелизм]]
+## Предварительные знания
 
-## Глава 2: Representing and Manipulating Information
+- двоичная запись целых чисел и степени двойки на базовом уровне;
+- умение запускать команду в терминале и читать результат теста;
+- для практики — базовый синтаксис Zig: `const`, функции, целочисленные типы. Нужные конструкции также объясняются внутри упражнений.
 
-### 2.1 Information Storage
+Если hex пока не читается группами по четыре бита, начни с [[2.chapter/2.1/2.1.1 . Шестнадцатеричная система счисления|короткой retrieval unit по hex]].
 
-- [[2.chapter/2.1/2.1-overview|Обзор: hex, word size, endianness, строки, побитовые операции, сдвиги]]
-- [[2.chapter/2.1/2.1-exercises|Упражнения: showBytes, endianness detection, RGB packing, BitSet8]]
+## Как проходить маршрут
 
-### 2.2 Integer Representations
+Для каждой строки:
 
-- [[2.chapter/2.2/2.2-overview|Обзор: B2U, B2T, T2U, U2T, расширение, усечение, unsigned-ловушки]]
-- [[2.chapter/2.2/2.2-exercises|Упражнения: таблица B2U/B2T, ручная реализация B2T, signed/unsigned трюки]]
+1. До чтения письменно предскажи ответ на проверку.
+2. Открой только указанные retrieval units, затем закрой заметку и объясни идею своими словами.
+3. Выполни упражнения по порядку; разворачивай подсказки и готовые разборы только после собственной попытки.
+4. Повтори [[#Retrieval и интервальное повторение|retrieval check]] на следующий день.
 
-### 2.3 Integer Arithmetic
+`Обзор` — каноническая концептуальная заметка. `Упражнения` и `.zig`-файлы — практика. `Anki` — слой retrieval, а не замена объяснению. Книга и сайт перечислены отдельно в [[#Источники|источниках]].
 
-- [[2.chapter/2.3/2.3-overview|Обзор: модулярная арифметика, переполнение, отрицание, умножение, деление]]
-- [[2.chapter/2.3/exercises/exercise-1.zig|Упражнение 1: wrapping arithmetic]]
-- [[2.chapter/2.3/exercises/exercise-2.zig|Упражнение 2: overflow detection]]
-- [[2.chapter/2.3/exercises/exercise-3.zig|Упражнение 3: two's complement negation]]
-- [[2.chapter/2.3/exercises/exercise-4.zig|Упражнение 4: multiplication via shifts]]
-- [[2.chapter/2.3/exercises/exercise-5.zig|Упражнение 5: security / accuracy scenarios]]
+## Зависимый маршрут
 
-### 2.4 Floating Point
+### 1. Карта системы: от битов к абстракциям
 
-> [!warning] Ещё не написано
-> Следующий раздел: IEEE 754, float/double representation, rounding, FP arithmetic.
+Глава 1 хранится одной большой заметкой, но проходится следующими независимыми retrieval units:
 
-## Глава 3: Machine-Level Representation of Programs
+| Порядок | Retrieval unit | Наблюдаемая проверка |
+|---|---|---|
+| 1.1 | [[1.chapter/1.chapter#1. Информация — это биты + контекст|Биты и контекст]] | Приведи две разные интерпретации одной последовательности байтов и назови контекст, который выбирает смысл. |
+| 1.2 | [[1.chapter/1.chapter#2. Система компиляции|Система компиляции]] → [[1.chapter/1.chapter#3. Зачем понимать компиляцию|зачем её понимать]] | По памяти восстанови `hello.c → hello.i → hello.s → hello.o → hello` и назначение каждого этапа. |
+| 1.3 | [[1.chapter/1.chapter#4. Аппаратная организация системы|Аппаратная организация]] → [[1.chapter/1.chapter#5. Выполнение программы hello|выполнение `hello`]] | Нарисуй путь команды, executable и выводимых байтов через I/O, память и CPU; отдельно отметь DMA. |
+| 1.4 | [[1.chapter/1.chapter#6. Кеш-память и иерархия памяти|Кеш и иерархия памяти]] → [[1.chapter/1.chapter#7. Операционная система и её абстракции|абстракции ОС]] → [[1.chapter/1.chapter#8. Обмен данными в сетях|сеть как I/O]] | Объясни, где появляется locality и какие детали скрывают process, virtual memory и file. |
+| 1.5 | [[1.chapter/1.chapter#9. Закон Амдала|Закон Амдала]] → [[1.chapter/1.chapter#10. Конкуренция и параллелизм|конкуренция и параллелизм]] → [[1.chapter/1.chapter#11. Абстракции в компьютерных системах|системные абстракции]] | Для частично ускоренной системы объясни предел speedup и различи concurrency и parallelism на своём примере. |
 
-### 3.1 Historical Perspective
+Финиш главы: ответь без подсказок на [[1.chapter/1.chapter#Контрольные вопросы для самопроверки|контрольные вопросы]]. Пробел в ответе означает возврат к одной unit, а не перечитывание всей главы.
 
-- [[3.chapter/3.1/3.1-overview|Обзор: история x86, IA32, AMD64/x86-64, обратная совместимость, закон Мура]]
-- [[3.chapter/3.1/exercises|Упражнения: термины x86, legacy/core/background, проверка архитектуры машины]]
+### 2. Представление и обработка информации
 
-### 3.2 Program Encodings
+#### 2.1 Хранение информации
 
-- [[3.chapter/3.2/3.2-overview|Обзор: GCC pipeline, -Og, assembly, object code, executable, objdump, gdb]]
-- [[3.chapter/3.2/exercises|Упражнения: .s/.o/executable, objdump, gdb bytes, AT&T vs Intel syntax]]
-- [[3.chapter/3.2/anki-cards.txt|Anki: команды toolchain, machine state, disassembly, syntax]]
+Порядок: [[2.chapter/2.1/2.1-overview#Шаг 1: Память --- это просто массив байтов|память как байты]] → [[2.chapter/2.1/2.1-overview#Шаг 2: Hex --- компактный язык для байтов|hex]] → [[2.chapter/2.1/2.1-overview#Шаг 3: Сколько байтов занимает переменная|размеры]] → [[2.chapter/2.1/2.1-overview#Шаг 4: Порядок байтов --- endianness|endianness]] → [[2.chapter/2.1/2.1-overview#Шаг 5: Строки и машинный код --- данные без типов|данные без типов]] → [[2.chapter/2.1/2.1-overview#Шаг 6: Побитовые операции --- булева алгебра на практике|битовые операции]] → [[2.chapter/2.1/2.1-overview#Шаг 8: Сдвиги --- умножение и деление степенями двойки|сдвиги]].
 
-### 3.3 Data Formats
+**Проверка:** по значению `0x01234567` предскажи четыре байта и их адреса для little-endian; затем объясни разницу между `&` и `&&`.
 
-- [[3.chapter/3.3/3.3-overview|Обзор: размеры C-типов, byte/word/double word/quad word, суффиксы b/w/l/q]]
-- [[3.chapter/3.3/exercises|Упражнения: sizeof, movb/movw/movl/movq, pointer size vs pointed value size]]
-- [[3.chapter/3.3/anki-cards.txt|Anki: форматы данных, суффиксы инструкций, LP64/LLP64]]
+**Практика:** [[2.chapter/2.1/2.1-exercises|show_bytes → определение endianness → маски → bis/bic → диагностика XOR swap]]. После практики — [[2.chapter/2.1/anki-cards.txt|Anki 2.1]].
+
+#### 2.2 Целочисленные представления
+
+Порядок: [[2.chapter/2.2/2.2-overview#Шаг 1: Unsigned --- простой случай|B2U]] → [[2.chapter/2.2/2.2-overview#Шаг 2: Signed --- добавляем «отрицательную гирю»|B2T]] → [[2.chapter/2.2/2.2-overview#Шаг 3: Два взгляда на одни биты --- T2U и U2T|T2U/U2T]] → [[2.chapter/2.2/2.2-overview#Шаг 4: Опасная зона --- смешение signed и unsigned|смешение signed/unsigned]] → [[2.chapter/2.2/2.2-overview#Шаг 5: Расширение --- переходим к большему типу|расширение]] → [[2.chapter/2.2/2.2-overview#Шаг 6: Усечение --- переходим к меньшему типу|усечение]].
+
+**Проверка:** для одного 4-битного паттерна вычисли B2U и B2T, затем предскажи результат sign extension и truncation.
+
+**Практика:** [[2.chapter/2.2/2.2-exercises|таблица B2U/B2T → преобразования → signed/unsigned → extension → truncation → диагностика `usize`]]. После практики — [[2.chapter/2.2/anki-cards.txt|Anki 2.2]].
+
+#### 2.3 Целочисленная арифметика
+
+Порядок: [[2.chapter/2.3/2.3-overview#Шаг 1: Unsigned сложение --- числовое кольцо|unsigned-сложение]] → [[2.chapter/2.3/2.3-overview#Шаг 2: Signed сложение --- термометр, который сходит с ума|signed-сложение]] → [[2.chapter/2.3/2.3-overview#Шаг 3: Отрицание в дополнительном коде|отрицание]] → [[2.chapter/2.3/2.3-overview#Шаг 4: Unsigned умножение|умножение]] → [[2.chapter/2.3/2.3-overview#Шаг 6: Уязвимости --- когда переполнение убивает|уязвимости]] → [[2.chapter/2.3/2.3-overview#Шаг 7: Умножение на константу через сдвиги|умножение сдвигами]] → [[2.chapter/2.3/2.3-overview#Шаг 8: Деление на степень двойки через сдвиги|деление сдвигами]].
+
+**Проверка:** для `u8` и `i8` предскажи wrapping-result и overflow flag; объясни, почему одинаковая инструкция сложения допускает разные интерпретации.
+
+**Практика, строго по порядку:**
+
+1. [[2.chapter/2.3/exercises/exercise-1.zig|Predict: wrapping arithmetic]].
+2. [[2.chapter/2.3/exercises/exercise-2.zig|Implement: обнаружение overflow и safe operations]].
+3. [[2.chapter/2.3/exercises/exercise-3.zig|Explain/implement: two's-complement negation и TMin]].
+4. [[2.chapter/2.3/exercises/exercise-4.zig|Modify: умножение через сдвиги]].
+5. [[2.chapter/2.3/exercises/exercise-5.zig|Diagnose/transfer: размер буфера, деление и signed overflow]].
+
+Каждый файл содержит собственный запуск и проверки. Не переходи дальше, пока текущий файл не сообщает, что все его проверки пройдены. Затем используй [[2.chapter/2.3/anki-cards.txt|Anki 2.3]].
+
+#### 2.4 Числа с плавающей точкой
+
+Порядок: [[2.chapter/2.4/2.4-overview#Шаг 1: Двоичные дроби --- что можно, а что нельзя представить|двоичные дроби]] → [[2.chapter/2.4/2.4-overview#Шаг 2: Формат IEEE 754 --- анатомия float|IEEE 754]] → [[2.chapter/2.4/2.4-overview#Шаг 3: Три категории чисел|категории]] → [[2.chapter/2.4/2.4-overview#Шаг 4: Плотность чисел на числовой прямой|плотность]] → [[2.chapter/2.4/2.4-overview#Шаг 5: Округление|округление]] → [[2.chapter/2.4/2.4-overview#Шаг 6: Арифметика с плавающей точкой|арифметика]] → [[2.chapter/2.4/2.4-overview#Шаг 8: Практические ловушки и реальные инциденты|диагностика ловушек]].
+
+**Проверка:** вручную разложи одно `f32` на sign/exponent/fraction, классифицируй `0`, infinity и NaN и приведи контрпример ассоциативности.
+
+**Практика:** [[2.chapter/2.4/exercises|двоичные дроби → разбор `f32` → категории → точность → округление → диагностика инцидента Patriot]]. После практики — [[2.chapter/2.4/anki-cards.txt|Anki 2.4]].
+
+### 3. Машинное представление программ
+
+Раздел зависит от главы 2: байт, размер и интерпретация уже должны быть рабочими инструментами.
+
+| Порядок | Канонический материал | Практика | Наблюдаемая проверка |
+|---|---|---|---|
+| 3.1 | [[3.chapter/3.1/3.1-overview|Историческая перспектива x86]] | [[3.chapter/3.1/exercises|термины → рабочее подмножество → архитектура машины → причинная карта]], затем [[3.chapter/3.1/anki-cards.txt|Anki]] | Различи `x86`, `IA32`, `x86-64` и объясни цену обратной совместимости. |
+| 3.2 | [[3.chapter/3.2/3.2-overview|Program encodings и toolchain]] | [[3.chapter/3.2/exercises|`.s` → `.o`/disassembly → сравнение → optional GDB]], затем [[3.chapter/3.2/anki-cards.txt|Anki]] | Получи `.s`, `.o` и executable; покажи, где одни и те же байты видны в `objdump` и GDB. |
+| 3.3 | [[3.chapter/3.3/3.3-overview|Форматы данных]] | [[3.chapter/3.3/exercises|`sizeof` → суффиксы `mov` → pointer/value size]], затем [[3.chapter/3.3/anki-cards.txt|Anki]] | По C-типу выбери размер и суффикс инструкции; отдельно назови размер pointer и pointed value. |
+
+## Диагностика пробелов
+
+| Наблюдаемый сбой | Куда вернуться |
+|---|---|
+| Не удаётся перейти между hex и битами | [[2.chapter/2.1/2.1.1 . Шестнадцатеричная система счисления|Hex retrieval unit]] |
+| Путаются байты значения и порядок их адресов | [[2.chapter/2.1/2.1-overview#Шаг 4: Порядок байтов --- endianness|Endianness]] и первое упражнение 2.1 |
+| `-1` как unsigned кажется новым набором битов | [[2.chapter/2.2/2.2-overview#Шаг 3: Два взгляда на одни биты --- T2U и U2T|T2U/U2T]] |
+| Overflow обнаруживается только после неправильного результата | [[2.chapter/2.3/exercises/exercise-2.zig|Overflow detection]] |
+| `.s`, `.o` и executable смешиваются | [[3.chapter/3.2/exercises#Упражнение 3: Сравнить `.s` и `objdump -d`|сравнение представлений]] |
+
+## Retrieval и интервальное повторение
+
+- Сразу после unit: ответь на её наблюдаемую проверку без заметки.
+- На следующий день: используй соответствующий `anki-cards.txt` и воспроизведи один пример на бумаге.
+- Через неделю: выбери одну ошибку из таблицы диагностики и объясни, почему неверный ответ правдоподобен.
+- Критерий завершения раздела: ответ воспроизводится без подсказки и подтверждается упражнением либо наблюдаемым выводом toolchain.
 
 ## Связанные темы
 
-- [[../../08-internals/jit-compilation|JIT-компиляция в V8]] — как JS-движок компилирует в машинный код
-- [[../../01-javascript/MOC|JavaScript]] — высокоуровневый язык поверх этих абстракций
+- [[../../08-internals/jit-compilation|JIT-компиляция в V8]] — высокоуровневый код до machine code.
+- [[../../01-javascript/MOC|JavaScript]] — язык поверх системных абстракций.
+- [[../../09-practice/MOC|Практика]] — как отличать упражнения, workshops и reference implementations.
 
-## Sources
+## Источники
 
-- Bryant, O'Hallaron — *Computer Systems: A Programmer's Perspective*, 3rd Edition
-- [CS:APP Student Site](http://csapp.cs.cmu.edu/)
+- Bryant, R. E., O'Hallaron, D. R. *Computer Systems: A Programmer's Perspective*, 3rd Edition.
+- [CS:APP Student Site](https://csapp.cs.cmu.edu/).
