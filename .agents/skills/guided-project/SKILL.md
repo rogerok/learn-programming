@@ -1,6 +1,6 @@
 ---
 name: guided-project
-description: Proposes and creates a standalone starter project in which the learner implements an established capability through checked milestones and fading, optional hints. Use when the learner wants to build the behavior. Do not use for a finished sample, chapter, exercise sheet, or submitted-solution review. Always obtain explicit confirmation before writing project files.
+description: Proposes and creates a standalone starter project in which the learner implements an established capability through checked milestones and adaptive, progressively revealed guidance. Use when the learner wants to build the behavior. Do not use for a finished sample, chapter, exercise sheet, or submitted-solution review. Always obtain explicit confirmation before writing project files.
 ---
 
 # Guided Project
@@ -20,13 +20,25 @@ Apply the relevant rules from:
 
 Keep `guided-project` responsible for the final result. Do not invoke legacy agents or subagents automatically.
 
+When this skill selects the supported profile or the learner explicitly requests a complete spoiler, its milestone-spoiler rules override the default prohibition on complete code in `exercise-design` and `study-note-review`. The exception applies only to collapsed, per-milestone help; it never permits a completed starter, public solution directory, or solution for the independent transfer.
+
 ## Inputs and Grounding
 
-1. Identify the target capability, learner's demonstrated prerequisites, language, runtime, and project constraints.
+1. Identify the target capability, learner's demonstrated prerequisites, experience with the central library or framework, language, runtime, and project constraints.
 2. Inspect relevant canonical concepts, chapters, exercises, MOCs, terminology, and existing example or guided projects. A note's presence is not evidence that the learner has mastered it.
 3. If no chapter exists, establish scope from the request and authoritative sources. Do not create a chapter as a prerequisite.
-4. Detect hidden prerequisites. Keep the project within demonstrated scope or name the prerequisite and its evidence requirement in the proposal.
+4. Detect hidden prerequisites and unfamiliar APIs. Keep the project within demonstrated scope or introduce the prerequisite immediately before the milestone that needs it, with a direct primary-source link and a small orientation example when syntax is not already established.
 5. Check complete examples for the same learning unit. Use a meaningfully different problem domain from any accessible complete example. If a same-domain complete example is essential, it must remain unavailable until after the learner's corresponding attempt.
+
+## Guidance Profile
+
+Choose and name one profile before writing the project:
+
+- **supported** — default when the learner is new to the central library or explicitly asks for detailed implementation help. Name exact files and symbols, explain current starter behavior, break the change into ordered steps, link the relevant primary documentation near the step, and provide an optional final collapsed implementation spoiler for each non-transfer milestone;
+- **guided** — use when prerequisites are demonstrated. Name the relevant files and boundaries, provide progressive concept, structure, and pseudocode hints, but omit complete code unless requested;
+- **independent** — use for a repeat attempt or demonstrated fluency. Give behavior contracts, checks, and only prerequisite-remediation hints.
+
+Do not infer expertise from vocabulary or from the existence of notes. If evidence is mixed, choose the more supportive profile. Detail must remove navigation and prerequisite friction, not narrate every keystroke or restate tests.
 
 ## Mandatory Confirmation Gate
 
@@ -38,6 +50,7 @@ Before creating or modifying files, installing dependencies, or generating scaff
 - source notes or authoritative scope;
 - the final observable capability and mastery evidence;
 - dependency-ordered milestones, each with its learner action, observable behavior, check, and intended amount of guidance;
+- the selected guidance profile, why it matches the learner's evidence, and whether collapsed implementation spoilers will be present;
 - proposed destination and storage rationale;
 - language, runtime, libraries, and verification commands;
 - expected files and the purpose each serves;
@@ -76,28 +89,43 @@ Use the fewest cumulative milestones that make dependencies and evidence clear. 
 
 For each milestone:
 
-1. state an observable outcome and why it follows the previous milestone;
-2. give a behavior-level contract and exact targeted check command;
-3. include a reasoning checkpoint when prediction, explanation, or diagnosis is part of the evidence;
-4. ensure checks fail for a plausible missing or incorrect behavior, not for setup or syntax;
-5. make the learner change real behavior rather than fill a placeholder;
-6. reduce decomposition, named steps, starter code, and hints as capability grows;
-7. end with an independent transfer in a different context or representation when transfer is part of the learning unit.
+1. state an observable outcome, why it follows the previous milestone, and the small mechanism being learned;
+2. name the exact files and public symbols the learner should inspect or edit, plus files that are supporting scaffold and normally remain unchanged;
+3. describe what the starter currently does and the concrete behavior the learner must replace or extend;
+4. give a behavior-level contract and exact targeted check command;
+5. give ordered implementation steps at the selected guidance profile without hiding required parsing, execution, wiring, or error-mapping actions behind vague verbs;
+6. include a reasoning checkpoint when prediction, explanation, or diagnosis is part of the evidence;
+7. ensure checks fail for a plausible missing or incorrect behavior, not for setup or syntax;
+8. make the learner change real behavior rather than fill a placeholder;
+9. reduce decomposition, named steps, starter code, and hints as capability grows;
+10. end with an independent transfer in a different context or representation when transfer is part of the learning unit.
 
-The starter must compile or run and expose meaningful baseline behavior. Leave later capabilities absent by design; do not use empty files, fake handlers, no-op branches, `throw new Error("TODO")`, or other placeholder failures.
+The starter must compile or run and expose meaningful baseline behavior. Leave later capabilities absent by design; do not use empty files, fake handlers, no-op branches, `throw new Error("TODO")`, or other placeholder failures. Add sparse comments such as `Этап 2: текущая baseline-реализация...` at non-obvious learner seams. Each marker must say what already works and point to the corresponding guide stage; never comment every line or paste the task into source.
 
 ## GUIDE.md Contract
 
-`GUIDE.md` must contain only material needed to attempt and verify the work:
+`GUIDE.md` must contain enough material to locate, attempt, debug, and verify the work without guessing repository structure:
 
-- context, prerequisites, target capability, and run/check commands;
-- a compact explanation of the functioning starter architecture;
+- context, actual prerequisites, target capability, and run/check commands;
+- a starter map that distinguishes working domain code, supporting scaffold, learner edit points, and check files;
+- a compact explanation of the functioning starter architecture and data flow;
 - dependency-ordered milestones with behavior contracts and evidence criteria;
-- exact targeted check commands and manual reasoning checkpoints;
-- optional collapsed hints that fade across milestones;
+- for every milestone: `Зачем`, `Где работать`, `Что уже есть`, `Что изменить`, ordered `Шаги реализации`, `Проверка`, and a reasoning checkpoint when it adds evidence;
+- direct primary-source links adjacent to the unfamiliar API or mechanism they support, optionally anchored to a relevant example or API section;
 - final integration evidence and an independent transfer task.
 
-Use hints in reveal order: concept, relevant structure or boundary, then pseudocode or algorithm shape. Never include complete code. Early milestones may have up to three hints; later implementation and diagnosis milestones should have fewer and less-specific hints; the final transfer has no hint by default. Do not include a reference implementation, answer key, copied expected output that gives away the implementation, or a committed `solution/` directory.
+Do not make prose telegraphic merely to keep it compact. Introduce encoded/decoded values, parser execution, Effect error mapping, Layer wiring, and other consequential intermediate actions explicitly when the learner has not demonstrated them. Avoid tutorial filler, repeated motivation, generic encouragement, and line-by-line narration.
+
+Use collapsed hints in this reveal order:
+
+1. governing concept and the question to ask;
+2. relevant file, symbol, state, or boundary;
+3. pseudocode, API composition, or algorithm shape;
+4. in the supported profile, a complete minimal implementation for that milestone, labeled `Полная реализация — открыть после попытки`.
+
+A complete spoiler must compile, be limited to the milestone's edit surface, and explain two or three non-obvious decisions after the code. It must not silently implement later milestones. Revealing it records supported practice, not independent completion. The final transfer has no implementation spoiler.
+
+Do not include a whole-project reference implementation, answer key outside collapsed milestone spoilers, copied expected output that gives away independent work, or a committed `solution/` directory.
 
 Learner-facing headings and hint prose must follow repository language rules; new Russian guidance should use labels such as `Результат`, `Проверка`, and `Подсказка` rather than English template filler.
 
@@ -109,17 +137,17 @@ Learner-facing headings and hint prose must follow repository language rules; ne
 4. In a clean temporary copy with no root dependency access, create a private reference implementation for verification only.
 5. Run every targeted and integration check against that implementation. Also run representative plausible incorrect implementations where needed to prove a check is discriminating.
 6. Confirm the final transfer check measures the same capability in a new context rather than a copied structure.
-7. Remove all temporary implementations and leave only the learner-facing starter and guidance, with no solution or recoverable generated answer.
+7. Remove all temporary implementations. Leave only the learner-facing starter and guidance allowed by the selected profile; ensure no private whole-project solution or recoverable generated answer remains.
 8. Confirm repository-root build, lint, and test discovery excludes the standalone project.
 
 ## Evidence and Completion
 
-Report baseline commands and observed behavior, checks proven to fail and pass for the intended reasons, and the guidance available at each milestone. A learner has not demonstrated mastery merely by opening the project, passing after revealing algorithm-level help, or copying code. Independent completion plus reasoning and transfer evidence support mastery; otherwise recommend a later reduced-guidance attempt.
+Report baseline commands and observed behavior, checks proven to fail and pass for the intended reasons, the selected guidance profile, and the guidance available at each milestone. A learner has not demonstrated mastery merely by opening the project, passing after revealing algorithm-level help, or copying a complete spoiler. Independent completion plus reasoning and transfer evidence support mastery; otherwise recommend a later reduced-guidance attempt.
 
 ## Boundaries
 
 - Do not generate a chapter, quiz, Anki export, exercise sheet, complete example, or review of submitted code.
-- Do not include any default solution in source, GUIDE, tests, snapshots, history, or a solution directory.
+- Do not include a default solution in source, tests, snapshots, history, or a solution directory. A complete implementation is allowed only in a collapsed, per-milestone spoiler under the supported profile or after an explicit learner request.
 - Do not reveal advanced APIs outside established scope without naming the prerequisite.
 - Do not make framework setup the main challenge unless the framework is the capability.
 - Do not use milestone, file, or heading count as a quality target.

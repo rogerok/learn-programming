@@ -29,8 +29,7 @@ aliases: [Practice, Практика]
 | **Workshops** | Пошаговых workshops с общей live-сессией пока нет | Не называть готовый листинг workshop: он не оставляет учащемуся реализацию по этапам. |
 | **Complete examples** | [Validation Pipeline](../../projects/examples/validation-pipeline/README.md) | Запустить неизменённым, проследить pure core/impure shell, затем использовать как проверяемую reference architecture. |
 | **Reference implementations** | [[zod-validator/readme|Упрощённый Zod-like validator]] | Читать после собственной модели как локальный листинг для retrieval и диагностики. Это не задание «реализуй с нуля». |
-| **Guided projects** | [Планировщик асинхронных задач](../../projects/guided/async-task-scheduler/GUIDE.md) | Изменять только указанный файл, идти по milestones и открывать progressive hints по одной. |
-| **Будущие guided projects** | Пока не опубликованы | Не смешивать намерение с доступным материалом; новый проект должен иметь outcomes, checkpoints, hints и reflection. |
+| **Guided projects** | [Планировщик асинхронных задач](../../projects/guided/async-task-scheduler/GUIDE.md); [система бронирования мест на Effect](../../projects/guided/seat-reservation-engine/GUIDE.md) | Выбрать проект по prerequisites, идти по cumulative milestones и открывать progressive hints по одной. |
 
 ## Маршрут по форматам
 
@@ -45,7 +44,11 @@ aliases: [Practice, Практика]
 
 **Готово, когда:** `pnpm check` проходит в директории example; по выводу CLI можно показать normalization, точный error path и exit behavior; роли `validation.ts`, `parcel-order.ts` и `cli.ts` объясняются без кода.
 
-### Guided project: построить поведение по milestones
+### Guided projects: построить поведение по milestones
+
+Выбери один маршрут по prerequisites и целевой способности.
+
+#### Promise и worker pool
 
 1. Открой [guide планировщика](../../projects/guided/async-task-scheduler/GUIDE.md) и выполни начальные `npm run build` и `npm run smoke`.
 2. Для каждого этапа сначала запиши prediction, затем запусти только соответствующий накопительный `npm run check:N`.
@@ -53,6 +56,18 @@ aliases: [Practice, Практика]
 4. После этапа 4 пройди final self-check из guide и объясни перенос принципа worker pool на другую очередь задач.
 
 **Готово, когда:** `check:1`–`check:4` проходят по порядку; наблюдаемы стабильный порядок результатов, переходы состояний, isolated errors, предел concurrency и задача, добавленная во время `run()`.
+
+#### Effect и transactional booking
+
+1. Сначала пройди [[../02-typescript/effect-ts/1.intro/readme|Effect intro]] → [[../02-typescript/effect-ts/5.resources|resources]] и mentor lessons про fibers, coordination и STM.
+2. Открой [guide системы бронирования](../../projects/guided/seat-reservation-engine/GUIDE.md), затем подтверди baseline через `npm run build`, `npm test` и `npm run smoke`.
+3. Выполняй `check:1`–`check:6` последовательно: Schema → typed errors → Layer → Scope → coordination → STM.
+4. Заверши отдельным `npm run check:transfer`, не открывая подсказок.
+5. После самостоятельного transfer и mentor lessons 9–12 открой [итерацию Operations & Delivery](../../projects/guided/seat-reservation-engine/guides/iteration-2-operations.md): Stream → Request batching и Cache → Schedule → CLI/HttpApi/SSE.
+
+**Готово, когда:** все checks проходят; вы можете объяснить error channel, service requirements, resource lifetime, backpressure, concurrency bound и interleaving double booking по наблюдаемому поведению.
+
+**Operations & Delivery готово, когда:** `check:ops` и `check:ops:transfer` проходят; вы можете доказать size/time batching, разделить Request deduplication и TTL cache, обосновать retry по error tags и показать один application path для CLI и HTTP.
 
 ### Reference note: извлечь модель и найти пробел
 
@@ -138,6 +153,7 @@ aliases: [Practice, Практика]
 
 - [Complete example: Validation Pipeline](../../projects/examples/validation-pipeline/README.md) — запускаемый TypeScript CLI с тестами и `pnpm check`.
 - [Guided project: планировщик асинхронных задач](../../projects/guided/async-task-scheduler/GUIDE.md) — четыре накопительных milestone и manual checkpoints.
+- [Guided project: система бронирования мест на Effect](../../projects/guided/seat-reservation-engine/GUIDE.md) — первая итерация от Schema до STM; [Operations & Delivery](../../projects/guided/seat-reservation-engine/guides/iteration-2-operations.md) — Stream, batching, resilience и adapters.
 - [[zod-validator/readme|Локальная reference implementation Zod-like validator]] — полный учебный листинг и три теста.
 - Внешний список источников для этой реализации в vault не зафиксирован; он намеренно не подменяется предположениями.
 
