@@ -3,6 +3,7 @@ import { Context, Effect, Layer, Stream } from "effect";
 import type {
   BookingEvent,
   Reservation,
+  ReservationId,
   ReservationIdSchema,
   SeatId,
   VenueSnapshot,
@@ -15,7 +16,7 @@ export interface HoldInput {
 }
 
 export interface ConfirmInput {
-  readonly reservationId: ReservationIdSchema;
+  readonly reservationId: ReservationId;
   readonly amount: number;
 }
 
@@ -23,7 +24,7 @@ export interface BookingOperationsService {
   readonly status: Effect.Effect<VenueSnapshot>;
   readonly hold: (input: HoldInput) => Effect.Effect<Reservation, BookingError>;
   readonly confirm: (input: ConfirmInput) => Effect.Effect<Reservation, BookingError>;
-  readonly cancel: (reservationId: ReservationIdSchema) => Effect.Effect<void, BookingError>;
+  readonly cancel: (reservationId: ReservationId) => Effect.Effect<void, BookingError>;
   readonly events: Stream.Stream<BookingEvent>;
 }
 

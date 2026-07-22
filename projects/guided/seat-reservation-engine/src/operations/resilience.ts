@@ -1,6 +1,6 @@
 import { Data, Effect } from "effect";
 
-import type { ReservationIdSchema } from "../domain.js";
+import type { ReservationId, ReservationIdSchema } from "../domain.js";
 import type { PaymentDeclined } from "../errors.js";
 
 export class PaymentGatewayUnavailable extends Data.TaggedError("PaymentGatewayUnavailable")<{
@@ -9,7 +9,7 @@ export class PaymentGatewayUnavailable extends Data.TaggedError("PaymentGatewayU
 }> {}
 
 export class PaymentTimeout extends Data.TaggedError("PaymentTimeout")<{
-  readonly reservationId: ReservationIdSchema;
+  readonly reservationId: ReservationId;
   readonly timeoutMs: number;
 }> {}
 
@@ -17,7 +17,7 @@ export type ResilientPaymentError = PaymentDeclined | PaymentGatewayUnavailable 
 
 export interface ResilientPaymentGateway {
   readonly charge: (
-    reservationId: ReservationIdSchema,
+    reservationId: ReservationId,
     amount: number,
   ) => Effect.Effect<void, PaymentDeclined | PaymentGatewayUnavailable>;
 }
@@ -35,7 +35,7 @@ export interface PaymentResilienceOptions {
  */
 export const chargeWithResilience = (
   gateway: ResilientPaymentGateway,
-  reservationId: ReservationIdSchema,
+  reservationId: ReservationId,
   amount: number,
   options: PaymentResilienceOptions,
 ): Effect.Effect<void, ResilientPaymentError> => {

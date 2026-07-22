@@ -1,7 +1,7 @@
 import { Command } from "@effect/cli";
 import { Console, Data, Effect } from "effect";
 
-import type { ReservationIdSchema, SeatId } from "../domain.js";
+import type { ReservationId, ReservationIdSchema, SeatId } from "../domain.js";
 import type { BookingError } from "../errors.js";
 import { BookingOperations, type BookingOperationsService } from "./application.js";
 
@@ -14,10 +14,10 @@ export type CliAction =
     }
   | {
       readonly type: "confirm";
-      readonly reservationId: ReservationIdSchema;
+      readonly reservationId: ReservationId;
       readonly amount: number;
     }
-  | { readonly type: "cancel"; readonly reservationId: ReservationIdSchema };
+  | { readonly type: "cancel"; readonly reservationId: ReservationId };
 
 export class UnsupportedCliAction extends Data.TaggedError("UnsupportedCliAction")<{
   readonly action: Exclude<CliAction["type"], "status">;

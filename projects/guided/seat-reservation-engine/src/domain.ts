@@ -1,26 +1,34 @@
 import { Data, Effect, Schema } from "effect";
 
-export const SeatIdSchema = Schema.String.pipe(Schema.brand("SeatIdSW"));
-export const ReservationIdSchema = Schema.String.pipe(Schema.brand("ReservationId"));
-export const AidIdSchema = Schema.String.pipe(Schema.brand("AidId"));
+// export const SeatIdSchema = Schema.String.pipe(Schema.brand("SeatIdSW"));
+// export const ReservationIdSchema = Schema.String.pipe(Schema.brand("ReservationId"));
+// export const AidIdSchema = Schema.String.pipe(Schema.brand("AidId"));
+
+export const SeatIdSchema = Schema.String.pipe(Schema.minLength(1));
+export const ReservationIdSchema = Schema.String.pipe(Schema.minLength(1));
+export const AidIdSchema = Schema.String.pipe(Schema.minLength(1));
 
 export type SeatId = Schema.Schema.Type<typeof SeatIdSchema>;
 export type ReservationId = Schema.Schema.Type<typeof ReservationIdSchema>;
 export type AidId = Schema.Schema.Type<typeof AidIdSchema>;
 
-export const BookingCommandStatusSchema = Schema.TaggedStruct("BookingCommandStatus", {
+export const BookingCommandStatusSchema = Schema.Struct({
   type: Schema.Literal("status"),
 });
-export const BookingCommandHoldSchema = Schema.TaggedStruct("BookingCommandHold", {
+export const BookingCommandHoldSchema = Schema.Struct({
   type: Schema.Literal("hold"),
-  seats: Schema.Array(SeatIdSchema),
+  seats: Schema.NonEmptyArray(SeatIdSchema).pipe(
+    Schema.filter((seats) => seats.length === new Set(seats).size),
+  ),
+  // TODO: возможно сменить на Duration
+  durationMs: Schema.Number.pipe(Schema.finite(), Schema.positive()),
 });
-export const BookingCommandConfirmSchema = Schema.TaggedStruct("BookingCommandConfirm", {
+export const BookingCommandConfirmSchema = Schema.Struct({
   type: Schema.Literal("confirm"),
   reservationId: ReservationIdSchema,
-  amount: Schema.Number.pipe(Schema.int(), Schema.nonNegative()),
+  amount: Schema.Number.pipe(Schema.positive(), Schema.finite()),
 });
-export const BookingCommandCancelSchema = Schema.TaggedStruct("BookingCommandCancel", {
+export const BookingCommandCancelSchema = Schema.Struct({
   type: Schema.Literal("cancel"),
   reservationId: ReservationIdSchema,
 });

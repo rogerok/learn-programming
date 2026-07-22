@@ -3,10 +3,10 @@ import { randomUUID } from "node:crypto";
 import { Effect, Ref } from "effect";
 
 import type {
-  AidIdSchema,
+  AidId,
   BookingEvent,
   Reservation,
-  ReservationIdSchema,
+  ReservationId,
   SeatId,
   VenueSnapshot,
 } from "./domain.js";
@@ -34,7 +34,7 @@ export const createHold = (
 
 export const createAccessibleHold = (
   seats: ReadonlyArray<SeatId>,
-  aid: AidIdSchema,
+  aid: AidId,
   durationMs: number,
 ): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
   Effect.gen(function* () {
@@ -45,7 +45,7 @@ export const createAccessibleHold = (
   });
 
 export const confirmReservation = (
-  reservationId: ReservationIdSchema,
+  reservationId: ReservationId,
   amount: number,
 ): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
   Effect.gen(function* () {
@@ -57,7 +57,7 @@ export const confirmReservation = (
   });
 
 export const releaseReservation = (
-  reservationId: ReservationIdSchema,
+  reservationId: ReservationId,
 ): Effect.Effect<void, never, ReservationRepositoryService> =>
   Effect.flatMap(ReservationRepository, (repository) => repository.release(reservationId));
 

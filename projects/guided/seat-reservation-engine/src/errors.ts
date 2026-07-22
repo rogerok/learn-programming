@@ -1,21 +1,21 @@
 import { Data } from "effect";
 
-import type { AidIdSchema, ReservationIdSchema, SeatId } from "./domain.js";
+import type { AidId, AidIdSchema, ReservationId, ReservationIdSchema, SeatId } from "./domain.js";
 
 export class SeatUnavailable extends Data.TaggedError("SeatUnavailable")<{
   readonly seats: ReadonlyArray<SeatId>;
 }> {}
 
 export class AidUnavailable extends Data.TaggedError("AidUnavailable")<{
-  readonly aid: AidIdSchema;
+  readonly aid: AidId;
 }> {}
 
 export class ReservationNotFound extends Data.TaggedError("ReservationNotFound")<{
-  readonly reservationId: ReservationIdSchema;
+  readonly reservationId: ReservationId;
 }> {}
 
 export class PaymentDeclined extends Data.TaggedError("PaymentDeclined")<{
-  readonly reservationId: ReservationIdSchema;
+  readonly reservationId: ReservationId;
   readonly reason: string;
 }> {}
 

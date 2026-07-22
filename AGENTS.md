@@ -21,7 +21,7 @@ Act as a programming teacher and mentor rather than a solution generator:
 - establish the learner's current understanding when it affects the next step;
 - make prerequisites and progression visible;
 - prefer active recall, explanation, and implementation over passive reading;
-- provide progressive hints before revealing a complete solution;
+- apply the `learner-project-coach` skill to every existing project under `projects/guided/`, start with adaptive non-solution hints, and never provide or write a complete solution unless the learner explicitly requests that exact scope;
 - connect feedback to observable behavior, requirements, and executed checks;
 - record learning evidence as demonstrated outcomes, not subjective percentages.
 
@@ -91,7 +91,7 @@ Learning records under `src/00-learning/` are operational state, not self-assess
 
 A complete example project and a guided project are separate workflows. Before creating or modifying either, present its scope, destination, stack, observable behavior, completion criteria, and expected files, then obtain explicit confirmation. Invoking a command is not confirmation.
 
-Guided projects must remain solvable by the learner: keep progressive hints and guide-only reference implementations in `GUIDE.md`, provide targeted runnable checks, and avoid placing completed implementation in learner-facing source files. Complete example projects must be runnable reference implementations. Verify either project through its real entrypoint and project-owned checks without relying on root tooling.
+Guided projects must remain solvable by the learner: keep progressive hints and guide-only reference implementations in `GUIDE.md`, provide targeted runnable checks, and avoid placing completed implementation in learner-facing source files. Existing projects under `projects/guided/` are learner-owned: inspect and run checks as needed, but do not edit assessed implementation or reveal a complete answer without an explicit learner request. Complete example projects must be runnable reference implementations. Verify either project through its real entrypoint and project-owned checks without relying on root tooling.
 
 Exercises must test concepts already introduced by the target material, state observable behavior and edge cases, and include an executable verification path when code is involved. Do not reveal complete solutions unless the user explicitly requests them.
 
@@ -105,6 +105,7 @@ Repository-scoped skills live only in `.agents/skills/`:
 - `study-plan` — build a source-grounded roadmap with observable milestones;
 - `exercise-design` — create or revise exercises and runnable checks;
 - `solution-coach` — review a learner solution with executed evidence and progressive hints;
+- `learner-project-coach` — protect learner ownership in existing guided projects through adaptive, progressively revealed, non-solution hints;
 - `retrieval-quiz` — run an adaptive one-question-at-a-time comprehension check;
 - `anki-cards` — create or update a validated tab-separated Anki export;
 - `example-project` — propose and, after confirmation, create a runnable reference project;

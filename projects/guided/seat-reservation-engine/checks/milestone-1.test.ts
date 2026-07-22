@@ -1,26 +1,27 @@
 import { Effect, Either } from "effect";
 import { describe, expect, it } from "vitest";
 
-import { decodeBookingCommand } from "../src/domain.js";
+import { decodeBookingCommand, SeatIdSchema } from "../src/domain.js";
 
 const decode = (input: unknown) =>
   Effect.runPromise(decodeBookingCommand(input).pipe(Effect.either));
 
 describe("Этап 1: Schema на границе доверия", () => {
   it("декодирует корректную hold-команду во внутреннюю модель", async () => {
+    const id1 = SeatIdSchema.make("A1");
+    const id2 = SeatIdSchema.make("A2");
+
     const result = await decode({
       type: "hold",
-      seats: ["A1", "A2"],
+      seats: [id1, id2] as const,
       durationMs: 30_000,
     });
-
-    console.log(result);
 
     expect(Either.isRight(result)).toBe(true);
     if (Either.isRight(result)) {
       expect(result.right).toEqual({
         type: "hold",
-        seats: ["A1", "A2"],
+        seats: [id1, id2] as const,
         durationMs: 30_000,
       });
     }
