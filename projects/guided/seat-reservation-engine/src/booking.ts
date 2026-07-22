@@ -10,8 +10,17 @@ import type {
   SeatId,
   VenueSnapshot,
 } from "./domain.js";
-import type { BookingError } from "./errors.js";
-import { ReservationRepository, type ReservationRepositoryService } from "./services.js";
+import { type BookingError, PaymentDeclined } from "./errors.js";
+import {
+  PaymentGateway,
+  type PaymentGatewayService,
+  ReservationClock,
+  type ReservationClockService,
+  ReservationIdGenerator,
+  type ReservationIdGeneratorService,
+  ReservationRepository,
+  type ReservationRepositoryService,
+} from "./services.js";
 
 export const listVenue: Effect.Effect<VenueSnapshot, never, ReservationRepositoryService> =
   Effect.flatMap(ReservationRepository, (repository) => repository.snapshot);
@@ -21,14 +30,16 @@ export const listVenue: Effect.Effect<VenueSnapshot, never, ReservationRepositor
  * а confirm обходит PaymentGateway. Contracts и test Layers уже находятся в
  * services.ts и checks/support.ts; изменяется dependency wiring этих функций.
  */
-export const createHold = (
-  seats: ReadonlyArray<SeatId>,
-  durationMs: number,
-): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
+export const createHold = (seats: ReadonlyArray<SeatId>, durationMs: number) =>
   Effect.gen(function* () {
     const repository = yield* ReservationRepository;
-    const reservationId = randomUUID();
-    const expiresAt = Date.now() + durationMs;
+    const idGenerator = yield* ReservationIdGenerator;
+    const clock = yield* ReservationClock;
+    const reservationId = yield* idGenerator.next;
+
+    const now = yield* clock.now;
+    const expiresAt = now + durationMs;
+
     return yield* repository.holdSeats(reservationId, seats, expiresAt);
   });
 
@@ -47,12 +58,22 @@ export const createAccessibleHold = (
 export const confirmReservation = (
   reservationId: ReservationId,
   amount: number,
-): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
+): Effect.Effect<Reservation, BookingError, ReservationRepositoryService | PaymentGatewayService> =>
   Effect.gen(function* () {
     if (!Number.isFinite(amount) || amount <= 0) {
-      return yield* Effect.die(new Error("Payment amount must be a positive finite number"));
+      return yield* Effect.fail(
+        new PaymentDeclined({
+          reservationId,
+          reason: "Payment amount must be a positive finite number",
+        }),
+      );
     }
+
     const repository = yield* ReservationRepository;
+    const payment = yield* PaymentGateway;
+
+    yield* payment.charge(reservationId, amount);
+
     return yield* repository.confirm(reservationId);
   });
 
@@ -69,8 +90,11 @@ export const withTemporaryHold = <A, E, R>(
   seats: ReadonlyArray<SeatId>,
   durationMs: number,
   use: (reservation: Reservation) => Effect.Effect<A, E, R>,
-): Effect.Effect<A, E | BookingError, R | ReservationRepositoryService> =>
-  Effect.flatMap(createHold(seats, durationMs), use);
+): Effect.Effect<
+  A,
+  E | BookingError,
+  R | ReservationRepositoryService | ReservationIdGeneratorService | ReservationClockService
+> => Effect.flatMap(createHold(seats, durationMs), use);
 
 /**
  * Вторая точка этапа 4: expiration пока не supervised текущим Scope.
@@ -78,8 +102,11 @@ export const withTemporaryHold = <A, E, R>(
 export const openTimedHold = (
   seats: ReadonlyArray<SeatId>,
   durationMs: number,
-): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
-  createHold(seats, durationMs);
+): Effect.Effect<
+  Reservation,
+  BookingError,
+  ReservationRepositoryService | ReservationIdGeneratorService | ReservationClockService
+> => createHold(seats, durationMs);
 
 export interface BookingRequest {
   readonly seats: ReadonlyArray<SeatId>;
@@ -110,7 +137,14 @@ export interface BookingBatchResult {
 export const processBookingRequests = (
   requests: ReadonlyArray<BookingRequest>,
   options: BookingBatchOptions,
-): Effect.Effect<BookingBatchResult, never, ReservationRepositoryService> =>
+): Effect.Effect<
+  BookingBatchResult,
+  never,
+  | ReservationRepositoryService
+  | ReservationIdGeneratorService
+  | ReservationClockService
+  | PaymentGatewayService
+> =>
   Effect.gen(function* () {
     const events = yield* Ref.make<ReadonlyArray<BookingEvent>>([]);
 
@@ -151,7 +185,14 @@ export const processBookingRequests = (
 export interface BookingProcessor {
   readonly submit: (
     request: BookingRequest,
-  ) => Effect.Effect<BookingOutcome, never, ReservationRepositoryService>;
+  ) => Effect.Effect<
+    BookingOutcome,
+    never,
+    | ReservationRepositoryService
+    | ReservationClockService
+    | ReservationIdGeneratorService
+    | PaymentGatewayService
+  >;
   readonly subscribe: (
     subscriber: (event: BookingEvent) => Effect.Effect<void>,
   ) => Effect.Effect<void>;
@@ -193,7 +234,14 @@ export const makeBookingProcessor = (
 
     const submit = (
       request: BookingRequest,
-    ): Effect.Effect<BookingOutcome, never, ReservationRepositoryService> =>
+    ): Effect.Effect<
+      BookingOutcome,
+      never,
+      | ReservationRepositoryService
+      | ReservationClockService
+      | ReservationIdGeneratorService
+      | PaymentGatewayService
+    > =>
       Effect.gen(function* () {
         const reservation = yield* createHold(request.seats, request.durationMs);
         yield* publish({ _tag: "ReservationHeld", reservation });
