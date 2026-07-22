@@ -115,7 +115,6 @@ export const makeReservationRepository = (
 
     const snapshot = Ref.get(state).pipe(Effect.map(toSnapshot));
 
-    // Этап 2: эта операция пока сообщает conflict через Effect.die.
     const holdSeats: ReservationRepositoryService["holdSeats"] = (
       reservationId,
       seats,
@@ -126,7 +125,7 @@ export const makeReservationRepository = (
         const unavailable = seats.filter((seat) => observed.seats.get(seat) !== "available");
 
         if (unavailable.length > 0) {
-          return yield* Effect.die(new Error(`Seats are unavailable: ${unavailable.join(", ")}`));
+          return yield* Effect.fail(new SeatUnavailable({ seats: unavailable }));
         }
 
         // Этап 6: yield делает baseline race наблюдаемой; исправляется transaction,
