@@ -3,23 +3,18 @@ import { randomUUID } from "node:crypto";
 import { Context, Effect, Layer, Ref } from "effect";
 
 import type {
-  AidId,
+  AidIdSchema,
   Reservation,
-  ReservationId,
+  ReservationIdSchema,
   SeatId,
   VenueSnapshot,
 } from "./domain.js";
-import {
-  AidUnavailable,
-  PaymentDeclined,
-  ReservationNotFound,
-  SeatUnavailable,
-} from "./errors.js";
+import { AidUnavailable, PaymentDeclined, ReservationNotFound, SeatUnavailable } from "./errors.js";
 
 interface MutableVenueState {
   readonly seats: Map<SeatId, "available" | "held" | "booked">;
-  readonly aids: Map<AidId, "available" | "held" | "booked">;
-  readonly reservations: Map<ReservationId, Reservation>;
+  readonly aids: Map<AidIdSchema, "available" | "held" | "booked">;
+  readonly reservations: Map<ReservationIdSchema, Reservation>;
 }
 
 const copyState = (state: MutableVenueState): MutableVenueState => ({
@@ -55,31 +50,30 @@ const toSnapshot = (state: MutableVenueState): VenueSnapshot => ({
 export interface ReservationRepositoryService {
   readonly snapshot: Effect.Effect<VenueSnapshot>;
   readonly holdSeats: (
-    reservationId: ReservationId,
+    reservationId: ReservationIdSchema,
     seats: ReadonlyArray<SeatId>,
     expiresAt: number,
   ) => Effect.Effect<Reservation, SeatUnavailable>;
   readonly waitAndHoldSeats: (
-    reservationId: ReservationId,
+    reservationId: ReservationIdSchema,
     seats: ReadonlyArray<SeatId>,
     expiresAt: number,
   ) => Effect.Effect<Reservation, SeatUnavailable>;
   readonly holdAccessible: (
-    reservationId: ReservationId,
+    reservationId: ReservationIdSchema,
     seats: ReadonlyArray<SeatId>,
-    aid: AidId,
+    aid: AidIdSchema,
     expiresAt: number,
   ) => Effect.Effect<Reservation, SeatUnavailable | AidUnavailable>;
   readonly confirm: (
-    reservationId: ReservationId,
+    reservationId: ReservationIdSchema,
   ) => Effect.Effect<Reservation, ReservationNotFound>;
-  readonly release: (reservationId: ReservationId) => Effect.Effect<void>;
+  readonly release: (reservationId: ReservationIdSchema) => Effect.Effect<void>;
 }
 
-export const ReservationRepository =
-  Context.GenericTag<ReservationRepositoryService>(
-    "SeatReservation/ReservationRepository",
-  );
+export const ReservationRepository = Context.GenericTag<ReservationRepositoryService>(
+  "SeatReservation/ReservationRepository",
+);
 
 export interface ReservationClockService {
   readonly now: Effect.Effect<number>;
@@ -90,17 +84,16 @@ export const ReservationClock = Context.GenericTag<ReservationClockService>(
 );
 
 export interface ReservationIdGeneratorService {
-  readonly next: Effect.Effect<ReservationId>;
+  readonly next: Effect.Effect<ReservationIdSchema>;
 }
 
-export const ReservationIdGenerator =
-  Context.GenericTag<ReservationIdGeneratorService>(
-    "SeatReservation/ReservationIdGenerator",
-  );
+export const ReservationIdGenerator = Context.GenericTag<ReservationIdGeneratorService>(
+  "SeatReservation/ReservationIdGenerator",
+);
 
 export interface PaymentGatewayService {
   readonly charge: (
-    reservationId: ReservationId,
+    reservationId: ReservationIdSchema,
     amount: number,
   ) => Effect.Effect<void, PaymentDeclined>;
 }
@@ -117,7 +110,7 @@ export const PaymentGateway = Context.GenericTag<PaymentGatewayService>(
  */
 export const makeReservationRepository = (
   seatIds: ReadonlyArray<SeatId>,
-  aidIds: ReadonlyArray<AidId> = [],
+  aidIds: ReadonlyArray<AidIdSchema> = [],
 ): Effect.Effect<ReservationRepositoryService> =>
   Effect.gen(function* () {
     const state = yield* Ref.make<MutableVenueState>({
@@ -136,14 +129,10 @@ export const makeReservationRepository = (
     ) =>
       Effect.gen(function* () {
         const observed = yield* Ref.get(state);
-        const unavailable = seats.filter(
-          (seat) => observed.seats.get(seat) !== "available",
-        );
+        const unavailable = seats.filter((seat) => observed.seats.get(seat) !== "available");
 
         if (unavailable.length > 0) {
-          return yield* Effect.die(
-            new Error(`Seats are unavailable: ${unavailable.join(", ")}`),
-          );
+          return yield* Effect.die(new Error(`Seats are unavailable: ${unavailable.join(", ")}`));
         }
 
         // Этап 6: yield делает baseline race наблюдаемой; исправляется transaction,
@@ -174,11 +163,7 @@ export const makeReservationRepository = (
       expiresAt,
     ) =>
       Effect.gen(function* () {
-        const reservation = yield* holdSeats(
-          reservationId,
-          seats,
-          expiresAt,
-        );
+        const reservation = yield* holdSeats(reservationId, seats, expiresAt);
         const observed = yield* Ref.get(state);
 
         if (observed.aids.get(aid) !== "available") {
@@ -241,21 +226,16 @@ export const makeReservationRepository = (
 
 export const makeReservationRepositoryLayer = (
   seatIds: ReadonlyArray<SeatId>,
-  aidIds: ReadonlyArray<AidId> = [],
-) =>
-  Layer.effect(
-    ReservationRepository,
-    makeReservationRepository(seatIds, aidIds),
-  );
+  aidIds: ReadonlyArray<AidIdSchema> = [],
+) => Layer.effect(ReservationRepository, makeReservationRepository(seatIds, aidIds));
 
 export const ReservationClockLive = Layer.succeed(ReservationClock, {
   now: Effect.sync(() => Date.now()),
 });
 
-export const ReservationIdGeneratorLive = Layer.succeed(
-  ReservationIdGenerator,
-  { next: Effect.sync(() => randomUUID()) },
-);
+export const ReservationIdGeneratorLive = Layer.succeed(ReservationIdGenerator, {
+  next: Effect.sync(() => randomUUID()),
+});
 
 export const PaymentGatewayLive = Layer.succeed(PaymentGateway, {
   charge: () => Effect.void,

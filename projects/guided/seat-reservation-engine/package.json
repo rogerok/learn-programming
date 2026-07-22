@@ -27,7 +27,9 @@
     "@effect/cli": "0.76.0",
     "@effect/platform": "0.97.0",
     "@effect/platform-node": "0.108.0",
-    "effect": "3.22.0"
+    "effect": "3.22.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-perfectionist": "^5.10.0"
   },
   "devDependencies": {
     "@effect/vitest": "0.30.0",
@@ -35,6 +37,7 @@
     "@types/node": "24.3.0",
     "eslint": "9.32.0",
     "globals": "16.3.0",
+    "prettier": "3.9.6",
     "tsx": "4.20.6",
     "typescript": "5.9.3",
     "typescript-eslint": "8.39.0",

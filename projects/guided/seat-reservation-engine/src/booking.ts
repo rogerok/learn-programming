@@ -3,24 +3,18 @@ import { randomUUID } from "node:crypto";
 import { Effect, Ref } from "effect";
 
 import type {
-  AidId,
+  AidIdSchema,
   BookingEvent,
   Reservation,
-  ReservationId,
+  ReservationIdSchema,
   SeatId,
   VenueSnapshot,
 } from "./domain.js";
 import type { BookingError } from "./errors.js";
-import {
-  ReservationRepository,
-  type ReservationRepositoryService,
-} from "./services.js";
+import { ReservationRepository, type ReservationRepositoryService } from "./services.js";
 
-export const listVenue: Effect.Effect<
-  VenueSnapshot,
-  never,
-  ReservationRepositoryService
-> = Effect.flatMap(ReservationRepository, (repository) => repository.snapshot);
+export const listVenue: Effect.Effect<VenueSnapshot, never, ReservationRepositoryService> =
+  Effect.flatMap(ReservationRepository, (repository) => repository.snapshot);
 
 /**
  * Этап 3 — learner seam: use cases пока читают clock и UUID из Node globals,
@@ -30,11 +24,7 @@ export const listVenue: Effect.Effect<
 export const createHold = (
   seats: ReadonlyArray<SeatId>,
   durationMs: number,
-): Effect.Effect<
-  Reservation,
-  BookingError,
-  ReservationRepositoryService
-> =>
+): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
   Effect.gen(function* () {
     const repository = yield* ReservationRepository;
     const reservationId = randomUUID();
@@ -44,49 +34,32 @@ export const createHold = (
 
 export const createAccessibleHold = (
   seats: ReadonlyArray<SeatId>,
-  aid: AidId,
+  aid: AidIdSchema,
   durationMs: number,
-): Effect.Effect<
-  Reservation,
-  BookingError,
-  ReservationRepositoryService
-> =>
+): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
   Effect.gen(function* () {
     const repository = yield* ReservationRepository;
     const reservationId = randomUUID();
     const expiresAt = Date.now() + durationMs;
-    return yield* repository.holdAccessible(
-      reservationId,
-      seats,
-      aid,
-      expiresAt,
-    );
+    return yield* repository.holdAccessible(reservationId, seats, aid, expiresAt);
   });
 
 export const confirmReservation = (
-  reservationId: ReservationId,
+  reservationId: ReservationIdSchema,
   amount: number,
-): Effect.Effect<
-  Reservation,
-  BookingError,
-  ReservationRepositoryService
-> =>
+): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
   Effect.gen(function* () {
     if (!Number.isFinite(amount) || amount <= 0) {
-      return yield* Effect.die(
-        new Error("Payment amount must be a positive finite number"),
-      );
+      return yield* Effect.die(new Error("Payment amount must be a positive finite number"));
     }
     const repository = yield* ReservationRepository;
     return yield* repository.confirm(reservationId);
   });
 
 export const releaseReservation = (
-  reservationId: ReservationId,
+  reservationId: ReservationIdSchema,
 ): Effect.Effect<void, never, ReservationRepositoryService> =>
-  Effect.flatMap(ReservationRepository, (repository) =>
-    repository.release(reservationId),
-  );
+  Effect.flatMap(ReservationRepository, (repository) => repository.release(reservationId));
 
 /**
  * Этап 4 — learner seam: baseline создаёт hold, но не связывает release и
@@ -96,11 +69,8 @@ export const withTemporaryHold = <A, E, R>(
   seats: ReadonlyArray<SeatId>,
   durationMs: number,
   use: (reservation: Reservation) => Effect.Effect<A, E, R>,
-): Effect.Effect<
-  A,
-  E | BookingError,
-  R | ReservationRepositoryService
-> => Effect.flatMap(createHold(seats, durationMs), use);
+): Effect.Effect<A, E | BookingError, R | ReservationRepositoryService> =>
+  Effect.flatMap(createHold(seats, durationMs), use);
 
 /**
  * Вторая точка этапа 4: expiration пока не supervised текущим Scope.
@@ -108,11 +78,8 @@ export const withTemporaryHold = <A, E, R>(
 export const openTimedHold = (
   seats: ReadonlyArray<SeatId>,
   durationMs: number,
-): Effect.Effect<
-  Reservation,
-  BookingError,
-  ReservationRepositoryService
-> => createHold(seats, durationMs);
+): Effect.Effect<Reservation, BookingError, ReservationRepositoryService> =>
+  createHold(seats, durationMs);
 
 export interface BookingRequest {
   readonly seats: ReadonlyArray<SeatId>;
@@ -132,9 +99,7 @@ export interface BookingBatchOptions {
   readonly paymentConcurrency: number;
   readonly workerCount: number;
   readonly queueCapacity: number;
-  readonly subscribers: ReadonlyArray<
-    (event: BookingEvent) => Effect.Effect<void>
-  >;
+  readonly subscribers: ReadonlyArray<(event: BookingEvent) => Effect.Effect<void>>;
 }
 
 export interface BookingBatchResult {
@@ -145,35 +110,23 @@ export interface BookingBatchResult {
 export const processBookingRequests = (
   requests: ReadonlyArray<BookingRequest>,
   options: BookingBatchOptions,
-): Effect.Effect<
-  BookingBatchResult,
-  never,
-  ReservationRepositoryService
-> =>
+): Effect.Effect<BookingBatchResult, never, ReservationRepositoryService> =>
   Effect.gen(function* () {
     const events = yield* Ref.make<ReadonlyArray<BookingEvent>>([]);
 
     const publish = (event: BookingEvent) =>
       Effect.gen(function* () {
         yield* Ref.update(events, (current) => [...current, event]);
-        yield* Effect.forEach(
-          options.subscribers,
-          (subscriber) => subscriber(event),
-          { discard: true },
-        );
+        yield* Effect.forEach(options.subscribers, (subscriber) => subscriber(event), {
+          discard: true,
+        });
       });
 
     const outcomes = yield* Effect.forEach(requests, (request) =>
       Effect.gen(function* () {
-        const reservation = yield* createHold(
-          request.seats,
-          request.durationMs,
-        );
+        const reservation = yield* createHold(request.seats, request.durationMs);
         yield* publish({ _tag: "ReservationHeld", reservation });
-        const confirmed = yield* confirmReservation(
-          reservation.id,
-          request.amount,
-        );
+        const confirmed = yield* confirmReservation(reservation.id, request.amount);
         yield* publish({ _tag: "ReservationConfirmed", reservation: confirmed });
         return { _tag: "Booked" as const, reservation: confirmed };
       }).pipe(
@@ -183,10 +136,11 @@ export const processBookingRequests = (
             seats: request.seats,
             reason,
           };
-          return Effect.as(
-            publish(event),
-            { _tag: "Rejected" as const, seats: request.seats, reason },
-          );
+          return Effect.as(publish(event), {
+            _tag: "Rejected" as const,
+            seats: request.seats,
+            reason,
+          });
         }),
       ),
     );
@@ -211,11 +165,7 @@ export interface BookingProcessor {
  */
 export const makeBookingProcessor = (
   options: Omit<BookingBatchOptions, "subscribers">,
-): Effect.Effect<
-  BookingProcessor,
-  never,
-  ReservationRepositoryService
-> =>
+): Effect.Effect<BookingProcessor, never, ReservationRepositoryService> =>
   Effect.gen(function* () {
     if (
       !Number.isInteger(options.workerCount) ||
@@ -225,9 +175,7 @@ export const makeBookingProcessor = (
       !Number.isInteger(options.paymentConcurrency) ||
       options.paymentConcurrency < 1
     ) {
-      return yield* Effect.die(
-        new Error("Processor limits must be positive integers"),
-      );
+      return yield* Effect.die(new Error("Processor limits must be positive integers"));
     }
     const subscribers = yield* Ref.make<
       ReadonlyArray<(event: BookingEvent) => Effect.Effect<void>>
@@ -238,30 +186,18 @@ export const makeBookingProcessor = (
       Effect.gen(function* () {
         yield* Ref.update(events, (current) => [...current, event]);
         const currentSubscribers = yield* Ref.get(subscribers);
-        yield* Effect.forEach(
-          currentSubscribers,
-          (subscriber) => subscriber(event),
-          { discard: true },
-        );
+        yield* Effect.forEach(currentSubscribers, (subscriber) => subscriber(event), {
+          discard: true,
+        });
       });
 
     const submit = (
       request: BookingRequest,
-    ): Effect.Effect<
-      BookingOutcome,
-      never,
-      ReservationRepositoryService
-    > =>
+    ): Effect.Effect<BookingOutcome, never, ReservationRepositoryService> =>
       Effect.gen(function* () {
-        const reservation = yield* createHold(
-          request.seats,
-          request.durationMs,
-        );
+        const reservation = yield* createHold(request.seats, request.durationMs);
         yield* publish({ _tag: "ReservationHeld", reservation });
-        const confirmed = yield* confirmReservation(
-          reservation.id,
-          request.amount,
-        );
+        const confirmed = yield* confirmReservation(reservation.id, request.amount);
         yield* publish({
           _tag: "ReservationConfirmed",
           reservation: confirmed,
@@ -274,17 +210,17 @@ export const makeBookingProcessor = (
             seats: request.seats,
             reason,
           };
-          return Effect.as(
-            publish(event),
-            { _tag: "Rejected" as const, seats: request.seats, reason },
-          );
+          return Effect.as(publish(event), {
+            _tag: "Rejected" as const,
+            seats: request.seats,
+            reason,
+          });
         }),
       );
 
     return {
       submit,
-      subscribe: (subscriber) =>
-        Ref.update(subscribers, (current) => [...current, subscriber]),
+      subscribe: (subscriber) => Ref.update(subscribers, (current) => [...current, subscriber]),
       eventLog: Ref.get(events),
     };
   });

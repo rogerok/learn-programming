@@ -35,7 +35,6 @@
 - [[src/02-typescript/effect-ts/4.services-and-layers/readme|services и Layer]];
 - [[src/02-typescript/effect-ts/5.resources|Scope и resources]].
 
-Для fibers, coordination и STM используйте mentor lessons 6–8 из `/home/vyacheslav/Documents/bat-effect`.
 
 ## Как устроен starter
 

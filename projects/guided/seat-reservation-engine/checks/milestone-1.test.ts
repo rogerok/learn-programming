@@ -14,6 +14,8 @@ describe("Этап 1: Schema на границе доверия", () => {
       durationMs: 30_000,
     });
 
+    console.log(result);
+
     expect(Either.isRight(result)).toBe(true);
     if (Either.isRight(result)) {
       expect(result.right).toEqual({
@@ -26,18 +28,9 @@ describe("Этап 1: Schema на границе доверия", () => {
 
   it.each([
     ["пустой список мест", { type: "hold", seats: [], durationMs: 1_000 }],
-    [
-      "повторяющиеся места",
-      { type: "hold", seats: ["A1", "A1"], durationMs: 1_000 },
-    ],
-    [
-      "неположительный срок",
-      { type: "hold", seats: ["A1"], durationMs: 0 },
-    ],
-    [
-      "строковый срок",
-      { type: "hold", seats: ["A1"], durationMs: "1000" },
-    ],
+    ["повторяющиеся места", { type: "hold", seats: ["A1", "A1"], durationMs: 1_000 }],
+    ["неположительный срок", { type: "hold", seats: ["A1"], durationMs: 0 }],
+    ["строковый срок", { type: "hold", seats: ["A1"], durationMs: "1000" }],
   ])("отклоняет %s", async (_case, input) => {
     const result = await decode(input);
     expect(Either.isLeft(result)).toBe(true);

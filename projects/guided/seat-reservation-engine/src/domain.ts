@@ -1,22 +1,37 @@
-import { Data, Effect } from "effect";
+import { Data, Effect, Schema } from "effect";
 
-export type SeatId = string;
-export type ReservationId = string;
-export type AidId = string;
+export const SeatIdSchema = Schema.String.pipe(Schema.brand("SeatIdSW"));
+export const ReservationIdSchema = Schema.String.pipe(Schema.brand("ReservationId"));
+export const AidIdSchema = Schema.String.pipe(Schema.brand("AidId"));
 
-export type BookingCommand =
-  | { readonly type: "status" }
-  | {
-      readonly type: "hold";
-      readonly seats: ReadonlyArray<SeatId>;
-      readonly durationMs: number;
-    }
-  | {
-      readonly type: "confirm";
-      readonly reservationId: ReservationId;
-      readonly amount: number;
-    }
-  | { readonly type: "cancel"; readonly reservationId: ReservationId };
+export type SeatId = Schema.Schema.Type<typeof SeatIdSchema>;
+export type ReservationId = Schema.Schema.Type<typeof ReservationIdSchema>;
+export type AidId = Schema.Schema.Type<typeof AidIdSchema>;
+
+export const BookingCommandStatusSchema = Schema.TaggedStruct("BookingCommandStatus", {
+  type: Schema.Literal("status"),
+});
+export const BookingCommandHoldSchema = Schema.TaggedStruct("BookingCommandHold", {
+  type: Schema.Literal("hold"),
+  seats: Schema.Array(SeatIdSchema),
+});
+export const BookingCommandConfirmSchema = Schema.TaggedStruct("BookingCommandConfirm", {
+  type: Schema.Literal("confirm"),
+  reservationId: ReservationIdSchema,
+  amount: Schema.Number.pipe(Schema.int(), Schema.nonNegative()),
+});
+export const BookingCommandCancelSchema = Schema.TaggedStruct("BookingCommandCancel", {
+  type: Schema.Literal("cancel"),
+  reservationId: ReservationIdSchema,
+});
+
+export const BookingCommandSchema = Schema.Union(
+  BookingCommandStatusSchema,
+  BookingCommandHoldSchema,
+  BookingCommandConfirmSchema,
+  BookingCommandCancelSchema,
+);
+export type BookingCommand = Schema.Schema.Type<typeof BookingCommandSchema>;
 
 export class InvalidCommand extends Data.TaggedError("InvalidCommand")<{
   readonly message: string;
@@ -31,27 +46,11 @@ export class InvalidCommand extends Data.TaggedError("InvalidCommand")<{
 export const decodeBookingCommand = (
   input: unknown,
 ): Effect.Effect<BookingCommand, InvalidCommand> =>
-  Effect.try({
-    try: () => {
-      if (typeof input !== "object" || input === null || !("type" in input)) {
-        throw new TypeError("Command must be an object with a type");
-      }
-
-      const command = input as BookingCommand;
-      if (
-        command.type !== "status" &&
-        command.type !== "hold" &&
-        command.type !== "confirm" &&
-        command.type !== "cancel"
-      ) {
-        throw new TypeError("Unknown command type");
-      }
-
-      return command;
-    },
-    catch: (cause) =>
-      new InvalidCommand({ message: "Cannot decode booking command", cause }),
-  });
+  Schema.decodeUnknown(BookingCommandSchema)(input).pipe(
+    Effect.mapError(
+      (cause) => new InvalidCommand({ cause, message: "Cannot decode booking command" }),
+    ),
+  );
 
 export interface Reservation {
   readonly id: ReservationId;

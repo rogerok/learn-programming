@@ -1,6 +1,6 @@
 import { Effect, Layer } from "effect";
 
-import type { AidId, ReservationId, SeatId } from "../src/domain.js";
+import type { AidIdSchema, ReservationIdSchema, SeatId } from "../src/domain.js";
 import {
   makeReservationRepositoryLayer,
   PaymentGateway,
@@ -11,9 +11,9 @@ import {
 
 export interface TestLayerOptions {
   readonly seats?: ReadonlyArray<SeatId>;
-  readonly aids?: ReadonlyArray<AidId>;
+  readonly aids?: ReadonlyArray<AidIdSchema>;
   readonly now?: number;
-  readonly ids?: ReadonlyArray<ReservationId>;
+  readonly ids?: ReadonlyArray<ReservationIdSchema>;
   readonly charge?: PaymentGatewayService["charge"];
 }
 

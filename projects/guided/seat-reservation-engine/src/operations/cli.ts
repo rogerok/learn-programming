@@ -1,12 +1,9 @@
 import { Command } from "@effect/cli";
 import { Console, Data, Effect } from "effect";
 
-import type { ReservationId, SeatId } from "../domain.js";
+import type { ReservationIdSchema, SeatId } from "../domain.js";
 import type { BookingError } from "../errors.js";
-import {
-  BookingOperations,
-  type BookingOperationsService,
-} from "./application.js";
+import { BookingOperations, type BookingOperationsService } from "./application.js";
 
 export type CliAction =
   | { readonly type: "status" }
@@ -17,14 +14,12 @@ export type CliAction =
     }
   | {
       readonly type: "confirm";
-      readonly reservationId: ReservationId;
+      readonly reservationId: ReservationIdSchema;
       readonly amount: number;
     }
-  | { readonly type: "cancel"; readonly reservationId: ReservationId };
+  | { readonly type: "cancel"; readonly reservationId: ReservationIdSchema };
 
-export class UnsupportedCliAction extends Data.TaggedError(
-  "UnsupportedCliAction",
-)<{
+export class UnsupportedCliAction extends Data.TaggedError("UnsupportedCliAction")<{
   readonly action: Exclude<CliAction["type"], "status">;
 }> {}
 
@@ -35,11 +30,7 @@ export class UnsupportedCliAction extends Data.TaggedError(
  */
 export const executeCliAction = (
   action: CliAction,
-): Effect.Effect<
-  unknown,
-  BookingError | UnsupportedCliAction,
-  BookingOperationsService
-> =>
+): Effect.Effect<unknown, BookingError | UnsupportedCliAction, BookingOperationsService> =>
   Effect.gen(function* () {
     const operations = yield* BookingOperations;
     if (action.type === "status") {
