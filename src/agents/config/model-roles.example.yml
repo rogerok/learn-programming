@@ -1,0 +1,16 @@
+# Это фрагмент, а не полный config.yml.
+# Перенесите значения modelRoles в активную конфигурацию OMP
+# либо назначьте роли через интерфейс /models.
+
+modelRoles:
+  # Самая дешёвая модель с достаточным tool calling для чтения и классификации.
+  smol: "provider/cheap-tool-capable-model:low"
+
+  # Недорогая, но более надёжная coding-модель для ограниченных edits и review.
+  task: "provider/cheap-coding-model:medium"
+
+  # Сильная модель для основной сессии, архитектуры, интеграции и выводов.
+  slow: "provider/strong-reasoning-model:high"
+
+  # Необязательно: лёгкие фоновые операции OMP.
+  tiny: "@smol"
