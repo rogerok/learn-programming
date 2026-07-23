@@ -3,7 +3,25 @@
 Этот guided project развивает одно приложение от безопасной границы ввода до конкурентного transactional state. Предметная область — удержание и подтверждение мест на мероприятии. Здесь нет monitoring, probes, telemetry или HTTP polling: проект не повторяет Pulse.
 
 Начальная версия уже компилируется, запускается и показывает состояние небольшого зала. Она намеренно доверяет части входных данных, использует глобальные часы и генератор ID, теряет освобождение resource при failure, обрабатывает запросы без worker pool и выполняет конкурентный `read → write` через `Ref`.
+## Оглавление
 
+- [Результат обучения](#learning-outcome)
+- [Prerequisites](#prerequisites)
+- [Как устроен starter](#starter-structure)
+- [Рабочий цикл](#workflow)
+- [Этап 1. Schema на границе доверия](#milestone-1)
+- [Этап 2. Actionable typed errors](#milestone-2)
+- [Этап 3. Services и Layer](#milestone-3)
+- [Этап 4. Scope и lifetime временного hold](#milestone-4)
+- [Этап 5. Queue, Deferred, PubSub и Semaphore](#milestone-5)
+- [Этап 6. STM и атомарное состояние](#milestone-6)
+- [Независимый transfer. Составной accessibility resource](#transfer)
+- [Финальная самопроверка](#self-check)
+- [Следующая итерация](#next-iteration)
+- [Sources](#sources)
+
+
+<a id="learning-outcome"></a>
 ## Результат обучения
 
 После завершения проекта вы сможете:
@@ -17,6 +35,7 @@
 - сохранять инварианты нескольких ресурсов через STM;
 - переносить transactional invariant на другую структуру ресурсов.
 
+<a id="prerequisites"></a>
 ## Prerequisites
 
 Перед началом нужны:
@@ -36,6 +55,7 @@
 - [[src/02-typescript/effect-ts/5.resources|Scope и resources]].
 
 
+<a id="starter-structure"></a>
 ## Как устроен starter
 
 ```text
@@ -77,6 +97,7 @@ Starter хранит места и accessibility aids в памяти. Это п
 
 Starter содержит не пустые заглушки, а упрощённые работающие реализации. Перед каждым learner seam есть комментарий `Этап N`: он описывает текущее baseline-поведение. Меняйте этот участок, а не переписывайте весь файл.
 
+<a id="workflow"></a>
 ## Рабочий цикл
 
 Установите зависимости из директории проекта:
@@ -105,6 +126,7 @@ npm run smoke
 5. объясните механизм на ручной контрольной точке;
 6. удалите временную диагностику.
 
+<a id="milestone-1"></a>
 ## Этап 1. Schema на границе доверия
 
 ### Зачем
@@ -285,6 +307,7 @@ Check должен принять корректную `hold`-команду и 
 >
 > Здесь `Schema.filter` закрепляет правила, которые нельзя выразить одной формой `Struct`. `decodeUnknown` уже помещает `ParseError` в канал `E`, поэтому `mapError` сохраняет ожидаемую ошибку и не превращает невалидный input в defect.
 
+<a id="milestone-2"></a>
 ## Этап 2. Actionable typed errors
 
 ### Результат
@@ -327,6 +350,7 @@ npm run check:2
 > [!tip]- Подсказка 3: проверка модели
 > `Effect.either` работает с ожидаемым `E`; defect остаётся в `Cause` и не превращается автоматически в `Left`.
 
+<a id="milestone-3"></a>
 ## Этап 3. Services и Layer
 
 ### Результат
@@ -358,6 +382,7 @@ Check подставляет фиксированные время и ID, зат
 > [!tip]- Подсказка 2: зона изменения
 > Сравните источники `reservationId`, `expiresAt` и результата оплаты в `src/booking.ts` с уже объявленными contracts в `src/services.ts`.
 
+<a id="milestone-4"></a>
 ## Этап 4. Scope и lifetime временного hold
 
 ### Результат
@@ -390,6 +415,7 @@ Check наблюдает состояние во время hold и после f
 > [!tip]- Подсказка 2: подходящие primitives
 > Для ограниченной use-зоны сопоставьте контракт с `acquireUseRelease`. Для фонового expiration свяжите fiber с текущим `Scope`, а не запускайте detached work.
 
+<a id="milestone-5"></a>
 ## Этап 5. Queue, Deferred, PubSub и Semaphore
 
 ### Результат
@@ -420,6 +446,7 @@ Check отправляет четыре независимых request конк�
 > [!tip]- Подсказка
 > Разделите responsibilities: очередь переносит request, одноразовый reply channel возвращает outcome конкретному caller, broadcast channel размножает event, а permit ограничивает только критическую внешнюю операцию.
 
+<a id="milestone-6"></a>
 ## Этап 6. STM и атомарное состояние
 
 ### Результат
@@ -455,6 +482,7 @@ Check запускает конфликтующие fibers, проверяет a
 > [!tip]- Подсказка
 > Transaction должна прочитать state, проверить все ресурсы и записать новое состояние как одно целое. Используйте retry только для операции с семантикой ожидания; обычный `holdSeats` по-прежнему должен вернуть actionable conflict.
 
+<a id="transfer"></a>
 ## Независимый transfer. Составной accessibility resource
 
 ### Результат
@@ -484,6 +512,7 @@ npm run build
 npm run smoke
 ```
 
+<a id="self-check"></a>
 ## Финальная самопроверка
 
 Проект подтверждает самостоятельное выполнение только если вы можете без algorithm-level hints:
@@ -499,10 +528,12 @@ npm run smoke
 
 Passing checks после раскрытия подробной подсказки фиксирует guided practice, но не самостоятельное mastery. Для mastery повторите соответствующий check позднее без подсказки и выполните transfer.
 
+<a id="next-iteration"></a>
 ## Следующая итерация
 
 После самостоятельного transfer и изучения mentor lessons 9–12 переходите к [Operations & Delivery](guides/iteration-2-operations.md). Вторая итерация сохраняет booking core и добавляет Stream, Request batching, Cache, Schedule, CLI, HttpApi, SSE и общий ManagedRuntime.
 
+<a id="sources"></a>
 ## Sources
 
 - [Effect documentation](https://effect.website/docs/)

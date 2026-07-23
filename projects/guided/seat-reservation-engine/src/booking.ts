@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { Effect, Ref } from "effect";
+import { Effect, Ref, Scope } from "effect";
 
 import type {
   AidId,
@@ -25,11 +25,6 @@ import {
 export const listVenue: Effect.Effect<VenueSnapshot, never, ReservationRepositoryService> =
   Effect.flatMap(ReservationRepository, (repository) => repository.snapshot);
 
-/**
- * Этап 3 — learner seam: use cases пока читают clock и UUID из Node globals,
- * а confirm обходит PaymentGateway. Contracts и test Layers уже находятся в
- * services.ts и checks/support.ts; изменяется dependency wiring этих функций.
- */
 export const createHold = (seats: ReadonlyArray<SeatId>, durationMs: number) =>
   Effect.gen(function* () {
     const repository = yield* ReservationRepository;
@@ -94,7 +89,7 @@ export const withTemporaryHold = <A, E, R>(
   A,
   E | BookingError,
   R | ReservationRepositoryService | ReservationIdGeneratorService | ReservationClockService
-> => Effect.flatMap(createHold(seats, durationMs), use);
+> => Effect.acquireUseRelease(createHold(seats, durationMs), use, (r) => releaseReservation(r.id));
 
 /**
  * Вторая точка этапа 4: expiration пока не supervised текущим Scope.
@@ -105,8 +100,21 @@ export const openTimedHold = (
 ): Effect.Effect<
   Reservation,
   BookingError,
-  ReservationRepositoryService | ReservationIdGeneratorService | ReservationClockService
-> => createHold(seats, durationMs);
+  | ReservationRepositoryService
+  | ReservationIdGeneratorService
+  | ReservationClockService
+  | Scope.Scope
+> =>
+  createHold(seats, durationMs).pipe(
+    Effect.flatMap((r) =>
+      Effect.gen(function* () {
+        yield* Effect.forkScoped(
+          Effect.sleep(`${durationMs} millis`).pipe(Effect.andThen(releaseReservation(r.id))),
+        );
+        return r;
+      }),
+    ),
+  );
 
 export interface BookingRequest {
   readonly seats: ReadonlyArray<SeatId>;
