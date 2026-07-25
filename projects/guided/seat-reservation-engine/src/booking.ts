@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { Effect, Ref, Scope } from "effect";
+import { Deferred, Effect, PubSub, Queue, Ref, Scope } from "effect";
 
 import type {
   AidId,
@@ -10,7 +10,7 @@ import type {
   SeatId,
   VenueSnapshot,
 } from "./domain.js";
-import { type BookingError, PaymentDeclined } from "./errors.js";
+import { type BookingError, PaymentDeclined, ReservationNotFound } from "./errors.js";
 import {
   PaymentGateway,
   type PaymentGatewayService,
@@ -50,10 +50,15 @@ export const createAccessibleHold = (
     return yield* repository.holdAccessible(reservationId, seats, aid, expiresAt);
   });
 
-export const confirmReservation = (
+const confirmReservationUsing = (
   reservationId: ReservationId,
   amount: number,
-): Effect.Effect<Reservation, BookingError, ReservationRepositoryService | PaymentGatewayService> =>
+  runCharge: PaymentGatewayService["charge"],
+): Effect.Effect<
+  Reservation,
+  PaymentDeclined | ReservationNotFound,
+  ReservationRepositoryService
+> =>
   Effect.gen(function* () {
     if (!Number.isFinite(amount) || amount <= 0) {
       return yield* Effect.fail(
@@ -65,11 +70,20 @@ export const confirmReservation = (
     }
 
     const repository = yield* ReservationRepository;
-    const payment = yield* PaymentGateway;
 
-    yield* payment.charge(reservationId, amount);
+    yield* runCharge(reservationId, amount);
 
     return yield* repository.confirm(reservationId);
+  });
+
+export const confirmReservation = (
+  reservationId: ReservationId,
+  amount: number,
+): Effect.Effect<Reservation, BookingError, ReservationRepositoryService | PaymentGatewayService> =>
+  Effect.gen(function* () {
+    const payment = yield* PaymentGateway;
+
+    return yield* confirmReservationUsing(reservationId, amount, payment.charge);
   });
 
 export const releaseReservation = (
@@ -207,14 +221,37 @@ export interface BookingProcessor {
   readonly eventLog: Effect.Effect<ReadonlyArray<BookingEvent>>;
 }
 
+const createSubscriber = (
+  pubsub: PubSub.PubSub<BookingEvent>,
+  events: Ref.Ref<ReadonlyArray<BookingEvent>>,
+) =>
+  Effect.gen(function* () {
+    const subscription = yield* PubSub.subscribe(pubsub);
+
+    while (true) {
+      const event = yield* subscription.take;
+
+      yield* Ref.update(events, (es) => [...es, event]);
+    }
+  });
+
 /**
  * Этап 5 — learner seam: baseline обрабатывает submit немедленно и сохраняет
  * публичный BookingProcessor, но пока не использует Queue, Deferred, PubSub,
  * worker fibers и concurrency permit. Подробная граница описана в GUIDE.md.
  */
+
 export const makeBookingProcessor = (
   options: Omit<BookingBatchOptions, "subscribers">,
-): Effect.Effect<BookingProcessor, never, ReservationRepositoryService> =>
+): Effect.Effect<
+  BookingProcessor,
+  never,
+  | ReservationRepositoryService
+  | PaymentGatewayService
+  | ReservationIdGeneratorService
+  | ReservationClockService
+  | Scope.Scope
+> =>
   Effect.gen(function* () {
     if (
       !Number.isInteger(options.workerCount) ||
@@ -226,21 +263,58 @@ export const makeBookingProcessor = (
     ) {
       return yield* Effect.die(new Error("Processor limits must be positive integers"));
     }
-    const subscribers = yield* Ref.make<
-      ReadonlyArray<(event: BookingEvent) => Effect.Effect<void>>
-    >([]);
     const events = yield* Ref.make<ReadonlyArray<BookingEvent>>([]);
+    const scope = yield* Effect.scope;
+
+    const pubsub = yield* PubSub.bounded<BookingEvent>(options.paymentConcurrency);
+    const paymentSem = yield* Effect.makeSemaphore(options.paymentConcurrency);
+    const queue = yield* Queue.bounded<{
+      request: BookingRequest;
+      reply: Deferred.Deferred<BookingOutcome>;
+    }>(options.queueCapacity);
 
     const publish = (event: BookingEvent) =>
       Effect.gen(function* () {
-        yield* Ref.update(events, (current) => [...current, event]);
-        const currentSubscribers = yield* Ref.get(subscribers);
-        yield* Effect.forEach(currentSubscribers, (subscriber) => subscriber(event), {
-          discard: true,
-        });
+        yield* Ref.update(events, (es) => [...es, event]);
+
+        yield* PubSub.publish(pubsub, event);
       });
 
-    const submit = (
+    const subscribe = (cb: (event: BookingEvent) => Effect.Effect<void>) =>
+      Effect.gen(function* () {
+        const subscription = yield* Scope.extend(PubSub.subscribe(pubsub), scope);
+
+        const consumer = Effect.gen(function* () {
+          const event = yield* subscription.take;
+          yield* cb(event);
+        }).pipe(Effect.forever);
+        yield* Effect.forkIn(consumer, scope);
+      });
+
+    const worker: Effect.Effect<
+      never,
+      never,
+      | ReservationRepositoryService
+      | PaymentGatewayService
+      | ReservationIdGeneratorService
+      | ReservationClockService
+      | Scope.Scope
+    > = Effect.forever(
+      Effect.gen(function* () {
+        const value = yield* queue.take;
+        const booked = yield* book(value.request);
+
+        yield* Deferred.succeed(value.reply, booked);
+      }),
+    );
+
+    const loop = Effect.forEach(Array.from({ length: options.workerCount }), () =>
+      Effect.forkScoped(worker),
+    );
+
+    yield* loop;
+
+    const book = (
       request: BookingRequest,
     ): Effect.Effect<
       BookingOutcome,
@@ -249,15 +323,26 @@ export const makeBookingProcessor = (
       | ReservationClockService
       | ReservationIdGeneratorService
       | PaymentGatewayService
+      | Scope.Scope
     > =>
       Effect.gen(function* () {
         const reservation = yield* createHold(request.seats, request.durationMs);
         yield* publish({ _tag: "ReservationHeld", reservation });
-        const confirmed = yield* confirmReservation(reservation.id, request.amount);
+
+        const payment = yield* PaymentGateway;
+
+        const confirmed = yield* confirmReservationUsing(
+          reservation.id,
+          request.amount,
+          (reservationId, amount) =>
+            paymentSem.withPermits(1)(payment.charge(reservationId, amount)),
+        );
+
         yield* publish({
           _tag: "ReservationConfirmed",
           reservation: confirmed,
         });
+
         return { _tag: "Booked" as const, reservation: confirmed };
       }).pipe(
         Effect.catchAll((reason) => {
@@ -266,6 +351,7 @@ export const makeBookingProcessor = (
             seats: request.seats,
             reason,
           };
+
           return Effect.as(publish(event), {
             _tag: "Rejected" as const,
             seats: request.seats,
@@ -274,9 +360,18 @@ export const makeBookingProcessor = (
         }),
       );
 
+    const submit = (request: BookingRequest): Effect.Effect<BookingOutcome> =>
+      Effect.gen(function* () {
+        const reply = yield* Deferred.make<BookingOutcome>();
+
+        yield* Queue.offer(queue, { request, reply });
+
+        return yield* Deferred.await(reply);
+      });
+
     return {
       submit,
-      subscribe: (subscriber) => Ref.update(subscribers, (current) => [...current, subscriber]),
+      subscribe,
       eventLog: Ref.get(events),
     };
   });
