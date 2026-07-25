@@ -221,20 +221,6 @@ export interface BookingProcessor {
   readonly eventLog: Effect.Effect<ReadonlyArray<BookingEvent>>;
 }
 
-const createSubscriber = (
-  pubsub: PubSub.PubSub<BookingEvent>,
-  events: Ref.Ref<ReadonlyArray<BookingEvent>>,
-) =>
-  Effect.gen(function* () {
-    const subscription = yield* PubSub.subscribe(pubsub);
-
-    while (true) {
-      const event = yield* subscription.take;
-
-      yield* Ref.update(events, (es) => [...es, event]);
-    }
-  });
-
 /**
  * Этап 5 — learner seam: baseline обрабатывает submit немедленно и сохраняет
  * публичный BookingProcessor, но пока не использует Queue, Deferred, PubSub,
