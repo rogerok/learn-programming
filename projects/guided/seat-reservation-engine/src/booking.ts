@@ -227,17 +227,21 @@ export interface BookingProcessor {
  * worker fibers и concurrency permit. Подробная граница описана в GUIDE.md.
  */
 
-export const makeBookingProcessor = (
-  options: Omit<BookingBatchOptions, "subscribers">,
-): Effect.Effect<
-  BookingProcessor,
-  never,
+type BookingProcessingDeps =
   | ReservationRepositoryService
   | PaymentGatewayService
   | ReservationIdGeneratorService
   | ReservationClockService
-  | Scope.Scope
-> =>
+  | Scope.Scope;
+
+type BookingQueue = {
+  request: BookingRequest;
+  reply: Deferred.Deferred<BookingOutcome>;
+};
+
+export const makeBookingProcessor = (
+  options: Omit<BookingBatchOptions, "subscribers">,
+): Effect.Effect<BookingProcessor, never, BookingProcessingDeps> =>
   Effect.gen(function* () {
     if (
       !Number.isInteger(options.workerCount) ||
@@ -254,10 +258,7 @@ export const makeBookingProcessor = (
 
     const pubsub = yield* PubSub.bounded<BookingEvent>(options.paymentConcurrency);
     const paymentSem = yield* Effect.makeSemaphore(options.paymentConcurrency);
-    const queue = yield* Queue.bounded<{
-      request: BookingRequest;
-      reply: Deferred.Deferred<BookingOutcome>;
-    }>(options.queueCapacity);
+    const queue = yield* Queue.bounded<BookingQueue>(options.queueCapacity);
 
     const publish = (event: BookingEvent) =>
       Effect.gen(function* () {
@@ -277,15 +278,7 @@ export const makeBookingProcessor = (
         yield* Effect.forkIn(consumer, scope);
       });
 
-    const worker: Effect.Effect<
-      never,
-      never,
-      | ReservationRepositoryService
-      | PaymentGatewayService
-      | ReservationIdGeneratorService
-      | ReservationClockService
-      | Scope.Scope
-    > = Effect.forever(
+    const worker: Effect.Effect<never, never, BookingProcessingDeps> = Effect.forever(
       Effect.gen(function* () {
         const value = yield* queue.take;
         const booked = yield* book(value.request);
@@ -302,15 +295,7 @@ export const makeBookingProcessor = (
 
     const book = (
       request: BookingRequest,
-    ): Effect.Effect<
-      BookingOutcome,
-      never,
-      | ReservationRepositoryService
-      | ReservationClockService
-      | ReservationIdGeneratorService
-      | PaymentGatewayService
-      | Scope.Scope
-    > =>
+    ): Effect.Effect<BookingOutcome, never, BookingProcessingDeps> =>
       Effect.gen(function* () {
         const reservation = yield* createHold(request.seats, request.durationMs);
         yield* publish({ _tag: "ReservationHeld", reservation });
