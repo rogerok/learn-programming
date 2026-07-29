@@ -95,7 +95,80 @@ dig +noall +answer example.com AAAA
 
 **Результат обучения:** вы изменяете working probe так, чтобы общий timeout сохранял информацию о текущем stage.
 
-Возьмите `inspect-channel.mjs` из главы. Сохраните существующее поведение и добавьте:
+Сохраните следующий working starter как `inspect-channel.mjs`:
+
+> [!example]- `inspect-channel.mjs`
+> ```javascript
+> import { lookup } from "node:dns/promises";
+> import { once } from "node:events";
+> import { connect as connectTcp } from "node:net";
+> import { connect as connectTls } from "node:tls";
+>
+> const [hostname, portText] = process.argv.slice(2);
+> const port = Number(portText);
+> if (!hostname || !Number.isInteger(port) || port < 1 || port > 65_535) {
+>   console.error("usage: node inspect-channel.mjs <hostname> <port>");
+>   process.exit(2);
+> }
+>
+> const stageTimeoutMs = 2_000;
+>
+> function timeout(stage) {
+>   return new Promise((_, reject) => {
+>     const timer = setTimeout(() => {
+>       const error = new Error(`${stage} timeout`);
+>       error.code = "ETIMEDOUT";
+>       reject(error);
+>     }, stageTimeoutMs);
+>     timer.unref();
+>   });
+> }
+>
+> function withinStage(stage, promise) {
+>   return Promise.race([promise, timeout(stage)]);
+> }
+>
+> let stage = "dns";
+> let activeSocket;
+>
+> try {
+>   const { address, family } = await withinStage(stage, lookup(hostname));
+>   console.log(JSON.stringify({ stage, status: "ok", address, family }));
+>
+>   stage = "tcp";
+>   const tcpSocket = connectTcp({ host: address, port });
+>   activeSocket = tcpSocket;
+>   await withinStage(stage, once(tcpSocket, "connect"));
+>   console.log(JSON.stringify({
+>     stage,
+>     status: "ok",
+>     remoteAddress: tcpSocket.remoteAddress,
+>     remotePort: tcpSocket.remotePort,
+>   }));
+>
+>   stage = "tls";
+>   const tlsSocket = connectTls({ socket: tcpSocket, servername: hostname });
+>   activeSocket = tlsSocket;
+>   await withinStage(stage, once(tlsSocket, "secureConnect"));
+>   console.log(JSON.stringify({
+>     stage,
+>     status: "ok",
+>     authorized: tlsSocket.authorized,
+>     protocol: tlsSocket.getProtocol(),
+>   }));
+>   tlsSocket.end();
+> } catch (error) {
+>   activeSocket?.destroy();
+>   console.log(JSON.stringify({
+>     stage,
+>     status: "error",
+>     code: error.code ?? "ERROR",
+>   }));
+>   process.exitCode = 1;
+> }
+> ```
+
+Сначала запустите starter без изменений и сохраните его output. Затем добавьте:
 
 - `startedAt` и `durationMs` для `dns`, `tcp` и `tls`;
 - аргумент `--deadline <milliseconds>` для всей operation;

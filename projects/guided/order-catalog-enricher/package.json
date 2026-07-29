@@ -1,0 +1,32 @@
+{
+  "name": "guided-order-catalog-enricher",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.25.0",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "smoke": "tsx src/index.ts",
+    "test": "vitest run checks/starter.test.ts",
+    "check:1": "vitest run checks/starter.test.ts checks/milestone-1-pagination.test.ts",
+    "check:2": "vitest run checks/starter.test.ts checks/milestone-1-pagination.test.ts checks/milestone-2-concurrency.test.ts",
+    "check:3": "vitest run checks/starter.test.ts checks/milestone-1-pagination.test.ts checks/milestone-2-concurrency.test.ts checks/milestone-3-request-batching.test.ts",
+    "check:transfer": "vitest run checks/transfer.test.ts",
+    "check": "vitest run checks/*.test.ts"
+  },
+  "dependencies": {
+    "effect": "4.0.0-beta.101"
+  },
+  "devDependencies": {
+    "@effect/vitest": "4.0.0-beta.101",
+    "@eslint/js": "9.32.0",
+    "@types/node": "25.0.3",
+    "eslint": "9.32.0",
+    "globals": "16.3.0",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.39.0",
+    "vitest": "4.1.10"
+  }
+}

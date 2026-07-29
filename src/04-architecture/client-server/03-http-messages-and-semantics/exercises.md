@@ -602,6 +602,6 @@ Next cold review date:
 
 - [[03-http-messages-and-semantics|HTTP messages и semantics]] — source chapter.
 - [[../02-dns-tcp-tls/exercises|Практика DNS, TCP и TLS]] — предыдущие transport/security boundaries.
-- `04-browser-state-and-security.md` — browser policy, credentials и CORS failures.
-- `05-http-caching.md` — полноценная freshness/validation model.
-- `06-reliable-client-server-interaction.md` — retry после ambiguous outcome.
+- [[../04-browser-state-and-security/04-browser-state-and-security|Состояние браузера и границы безопасности]] — browser policy, credentials и CORS failures.
+- [[../05-http-caching/05-http-caching|HTTP caching]] — полноценная freshness/validation model.
+- [[../06-reliable-client-server-interaction/06-reliable-client-server-interaction|Надёжное взаимодействие]] — retry после ambiguous outcome.

@@ -587,5 +587,5 @@ Next cold review date:
 
 - [[04-browser-state-and-security|Browser state и security]] — source chapter.
 - [[../03-http-messages-and-semantics/exercises|Практика HTTP semantics]] — methods, fields, statuses и conditional requests.
-- `05-http-caching.md` — `Vary: Origin`, private/shared cache и validation.
-- `06-reliable-client-server-interaction.md` — retry после hidden/ambiguous outcomes.
+- [[../05-http-caching/05-http-caching|HTTP caching]] — `Vary: Origin`, private/shared cache и validation.
+- [[../06-reliable-client-server-interaction/06-reliable-client-server-interaction|Надёжное взаимодействие]] — retry после hidden/ambiguous outcomes.

@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "smoke": "tsx src/index.ts",
     "test": "vitest run checks/starter.test.ts",
+    "practice:5": "vitest run checks/practice-5-coordination.test.ts",
     "check": "vitest run checks/milestone-*.test.ts checks/transfer.test.ts",
     "check:1": "vitest run checks/milestone-1.test.ts",
     "check:2": "vitest run checks/milestone-1.test.ts checks/milestone-2.test.ts",

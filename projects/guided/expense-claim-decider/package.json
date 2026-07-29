@@ -1,0 +1,32 @@
+{
+  "name": "guided-expense-claim-decider",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.25.0",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "smoke": "tsx src/index.ts",
+    "test": "vitest run checks/starter.test.ts",
+    "check:starter": "vitest run checks/starter.test.ts",
+    "check:1": "vitest run checks/starter.test.ts checks/milestone-1.test.ts",
+    "check:2": "vitest run checks/starter.test.ts checks/milestone-1.test.ts checks/milestone-2.test.ts",
+    "check:transfer": "vitest run checks/transfer.test.ts",
+    "check": "vitest run checks/*.test.ts"
+  },
+  "dependencies": {
+    "effect": "3.22.0"
+  },
+  "devDependencies": {
+    "@effect/vitest": "0.30.0",
+    "@eslint/js": "9.32.0",
+    "@types/node": "24.3.0",
+    "eslint": "9.32.0",
+    "globals": "16.3.0",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.39.0",
+    "vitest": "3.2.4"
+  }
+}

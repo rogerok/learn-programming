@@ -1,533 +1,321 @@
 ---
 tags: [architecture, client-server, http, web, networking]
 aliases: [HTTP messages и semantics, HTTP сообщения и семантика]
-source_checked: 2026-07-18
+source_checked: 2026-07-26
 ---
 
-# HTTP messages и semantics: что передают client и server
+# HTTP-сообщения и семантика
 
-> [!info] Практический сценарий
-> Frontend вызывает `fetch("/orders/42")`. Server отвечает `404 Not Found` с JSON-описанием ошибки. `catch` не выполняется, поэтому разработчик записывает в лог «request успешен», а затем получает ошибку при обработке данных. Чтобы исправить диагноз, нужно разделить три факта: дошёл ли обмен до HTTP, какой outcome сообщил status code и подходит ли representation клиенту.
+> [!info] Контекст
+> Frontend вызывает `fetch("/orders/42")`. Сервер отвечает `404 Not Found` с JSON-описанием ошибки, но `catch` не выполняется. Разработчик принимает выполненный Promise за успешную операцию. Ошибка возникает из-за смешения трёх фактов: HTTP-ответ получен, его status не относится к `2xx`, а JSON ещё нужно отдельно прочитать и проверить.
 
-[[../../MOC|К карте архитектуры]] · [[../02-dns-tcp-tls/02-dns-tcp-tls|Предыдущая глава]] · [[exercises|К упражнениям]]
+[[../../MOC|К карте архитектуры]] · [[../02-dns-tcp-tls/02-dns-tcp-tls|К предыдущей главе]] · [[exercises|К упражнениям]]
 
-## Контракт главы
+## Результат главы
 
-**Условия:** дан raw HTTP/1.1 exchange, запись Chrome DevTools Network, `curl -i/-v` output или объект Fetch `Response`.
+По raw HTTP/1.1 exchange, записи DevTools, выводу `curl` или объекту Fetch `Response` вы сможете:
 
-**Наблюдаемый результат:** вы можете разобрать request и response на control data, fields и content, восстановить HTTP semantics независимо от transport outcome, выбрать method/status/representation metadata и объяснить последующее действие client.
+1. выделить control data, fields и content HTTP-сообщения;
+2. объяснить выбор method через желаемую семантику операции;
+3. прочитать status как результат обработки одного request;
+4. предсказать поведение redirect и conditional request;
+5. отделить HTTP outcome от transport failure и ошибки декодирования.
 
-После главы вы должны уметь:
+Предполагается, что защищённый канал уже установлен, как описано в [[../02-dns-tcp-tls/02-dns-tcp-tls|главе 2]]. Cookie, CORS и browser policy относятся к [[../04-browser-state-and-security/04-browser-state-and-security|следующей главе]].
 
-1. прочитать raw HTTP/1.1 request и самостоятельно составить корректный response;
-2. отличить method, request target, protocol version, fields и content;
-3. объяснить различие `Content-Type` и `Accept`;
-4. выбирать status code по наблюдаемому outcome, а не по удобству frontend;
-5. различать safe и idempotent methods;
-6. предсказывать поведение redirect и conditional request;
-7. объяснять, почему `fetch()` выполняет Promise при `404` и `500`.
+## HTTP передаёт сообщения, а не вызовы функций
 
-### Предварительные знания
-
-Нужны end-to-end карта из [[../01-client-server-request-lifecycle/01-client-server-request-lifecycle|главы 1]] и границы DNS/TCP/TLS из [[../02-dns-tcp-tls/02-dns-tcp-tls|главы 2]]. Предполагается, что secure channel уже установлен. Достаточно уметь запускать Node.js, `curl` и читать строки terminal output.
-
-### Что намеренно не входит в главу
-
-Мы не разбираем cookie sessions, same-origin policy, CORS и CSRF — это глава 4. Freshness, shared cache, `Vary` и cache invalidation относятся к главе 5. Retry policy и idempotency key относятся к главе 6. HTTP/2 frames, HPACK, HTTP/3, QUIC и wire-level framing упомянуты только для отделения transport от общих HTTP semantics.
-
-## Центральный механизм: message сообщает намерение и outcome
-
-После установления channel стороны обмениваются не вызовами функций, а **HTTP messages**:
-
-- request сообщает target, желаемую operation и условия её выполнения;
-- response сообщает outcome обработки request и, возможно, переносит representation;
-- fields уточняют semantics и интерпретацию content;
-- transport переносит bytes или сообщает, что доставку нельзя подтвердить.
+После установления соединения стороны обмениваются HTTP-сообщениями:
 
 ```mermaid
-flowchart LR
-    C[Client intent] --> R[HTTP request<br/>method + target + fields + content]
-    R --> S[Server interpretation<br/>route + preconditions + operation]
-    S --> P[HTTP response<br/>status + fields + content]
-    P --> A[Client decision<br/>use, redirect, retry, show error]
-    T[TCP/TLS or QUIC transport] -. carries messages .-> R
-    T -. carries messages .-> P
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+
+    C->>S: Request = method + target + fields + content
+    S-->>C: Response = status + fields + content
 ```
 
-Диаграмма показывает две независимые оси. Transport отвечает, были ли переданы protocol data. HTTP semantics отвечает, что означает полученный message. `404` — завершённый HTTP response, а не transport failure. Разрыв TLS до response — transport failure, при котором HTTP status отсутствует.
+Request сообщает, над каким resource клиент хочет выполнить действие. Response сообщает результат обработки этого request и при необходимости переносит representation.
 
-## 1. Абстрактная message model и HTTP/1.1 запись
+Transport доставляет bytes. HTTP придаёт им форму и смысл. Успешный TCP/TLS канал не гарантирует `2xx`, а полученный `404` уже доказывает, что обмен дошёл до HTTP.
 
-RFC 9110 описывает message как сочетание:
+## Абстрактное сообщение и HTTP/1.1 запись
 
-1. **control data** — method и target в request либо status code в response;
-2. **header fields** — metadata и modifiers;
-3. **content** — необязательные данные сообщения;
-4. **trailer fields** — необязательные fields после content.
+RFC 9110 описывает HTTP-сообщение через четыре части:
 
-HTTP/1.1 делает эту модель видимой как текстовый head, пустую строку и optional body. В учебных примерах термины **body** и **content** почти совпадают, но не нужно переносить HTTP/1.1 delimiters на все версии HTTP.
+1. **управляющие данные** — method и target для запроса; status для ответа;
+2. **поля** — метаданные и инструкции обработки;
+3. **содержимое** — необязательные данные сообщения;
+4. **trailer fields** — необязательные поля после содержимого.
 
-### Request
+HTTP/1.1 записывает эти части текстуально. HTTP/2 и HTTP/3 используют другое framing, но сохраняют общую семантику методов, полей и статусов.
+
+### Запрос
 
 ```http
 POST /orders?notify=true HTTP/1.1
-Host: api.example.com
-Accept: application/json
+Host: api.example.test
 Content-Type: application/json
+Accept: application/json
 Content-Length: 29
 
-{"sku":"BOOK-1","quantity":2}
+{"sku":"book-7","quantity":2}
 ```
 
-Первая строка — **request-line**:
+Здесь:
 
-```text
-method SP request-target SP protocol-version
-```
+- `POST` — метод;
+- `/orders?notify=true` — request target;
+- строки до пустой строки — поля;
+- JSON после пустой строки — содержимое.
 
-- `POST` задаёт standard semantics operation;
-- `/orders?notify=true` — request target в origin-form: path и query, но не fragment;
-- `HTTP/1.1` задаёт wire protocol version этого message;
-- `Host` выбирает authority на HTTP/1.1 server;
-- пустая строка завершает header section;
-- следующие 29 octets — content.
+Fragment из URL, например `#payment`, браузер в request target не отправляет.
 
-> [!warning] URL fragment не отправляется server
-> В `https://api.example.com/orders#payment` часть `#payment` обрабатывает user agent. Она не входит в HTTP request target. Query `?notify=true`, напротив, входит.
-
-### Response
+### Ответ
 
 ```http
 HTTP/1.1 201 Created
-Content-Type: application/json; charset=utf-8
-Content-Length: 21
 Location: /orders/8472
+Content-Type: application/json
+Content-Length: 26
 
-{"id":8472,"ok":true}
+{"id":8472,"status":"new"}
 ```
 
-Первая строка — **status-line**:
+- `201` — статус;
+- `Location` указывает URI созданного ресурса;
+- `Content-Type` описывает представление;
+- `Content-Length` задаёт длину содержимого в байтах, а не в JavaScript characters.
 
-```text
-protocol-version SP status-code SP reason-phrase
-```
+### Где заканчивается сообщение
 
-- `201` — machine-readable outcome;
-- `Created` — необязательная human-readable reason phrase, не отдельный outcome;
-- `Location` указывает URI созданного resource;
-- `Content-Type` описывает enclosed representation;
-- `Content-Length` измеряет message content в octets, а не JavaScript characters.
+TCP предоставляет поток байтов без границ HTTP-сообщений. HTTP/1.1 framing определяет длину содержимого, например через `Content-Length`, chunked transfer coding или правила конкретного ответа. Один socket `data` event не обязан совпадать с одним полем, запросом или телом.
 
-HTTP field names case-insensitive, но field values подчиняются собственным grammars. `content-type`, `Content-Type` и `CONTENT-TYPE` обозначают одно field name. Это не означает, что произвольные значения fields тоже case-insensitive.
+Полностью полученная status line ещё не означает полностью полученное содержимое.
 
-### Где заканчивается message
+## Ресурс и представление
 
-TCP предоставляет byte stream без границ messages. HTTP/1.1 framing определяет завершение content через rules protocol: например, известный `Content-Length`, chunked transfer coding, semantics response или закрытие connection в допустимом контексте. Нельзя считать, что один TCP `data` event равен одному request, одному header или одному body.
+**Ресурс** — объект адресации HTTP. Это не обязательно файл или строка в базе данных.
 
-В HTTP/2 и HTTP/3 start-line не передаётся как строка HTTP/1.1. Control data представлена pseudo-fields вроде `:method`, `:path`, `:status`, а messages разбиты на frames. При этом `GET`, `404`, `Content-Type`, conditional semantics и meaning methods остаются HTTP concepts.
+**Представление** — конкретная форма состояния ресурса: JSON, HTML, изображение, вариант на другом языке или в другом encoding.
 
-## 2. Method — часть protocol contract
-
-Method сообщает желаемую semantics относительно target resource. Он не является именем server function и не гарантирует, как устроен storage.
-
-| Method | Standard intent | Safe | Idempotent |
-|---|---|---:|---:|
-| `GET` | получить current representation | да | да |
-| `HEAD` | получить fields как для `GET`, но без response content | да | да |
-| `OPTIONS` | узнать communication options | да | да |
-| `POST` | обработать enclosed content по resource-specific semantics | нет | нет по определению |
-| `PUT` | создать или заменить state target resource данным representation | нет | да |
-| `DELETE` | удалить связь target URI с current functionality | нет | да |
-| `PATCH` | применить partial modification, заданную patch document | нет | не гарантируется |
-
-### Safe не означает «без side effects»
-
-Method safe, если client не просит state-changing effect и не отвечает за него. Server может записать access log, обновить metrics или начислить рекламный показ при `GET`; это incidental side effects. Но endpoint `GET /orders/42?do=delete` нарушает declared semantics: crawler, prefetcher или link checker вправе выполнить `GET`.
-
-Standard safe methods: `GET`, `HEAD`, `OPTIONS`, `TRACE`. Safe semantics позволяют user agent и automated tools выполнять retrieval без ожидания запрошенного вредоносного изменения.
-
-### Idempotent относится к intended effect
-
-Method idempotent, если несколько одинаковых requests имеют тот же **intended effect**, что один request.
-
-```text
-PUT /profiles/7 {"name":"Ada"}
-PUT /profiles/7 {"name":"Ada"}
-```
-
-Ожидаемый final state одинаков. Responses при этом могут различаться: первый request способен вернуть `201`, второй — `200` или `204`; logs получат две записи.
-
-`DELETE` также idempotent по intended effect: после первого вызова target перестал быть связан с resource, повторный не удаляет «ещё раз». Первый response может быть `204`, следующий `404` — равенство responses не требуется.
-
-Safe methods idempotent. Обратное неверно: `PUT` и `DELETE` idempotent, но не safe, потому что client просит изменение state.
-
-> [!note] Method и operation — разные уровни
-> Конкретная application может спроектировать idempotent operation поверх `POST`, но сам `POST` standard method не становится idempotent. Как безопасно повторять payment с idempotency key, разбирает глава 6.
-
-## 3. Fields и content: metadata не равна данным
-
-Header field изменяет или описывает processing message. Content переносит representation либо application input. Один JSON-like текст не доказывает media type: recipient узнаёт intended format из representation metadata.
-
-### `Content-Type`: что находится в этом message
+У одного ресурса может быть несколько представлений. Поле `Content-Type` описывает представление в текущем сообщении, а не «тип URL».
 
 ```http
 Content-Type: application/json; charset=utf-8
 ```
 
-`Content-Type` описывает media type associated representation — обычно enclosed content текущего request или response. Он отвечает на вопрос: **«Как интерпретировать эти bytes?»**
-
-Примеры:
-
-- request `Content-Type: application/json` — body client закодирован как JSON;
-- response `Content-Type: text/html; charset=utf-8` — returned representation является HTML text;
-- `415 Unsupported Media Type` — server не поддерживает format request content для этой operation.
-
-### `Accept`: какой response предпочитает client
+Поле `Accept` выражает предпочтения получателя относительно ответа:
 
 ```http
 Accept: application/json, text/plain;q=0.5
 ```
 
-`Accept` в request задаёт preferences для media types будущего response. Он отвечает на вопрос: **«Какие representation formats я предпочитаю получить?»** Значение `q` задаёт относительный weight; отсутствие подходящего representation может привести к `406 Not Acceptable`, хотя server в некоторых случаях вправе проигнорировать preference и отправить другой response.
+`Content-Type` отвечает на вопрос «что находится в этом сообщении?», а `Accept` — «какое представление желательно получить?».
 
-Сравните:
+Если клиент отправляет JSON, но сервер не поддерживает этот media type, подходящий результат — `415 Unsupported Media Type`. Если сервер не может предоставить ни один приемлемый формат ответа, он может вернуть `406 Not Acceptable`.
 
-```http
-POST /reports HTTP/1.1
-Content-Type: text/csv
-Accept: application/json
+## Метод задаёт семантику запроса
 
-sku,quantity
-BOOK-1,2
-```
+Метод — часть публичного протокольного контракта. Он сообщает желаемое действие относительно целевого ресурса, а не имя функции или устройство хранилища.
 
-Client отправляет CSV и просит JSON response. Никакого противоречия нет: fields описывают разные направления и разные data.
+| Метод | Основное намерение | Safe | Idempotent |
+|---|---|---:|---:|
+| `GET` | Получить представление | Да | Да |
+| `HEAD` | Получить поля как у `GET`, без содержимого ответа | Да | Да |
+| `POST` | Передать данные для обработки согласно ресурсу | Нет | Нет |
+| `PUT` | Создать или заменить состояние целевого ресурса | Нет | Да |
+| `DELETE` | Удалить связь целевого ресурса с его текущей функциональностью | Нет | Да |
+| `OPTIONS` | Получить сведения о вариантах взаимодействия | Да | Да |
 
-### Representation и resource
+### Safe не означает «без побочных эффектов»
 
-Resource — не файл и не JSON object, а target абстракции HTTP. Один resource может иметь несколько representations: JSON, HTML, разные languages или encodings. `Content-Type` описывает выбранную representation, а не «тип URL».
+Safe method не просит изменить состояние, за которое отвечает клиент. Сервер всё равно может записать access log или увеличить metric. Эти сопутствующие эффекты не меняют заявленное намерение запроса.
 
-## 4. Status code сообщает outcome response
+`GET /orders/42?delete=true` нарушает safe semantics: crawler, prefetcher или link checker вправе выполнить `GET`.
 
-Status code относится к обработке **одного request**. Первая цифра задаёт class, которую client обязан понимать даже для неизвестного конкретного code.
+### Idempotent не означает «одинаковый ответ»
 
-| Class | Значение |
+Метод идемпотентен, если несколько одинаковых запросов имеют тот же ожидаемый эффект, что один запрос.
+
+Первый `DELETE /orders/42` может вернуть `204`, второй — `404`; итоговое состояние ресурса остаётся тем же. Журналы, timestamps и статус не обязаны совпадать.
+
+Идемпотентность метода не гарантирует корректность реализации. Обработчик `PUT`, который каждый раз списывает деньги, нарушает выбранную семантику.
+
+## Статус сообщает результат одного запроса
+
+Первая цифра status code задаёт класс:
+
+| Класс | Смысл |
 |---|---|
-| `1xx` | interim information до final response |
-| `2xx` | request принят и успешно обработан согласно semantics |
-| `3xx` | user agent нужен следующий шаг или stored representation |
-| `4xx` | request-side condition не позволяет выполнить operation |
-| `5xx` | server-side failure при обработке apparently valid request |
+| `1xx` | Промежуточная информация |
+| `2xx` | Запрос успешно получен, понят и принят; конкретный код уточняет результат |
+| `3xx` | Для завершения нужен redirect или используется сохранённая representation |
+| `4xx` | Проблема связана с request или доступом клиента |
+| `5xx` | Server считает, что ошибся или не способен выполнить request |
 
-Один request может получить zero or more interim `1xx` и ровно один final response не из `1xx` class. Reason phrase необязательна; code несёт protocol meaning.
+Практические различия важнее запоминания списка:
 
-### Практический набор codes
-
-| Situation | Code | Почему |
+| Ситуация | Status | Какое решение доступно клиенту |
 |---|---:|---|
-| `GET` вернул representation | `200 OK` | operation выполнена, content содержит результат |
-| resource создан синхронно | `201 Created` | новый resource уже создан; обычно добавить `Location` |
-| job только принят | `202 Accepted` | processing ещё не завершён |
-| success без response content | `204 No Content` | final outcome есть, representation не отправляется |
-| malformed syntax/input envelope | `400 Bad Request` | server не может обработать форму request |
-| authentication credentials отсутствуют/неприемлемы | `401 Unauthorized` | требуется authentication challenge; название исторически сбивает с толку |
-| identity известна, доступ запрещён | `403 Forbidden` | server понял request и отказывает |
-| target resource не найден | `404 Not Found` | server не нашёл current representation или не раскрывает её наличие |
-| method известен, но запрещён target | `405 Method Not Allowed` | вернуть `Allow` с разрешёнными methods |
-| conflict с current resource state | `409 Conflict` | client может разрешить state conflict и повторить новый request |
-| precondition false | `412 Precondition Failed` | `If-Match`/другая precondition защитила operation |
-| request content media type не поддерживается | `415 Unsupported Media Type` | проблема в format отправленного content |
-| semantics content понятна, но instructions невыполнимы | `422 Unprocessable Content` | syntax/media type приемлемы, application instructions не выполнены |
-| server требует conditional request | `428 Precondition Required` | client должен повторить operation с precondition, например `If-Match` |
-| неожиданная server failure | `500 Internal Server Error` | specific 4xx/5xx не описывает failure точнее |
-| proxy/gateway получил invalid upstream response | `502 Bad Gateway` | failure на upstream boundary |
-| service временно недоступен | `503 Service Unavailable` | overload/maintenance; иногда с `Retry-After` |
-| proxy/gateway не дождался upstream response | `504 Gateway Timeout` | timeout произошёл на gateway→upstream hop |
+| Resource получен | `200 OK` | Читать representation |
+| Resource создан | `201 Created` | Использовать URI из `Location` |
+| Успех без content | `204 No Content` | Не запускать decoder body |
+| Неверный ввод | `400 Bad Request` | Исправить request |
+| Нет аутентификации | `401 Unauthorized` | Получить или обновить credentials |
+| Server понял request, но отказывается его выполнить | `403 Forbidden` | Не повторять без изменения; причину отказа и состояние authentication уточнить отдельно |
+| Resource не найден | `404 Not Found` | Обработать отсутствие |
+| Конфликт с текущим состоянием | `409 Conflict` | Получить актуальное состояние или разрешить конфликт |
+| Не выполнена precondition | `412 Precondition Failed` | Не перезаписывать состояние вслепую |
+| Неподдерживаемый media type request | `415 Unsupported Media Type` | Изменить `Content-Type` или формат |
+| Слишком много requests | `429 Too Many Requests` | Учитывать policy и `Retry-After` |
+| Неожиданная ошибка server | `500 Internal Server Error` | Сопоставить request-id с журналами |
+| Proxy не получил корректный upstream response | `502 Bad Gateway` | Проверить следующую server-side границу |
+| Gateway не дождался upstream | `504 Gateway Timeout` | Outcome upstream может оставаться неизвестным |
 
-Status выбирают по observable protocol outcome, а не по желанию заставить client Promise reject. Возвращать `200 {"error":"not found"}` означает, что generic HTTP tooling видит success и вынужден угадывать application envelope.
+Status принадлежит response, а не исключению JavaScript. `4xx` и `5xx` — завершившиеся HTTP-ответы.
 
-## 5. Redirect — новый response и, возможно, новый request
+## `fetch()` разделяет получение ответа и HTTP success
 
-Redirect response не «переносит текущий request внутри server». User agent получает final response с `Location`, принимает policy decision и обычно создаёт следующий request.
-
-| Code | URI change | Что происходит с method при automatic redirect |
-|---:|---|---|
-| `301` | permanent | historical behavior допускает `POST → GET`; для preservation нужен `308` |
-| `302` | temporary | historical behavior допускает `POST → GET`; для preservation нужен `307` |
-| `303` | indirect result | следующий retrieval обычно `GET`/`HEAD` |
-| `307` | temporary | method и content сохраняются |
-| `308` | permanent | method и content сохраняются |
-
-Пример Post/Redirect/Get:
-
-```http
-POST /orders HTTP/1.1
-Content-Type: application/json
-
-{"sku":"BOOK-1"}
-```
-
-```http
-HTTP/1.1 303 See Other
-Location: /orders/8472
-Content-Length: 0
-```
-
-User agent затем может выполнить:
-
-```http
-GET /orders/8472 HTTP/1.1
-Host: api.example.com
-```
-
-Так refresh result page не обязан повторять исходный `POST`. `307` здесь означал бы другое: повторить `POST` на новый target.
-
-> [!warning] Redirect меняет security context
-> При переходе на другой origin client должен пересмотреть origin-specific и sensitive fields, включая `Authorization` и `Cookie`. Browser/curl policy определяет automatic follow; наличие `3xx` само по себе не доказывает, что follow произошёл.
-
-`304 Not Modified` находится в `3xx`, но не является обычным URI redirect. Он говорит conditional `GET`/`HEAD`: используйте уже stored representation; response `304` не содержит message content.
-
-## 6. Conditional request: выполнить только при условии
-
-Conditional fields превращают operation в проверяемую precondition относительно selected representation.
-
-### Validation: `If-None-Match`
-
-Первый response:
-
-```http
-HTTP/1.1 200 OK
-ETag: "order-42-v7"
-Content-Type: application/json
-
-{"id":42,"status":"paid"}
-```
-
-Следующий request:
-
-```http
-GET /orders/42 HTTP/1.1
-If-None-Match: "order-42-v7"
-```
-
-Если validator всё ещё совпадает, server отвечает:
-
-```http
-HTTP/1.1 304 Not Modified
-ETag: "order-42-v7"
-```
-
-Client объединяет metadata `304` с stored response и использует сохранённую representation. `304` без ранее сохранённого response не даёт body «из воздуха». Freshness и cache update algorithm подробно рассматриваются в главе 5.
-
-### Lost-update protection: `If-Match`
-
-```http
-PUT /orders/42 HTTP/1.1
-If-Match: "order-42-v7"
-Content-Type: application/json
-
-{"id":42,"status":"cancelled"}
-```
-
-Server выполняет modification только если current validator совпадает. Если другой actor уже создал version 8, precondition false и response обычно `412 Precondition Failed`. Это не transport failure: server понял условие и отказался применять stale change.
-
-Preconditions проверяются после обычных request checks и непосредственно перед processing content/action. Поэтому authentication failure или redirect, обнаруженный раньше significant processing, может иметь precedence.
-
-## 7. HTTP semantics не равна transport
-
-Рассмотрим четыре outcomes одного `GET /orders/42`:
-
-| Observation | Что доказано | Чего не доказано |
-|---|---|---|
-| TLS connection закрылась до response | final HTTP response не получен | применял ли server operation |
-| `HTTP/1.1 404 Not Found` | HTTP exchange дошёл до final response; target не найден по server semantics | что DNS/TCP/TLS были «безошибочны навсегда» |
-| `HTTP/1.1 500 Internal Server Error` | server сообщил failure обработки request | что response body можно игнорировать или retry безопасен |
-| `HTTP/1.1 200 OK`, затем truncated content | success status получен, но message incomplete | что representation полностью доступна client |
-
-Transport success не означает business success. HTTP error status не означает network failure. И даже полученный status не всегда доказывает complete content.
-
-### Почему `fetch()` не reject на `404` и `500`
-
-Fetch Promise представляет получение `Response`, а не только `2xx`. Если server прислал корректный HTTP response, Promise выполняется; code проверяет `response.ok` (`200–299`) или `response.status`.
+`fetch()` возвращает Promise объекта `Response`. Promise обычно выполняется для любого доступного HTTP-ответа, включая `404` и `500`. Проверка `response.ok` классифицирует только диапазон `200–299`.
 
 ```javascript
 const response = await fetch("/orders/42");
 
 if (!response.ok) {
-  const problem = await response.text();
-  throw new Error(`HTTP ${response.status}: ${problem}`);
+  throw new Error(`HTTP ${response.status}`);
 }
 
 const order = await response.json();
 ```
 
-Promise reject нужен для failure самого fetch: malformed URL, network error, browser policy block, abort и подобных условий. Browser может скрыть детали ради security, поэтому reject ещё не локализует DNS/TCP/TLS/CORS stage.
+Здесь есть три отдельные границы ошибок:
 
-`curl` по умолчанию также не превращает `404` в non-zero exit только из-за status. Для scripting можно использовать `--fail` или `--fail-with-body`, но это client policy поверх полученного HTTP response.
+1. `fetch()` rejected — response недоступен вызывающему коду из-за network error, malformed URL, abort или browser policy;
+2. `response.ok === false` — доступен HTTP response вне `2xx`;
+3. `response.json()` rejected — content нельзя декодировать как JSON или чтение body оборвалось.
 
-## 8. Наблюдение: raw request, raw response и fulfilled `fetch`
+Нельзя заменять эти проверки одним `try/catch` и называть любой outcome «network error».
 
-Сохраните script как `raw-http-observation.mjs` и запустите `node raw-http-observation.mjs`. Он использует loopback и не требует Internet.
+### Воспроизводимое наблюдение
+
+Скрипт запускает локальный сервер, получает `404` и показывает выполненный Fetch Promise:
 
 ```javascript
-import { once } from "node:events";
-import { connect, createServer } from "node:net";
+import { createServer } from "node:http";
 
-const body = JSON.stringify({ error: "order not found" });
-const response = [
-  "HTTP/1.1 404 Not Found",
-  "Content-Type: application/json; charset=utf-8",
-  `Content-Length: ${Buffer.byteLength(body)}`,
-  "Connection: close",
-  "",
-  body,
-].join("\r\n");
+const server = createServer((_request, response) => {
+  response.writeHead(404, { "content-type": "application/json" });
+  response.end(JSON.stringify({ error: "not found" }));
+});
 
-let requestNumber = 0;
-const server = createServer((socket) => {
-  let request = "";
-  let answered = false;
-  socket.setEncoding("utf8");
-  socket.on("data", (chunk) => {
-    request += chunk;
-    if (!answered && request.includes("\r\n\r\n")) {
-      answered = true;
-      requestNumber += 1;
-      console.log(`incoming #${requestNumber}:`, JSON.stringify(request));
-      socket.end(response);
-    }
+server.listen(0, "127.0.0.1", async () => {
+  const { port } = server.address();
+  const response = await fetch(`http://127.0.0.1:${port}/orders/42`);
+
+  console.log({
+    status: response.status,
+    ok: response.ok,
+    body: await response.json(),
   });
+
+  server.close();
 });
-
-server.listen(0, "127.0.0.1");
-await once(server, "listening");
-const { port } = server.address();
-
-const rawResponse = await new Promise((resolve, reject) => {
-  const socket = connect({ host: "127.0.0.1", port });
-  let data = "";
-  socket.setEncoding("utf8");
-  socket.on("connect", () => {
-    socket.write([
-      "GET /orders/42 HTTP/1.1",
-      `Host: 127.0.0.1:${port}`,
-      "Accept: application/json",
-      "Connection: close",
-      "",
-      "",
-    ].join("\r\n"));
-  });
-  socket.on("data", (chunk) => { data += chunk; });
-  socket.on("end", () => resolve(data));
-  socket.on("error", reject);
-});
-
-console.log("raw response:", JSON.stringify(rawResponse));
-
-const fetched = await fetch(`http://127.0.0.1:${port}/orders/42`, {
-  headers: { Accept: "application/json" },
-});
-console.log("fetch result:", {
-  fulfilled: true,
-  status: fetched.status,
-  ok: fetched.ok,
-  contentType: fetched.headers.get("content-type"),
-  body: await fetched.json(),
-});
-
-const closed = once(server, "close");
-server.close();
-await closed;
 ```
 
-Ищите три invariants:
+Ожидаемый смысл результата: `status` равен `404`, `ok` равен `false`, JSON доступен. Если заменить адрес на недоступную точку, граница изменится: объекта `Response` может не быть.
 
-1. manual request содержит request-line, fields и пустую строку;
-2. server возвращает полноценный `404` response с JSON representation;
-3. `fetch` доходит до `await`, возвращает `status: 404`, `ok: false` и не выполняет implicit throw.
+## Перенаправление создаёт новый запрос
 
-В Chrome DevTools откройте Network → request → Headers/Response. Поля **Request Method**, **Status Code**, **Request Headers**, **Response Headers** и body — разные evidence. Опция «view source» полезна для HTTP/1.1-like representation, но DevTools может показывать нормализованную model, а не буквальные bytes transport.
+Ответ с перенаправлением содержит статус и обычно `Location`. User agent принимает решение и создаёт следующий запрос. Это не внутренний переход между обработчиками сервера.
 
-## 9. Границы ответственности
+Для исходного `POST /orders` различайте:
 
-| Участник | Отвечает | Не гарантирует |
-|---|---|---|
-| Caller/application code | выбирает operation, target, fields/content; интерпретирует `Response` | доставку, server outcome, browser policy |
-| User agent / HTTP client | сериализует/кодирует message, следует client redirect/cache/security policy | корректность business request и server data |
-| Proxy/gateway | принимает один HTTP hop, может forward/transform/cache по contract | что downstream и upstream — один process или один protocol version |
-| Origin/application server | интерпретирует target/method/fields, применяет operation, формирует response | что client использует representation правильно |
-| HTTP semantics | определяет meaning methods, fields, statuses и conditional behavior | reliable delivery, encryption, authentication пользователя |
-| Transport/security channel | переносит protocol data и даёт transport/TLS properties | meaning `404`, JSON schema или business success |
+- `303 See Other` — следующий запрос получает представление результата через `GET` или `HEAD`;
+- `307 Temporary Redirect` — сохраняет метод и содержимое;
+- `308 Permanent Redirect` — сохраняет метод и содержимое и сообщает постоянное перенаправление;
+- `301` и `302` имеют исторически неоднозначное поведение для `POST`; не выбирайте их, когда сохранение метода критично.
 
-На каждом proxy hop wire version может различаться: browser общается с edge по HTTP/3, edge — с upstream по HTTP/2 или HTTP/1.1. End-to-end semantics сохраняется настолько, насколько intermediaries соблюдают HTTP rules, но literal framing не обязано совпадать.
+При автоматическом перенаправлении DevTools и `curl -L` показывают несколько HTTP-обменов. Итоговый статус не заменяет историю предыдущих ответов.
 
-## 10. Пять распространённых заблуждений
+## Условные запросы защищают от лишней передачи и lost update
 
-### Заблуждение 1: «`404` означает, что network request упал»
+Validators связывают запрос с известной клиенту версией представления.
 
-Нет. Полученный `404` — evidence completed HTTP response. Network/TLS failure обычно не имеет HTTP status code.
+### `If-None-Match`: изменилось ли представление
 
-### Заблуждение 2: «`fetch` reject означает HTTP error, resolve означает success»
+Первый ответ:
 
-Нет. Resolve означает, что доступен `Response`, включая `404` и `500`. Business/HTTP success проверяется отдельно через `ok`, `status` и application contract.
+```http
+HTTP/1.1 200 OK
+ETag: "order-v7"
+Content-Type: application/json
 
-### Заблуждение 3: «Idempotent request всегда возвращает одинаковый response»
+{"id":42,"status":"paid"}
+```
 
-Нет. Одинаковым должен быть intended effect нескольких identical requests. Status, timestamps, logs и representation могут различаться.
+Повторная проверка:
 
-### Заблуждение 4: «`Content-Type` говорит server, какой response хочет client»
+```http
+GET /orders/42 HTTP/1.1
+If-None-Match: "order-v7"
+```
 
-Нет. `Content-Type` описывает associated representation текущего message. Preference response format обычно выражает `Accept`.
+Если выбранное представление не изменилось, сервер отвечает `304 Not Modified` без содержимого. Клиент использует сохранённое представление. `304` не является «пустым `200`»: он имеет смысл только вместе с conditional request и сохранённым состоянием клиента или кэша.
 
-### Заблуждение 5: «HTTP/2 и HTTP/3 имеют другие methods и status semantics»
+### `If-Match`: обновить только известную версию
 
-Нет. Они по-другому кодируют и переносят HTTP messages. `GET`, `PUT`, `404`, fields и conditional semantics остаются общими; меняются framing, multiplexing и transport properties.
+```http
+PUT /orders/42 HTTP/1.1
+If-Match: "order-v7"
+Content-Type: application/json
 
-## 11. Вопросы для собеседования
+{"id":42,"status":"cancelled"}
+```
 
-1. Разберите `POST /orders HTTP/1.1`: где method, target, version, fields и content? Как определяется граница content?
-2. Чем `Content-Type` отличается от `Accept`? Приведите request, где значения намеренно различаются.
-3. Почему `GET` safe, хотя server пишет access log?
-4. Почему `DELETE` idempotent, если первый response `204`, а второй `404`?
-5. Как выбрать между `200`, `201`, `202` и `204`?
-6. Чем `400`, `409`, `412`, `415` и `422` сообщают разные исправимые условия?
-7. Что произойдёт с `POST` при `303`, `307` и `308` redirect?
-8. Почему `304` нельзя использовать как обычный response без stored representation?
-9. Что должен сделать frontend после fulfilled `fetch`, прежде чем вызывать `response.json()`?
-10. Как отличить HTTP `504` от client-side timeout, при котором response не получен?
-11. Какие semantics останутся теми же, если browser→edge использует HTTP/3, а edge→application server — HTTP/1.1?
-12. Что доказывает `HTTP/1.1 500`, и чего он не доказывает о повторном выполнении operation?
+Сервер выполняет update, только если текущий validator совпадает. Иначе он возвращает `412 Precondition Failed`. Так клиент обнаруживает concurrent modification вместо молчаливой перезаписи.
 
-> [!tip] Критерий сильного ответа
-> Называйте observable field/status/event, protocol boundary и следующий client action. Не подменяйте safe словом «без side effects», idempotent — «одинаковый response», а HTTP error — transport failure.
+Полная политика кэширования относится к следующему учебному циклу; здесь важен механизм precondition.
 
-## Свидетельства результата
+## Как читать трассировку HTTP
 
-### 1. Прочитать и составить messages
+Разбирайте обмен в фиксированном порядке:
 
-Без подсказок подпишите части незнакомого raw request и составьте response с подходящими status, representation metadata и framing. Получатель должен однозначно определить outcome и границу content.
+1. Был ли получен HTTP response или наблюдение закончилось раньше?
+2. Каковы method и target исходного request?
+3. Какие fields изменяют interpretation content или processing?
+4. Как определяется граница content?
+5. Что status сообщает об outcome именно этого request?
+6. Были ли redirects или повторные requests?
+7. Какое решение должен принять client: декодировать, исправить request, обновить credentials, разрешить conflict или перейти к диагностике server-side boundary?
 
-### 2. Обосновать semantics
+Не выводите из status то, чего в нём нет. `500` не сообщает stack trace, `502` не доказывает, что handler не запускался, а `200` не гарантирует корректность JSON или business result.
 
-Для предложенной operation выберите method и объясните safe/idempotent properties через intended effect. Для пяти outcomes выберите distinct status codes, указав, какое client decision каждый code позволяет принять.
+## Проверка результата
 
-### 3. Наблюдать client behavior
+Без текста главы разберите незнакомые request и response:
 
-Через Node.js, `curl` или DevTools покажите отдельно transport evidence, final HTTP status, response fields и content. Для `404` продемонстрируйте, что Fetch Promise fulfilled, а `response.ok === false`. Практика находится в [[exercises|sibling exercises.md]].
+1. подпишите control data, fields и content;
+2. объясните safe и idempotent свойства method через intended effect;
+3. назовите client decision, которое позволяет принять status;
+4. предскажите следующий method для `303` и `307`;
+5. объясните отдельно поведение `fetch`, `response.ok` и decoder;
+6. измените сценарий так, чтобы `If-Match` обнаружил lost update.
+
+Перенос: спроектируйте три различимых response для «создано», «такой resource уже существует» и «request имеет неподдерживаемый media type». Если client не может выбрать разное поведение по вашим messages, contract остаётся неоднозначным.
 
 ## Related Topics
 
-- [[../01-client-server-request-lifecycle/01-client-server-request-lifecycle|Путь HTTPS-запроса от URL до ответа]] — end-to-end роли и last confirmed boundary.
-- [[../04-browser-state-and-security/04-browser-state-and-security|Browser state и security]] — cookies, sessions, same-origin policy, CORS и CSRF поверх HTTP semantics.
-- `05-http-caching.md` — freshness, validation, shared caches, `Vary` и invalidation.
-- `06-reliable-client-server-interaction.md` — partial failure, retry и operation idempotency.
-- `07-rest-and-http-api-design.md` — resource modeling и API design поверх HTTP semantics.
+- [[../01-client-server-request-lifecycle/01-client-server-request-lifecycle|Путь HTTPS-запроса]] — где HTTP находится в полном сетевом пути.
+- [[../02-dns-tcp-tls/02-dns-tcp-tls|DNS, TCP и TLS]] — гарантии канала, по которому передаются HTTP messages.
+- [[../04-browser-state-and-security/04-browser-state-and-security|Состояние браузера и границы безопасности]] — cookie, same-origin policy, CORS и CSRF поверх HTTP.
 
 ## Sources
 
-- [MDN: HTTP messages](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Messages) — HTTP/1.1 message anatomy, request/status lines, fields/content и HTTP/2 pseudo-fields.
-- [MDN: Overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview) — client/server/proxy model, application-layer boundaries и HTTP flow.
-- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — normative semantics methods, fields, status codes, redirects, content negotiation и conditional requests.
-- [RFC 6585: Additional HTTP Status Codes](https://www.rfc-editor.org/rfc/rfc6585.html) — `428 Precondition Required` для защиты от lost update.
-- [MDN: `Window.fetch()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch) — Promise fulfillment/rejection contract, `Response.ok` и `Response.status`.
-- [Fetch Standard](https://fetch.spec.whatwg.org/) — browser fetch algorithm, response model, network errors и redirect processing.
+- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — message abstraction, methods, fields, statuses, redirects и conditional requests.
+- [RFC 9112: HTTP/1.1](https://www.rfc-editor.org/rfc/rfc9112.html) — запись сообщений, `Content-Length`, framing и определение длины тела.
+- [RFC 6585: Additional HTTP Status Codes](https://www.rfc-editor.org/rfc/rfc6585.html) — `428 Precondition Required` и `429 Too Many Requests`.
+- [MDN: HTTP messages](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Messages) — HTTP/1.1 запись request/response и различия framing между версиями.
+- [MDN: `Window.fetch()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch) — fulfillment/rejection contract, `Response.ok` и `Response.status`.
+- [Fetch Standard](https://fetch.spec.whatwg.org/) — browser fetch algorithm, network errors и redirect processing.

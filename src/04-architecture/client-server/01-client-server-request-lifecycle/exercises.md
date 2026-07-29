@@ -120,7 +120,33 @@ curl --http1.1 --silent --show-error --output /dev/null \
 
 **Результат обучения:** вы меняете поведение HTTP server и предсказываете, какой участок client timing изменится.
 
-Возьмите `server.mjs` из главы. Сохраните `/fast` с исходным быстрым response и добавьте два route:
+Сохраните следующий starter как `server.mjs`:
+
+> [!example]- `server.mjs`
+> ```javascript
+> import { createServer } from "node:http";
+>
+> const server = createServer((request, response) => {
+>   if (request.method === "GET" && request.url === "/fast") {
+>     response.writeHead(200, {
+>       "content-type": "text/plain; charset=utf-8",
+>     });
+>     response.end("fast\n");
+>     return;
+>   }
+>
+>   response.writeHead(404, {
+>     "content-type": "text/plain; charset=utf-8",
+>   });
+>   response.end("not found\n");
+> });
+>
+> server.listen(3000, "127.0.0.1", () => {
+>   console.log("http://127.0.0.1:3000");
+> });
+> ```
+
+Убедитесь, что `/fast` отвечает сразу. Затем сохраните его поведение и добавьте два route:
 
 - `/slow-header` — server ждёт не менее `700 ms` до отправки status/headers, затем сразу завершает небольшой body;
 - `/slow-body` — server немедленно отправляет status/headers и первый chunk body, ждёт не менее `700 ms`, затем отправляет последний chunk и завершает response.
@@ -258,7 +284,7 @@ curl --silent --show-error --output /dev/null \
 > [!tip]- Подсказка 1: двигайтесь слева направо
 > Не спрашивайте сначала «что сломалось?». Спросите «какое событие точно успело произойти?».
 
-## 6. Transfer: провести production request path на собеседовании
+## 6. Transfer: восстановить production request path
 
 **Результат обучения:** вы переносите модель с учебного localhost на production architecture без превращения всех компонентов в один `server`.
 
@@ -293,7 +319,7 @@ Failure seen by previous participant:
 2. TLS завершается на edge, upstream использует отдельное TLS connection.
 3. Application commit завершён, но client не получил response.
 
-Дайте пятиминутное устное объяснение без заметок. Слушатель должен в любой момент спросить «какое evidence это доказывает?». Исправления после вопроса запишите отдельно: они показывают границы, которые пока не извлекаются автоматически.
+Объясните схему без заметок. Проверяющий может в любой момент спросить: «Какое evidence это доказывает?». Исправления после вопроса запишите отдельно: они показывают границы, которые пока не извлекаются автоматически.
 
 **Критерий проверки:** на схеме видны отдельные roles, connections и producers response; timeout не превращён в confirmed failure, а Remote Address не объявлен application machine без evidence.
 

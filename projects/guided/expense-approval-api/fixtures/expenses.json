@@ -1,0 +1,20 @@
+[
+  {
+    "vendor": "Rail Europe",
+    "amountCents": 24500,
+    "category": "travel",
+    "submittedBy": "seed-user"
+  },
+  {
+    "vendor": "",
+    "amountCents": 0,
+    "category": "unknown",
+    "submittedBy": "batch-user"
+  },
+  {
+    "vendor": "TypeScript Workshop",
+    "amountCents": 75000,
+    "category": "training",
+    "submittedBy": "batch-user"
+  }
+]

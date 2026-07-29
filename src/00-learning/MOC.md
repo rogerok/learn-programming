@@ -9,6 +9,7 @@ aliases: [Обучение, Учебный цикл]
 
 ## Начать или продолжить
 
+- [[software-developer-roadmap|Software Developer Roadmap]] — общий путь от programming fundamentals и developer tooling к web, persistence, delivery и одной ветке специализации.
 - [[session-template|Шаблон учебной сессии]] — копируется в `sessions/YYYY-MM-DD-topic.md` только после первого ответа учащегося.
 - Новая тема начинается с baseline assessment: сначала cold retrieval или небольшая задача без чтения, затем выбирается одна наблюдаемая цель.
 - Следующая сессия начинается с cold retrieval по предыдущей цели. Чтение открывается только после того, как попытка показала конкретный пробел.
@@ -41,7 +42,11 @@ Review queue включает записи с `review_due` не позже те�
 
 ## Журнал сессий
 
-Завершённых учебных сессий пока нет. После появления доказательств замените эту строку ссылкой на запись в `sessions/` и кратко укажите тему, наблюдаемую цель и дату следующего review. Не создавайте запись о сессии до ответа учащегося.
+- [[sessions/2026-07-24-effect-booking-coordination|2026-07-24 — Effect Queue, Deferred и worker fibers]] — проследить путь request через Queue и worker к outcome через Deferred; review: 2026-07-27.
+- [[sessions/2026-07-25-effect-scoped-workers|2026-07-25 — Effect scoped worker fibers]] — запустить `workerCount` конкурентных workers в scope processor; review: 2026-07-28.
+- [[sessions/2026-07-25-effect-payment-semaphore|2026-07-25 — Effect Semaphore для PaymentGateway]] — ограничить `PaymentGateway.charge` общим semaphore; review: 2026-07-28.
+- [[sessions/2026-07-25-effect-pubsub-subscribers|2026-07-25 — Effect PubSub и subscriber fibers]] — доставить события через scoped consumer fibers; review: 2026-07-28.
+- [[sessions/2026-07-25-effect-queue-backpressure|2026-07-25 — Effect bounded Queue backpressure]] — проследить A, B и C при заполненной queue; review: 2026-07-28.
 
 ## Формат учебного цикла
 
