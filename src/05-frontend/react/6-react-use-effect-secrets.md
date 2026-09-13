@@ -104,9 +104,8 @@ function AutoSaveComponent({ content }) {
 
 ## Request Version Tracking
 
-Version tracking ensures latest data wins
-Each request has unique ID, only latest updates state
-Combine request versioning with optimistic updates. Store the version with the optimistic data and only revert if a newer request fails.
+Version tracking ensures latest data wins Each request has unique ID, only latest updates state Combine request
+versioning with optimistic updates. Store the version with the optimistic data and only revert if a newer request fails.
 
 ```js
 const useLatestEffect = (asyncEffect, deps) => {
@@ -146,7 +145,8 @@ const useLatestEffect = (asyncEffect, deps) => {
 
 ## Guard Pattern Inside Effects
 
-Log guard failures in development but not in production. Use a feature flag or environment variable to control logging verbosity.
+Log guard failures in development but not in production. Use a feature flag or environment variable to control logging
+verbosity.
 
 ```js
 const useGuardEffect = (guards, effect, deps) => {
@@ -218,10 +218,11 @@ const DataComp = ({ userId }) => {
 
 ## Dependency Optimization with Stable References
 
-Use useLayoutEffect for updating refs that are read during render. This ensures the ref is updated before the browser paints, preventing visual inconsistencies.
+Use useLayoutEffect for updating refs that are read during render. This ensures the ref is updated before the browser
+paints, preventing visual inconsistencies.
 
 ```js
-// Custom hook for stable callback references
+// Custom hook for stable callback dsl
 
 const useStableCallback = (callback) => {
   const callbackRef = useRef(callback);
@@ -268,7 +269,8 @@ function isEqual(a, b) {
 
 ## Error Boundary Bridge
 
-Create different error boundaries for different parts of your app. A failure in analytics shouldn’t break the entire UI — isolate non-critical features with their own boundaries.
+Create different error boundaries for different parts of your app. A failure in analytics shouldn’t break the entire
+UI — isolate non-critical features with their own boundaries.
 
 ```js
 function useAsyncError() {

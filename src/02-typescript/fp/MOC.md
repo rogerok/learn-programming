@@ -166,9 +166,9 @@ aliases: [Функциональное программирование в TypeS
 | [[../fp-ts/fp-ts-roadmap|fp-ts roadmap]] и [[../fp-ts/fp-ts-phase-1-2|fp-ts Phase 1–2]] | После композиции и ADT | Путь по API `fp-ts`, его типам и production-паттернам |
 | [[../fp-ts/mostly-adequate/ch03-pure-functions|Mostly Adequate через fp-ts]] | После канонического объяснения понятия | Книжный трек с более глубокими главами о чистоте, currying, Functor, Monad и Applicative |
 | [[../fp-ts/fp-ts-turorial/1.pipe-and-flow|fp-ts tutorial]] | После шага 2 | Короткая практика `pipe`, `Option`, `Either` и `IO` по API библиотеки |
-| [[../effect-ts/1.intro/readme|Effect]] | После шага 8 | Библиотечный трек: runtime, Schema, ошибки, services, Layer и ресурсы |
+| [[../effect-ts/1.intro/readme|Effect]] | После шага 8 | Библиотечный трек: runtime, Schema, ошибки, services, Layer, ресурсы и слой доступа к данным |
 
-Рекомендуемый порядок внутри `Effect`: [[../effect-ts/1.intro/readme|введение и runtime]] → [[../effect-ts/2.schema/readme|Schema]] → [[../effect-ts/3.errors/readme|ошибки]] → [[../effect-ts/4.services-and-layers/readme|services и Layer]] → [[../effect-ts/5.resources|ресурсы]]. `Schema` нужен для декодирования внешних данных, но не является пререквизитом чистых функций или абстракций композиции.
+Рекомендуемый порядок внутри `Effect`: [[../effect-ts/1.intro/readme|введение и runtime]] → [[../effect-ts/2.schema/readme|Schema]] → [[../effect-ts/3.errors/readme|ошибки]] → [[../effect-ts/4.services-and-layers/readme|services и Layer]] → [[../effect-ts/5.resources|ресурсы]] → [[../effect-ts/6.orm/readme|ORM: Identity Map и Unit of Work]]. `Schema` нужен для декодирования внешних данных, но не является пререквизитом чистых функций или абстракций композиции. Глава про ORM — прикладная: она опирается на `Layer` и ресурсы и показывает, во что они складываются на практике.
 
 ## Справочные материалы
 

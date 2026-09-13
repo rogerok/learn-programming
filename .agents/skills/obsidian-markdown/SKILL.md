@@ -1,6 +1,6 @@
 ---
 name: obsidian-markdown
-description: Creates and edits Obsidian Flavored Markdown with valid frontmatter, wikilinks, embeds, callouts, block references, tags, and Mermaid diagrams. Use for Markdown files in this Obsidian vault. Do not use to change the repository's pedagogical or chapter contracts.
+description: Creates and edits Obsidian Flavored Markdown with valid frontmatter, wikilinks, embeds, callouts, block dsl, tags, and Mermaid diagrams. Use for Markdown files in this Obsidian vault. Do not use to change the repository's pedagogical or chapter contracts.
 ---
 
 # Obsidian Markdown
